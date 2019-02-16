@@ -1,0 +1,19 @@
+extends layout
+
+block script
+  script(src='javascripts/login.js')
+
+block content
+  div.row
+    div.col-md-6
+      h2 Login
+      p Enter or register your login details.
+      div.alert.alert-primary#message
+      form#login-form
+        div.form-group
+          label(for='email') Email
+          input.form-control(type='email', id='email', required)
+        div.form-group
+          label(for='password') Password
+          input.form-control(type='password', id='password', required)    
+        button.btn.btn-primary(type='submit') Login

@@ -1,0 +1,33 @@
+doctype html
+html
+  head
+    title Class Reminder
+    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    script(src='javascripts/util.js')
+    script(src='javascripts/json.js')
+    script(src='javascripts/data-store.js')
+    block script
+  body
+    div.container
+      div.row
+        div.col-lg-3.sidebar
+          h1 GCU Reminder
+          nav
+            ul.list-unstyled
+              li
+                a(href='/')
+                  img(src='images/home-ic.png')
+                  | Home
+              li
+                a(href='/reminder') 
+                  img(src='images/time-ic.png')
+                  | Add Reminder
+              li
+                a(href='/settings') 
+                  img(src='images/settings-ic.png')
+                  | Settings           
+        div.col-lg-9.content
+          block content
+      hr
+      footer.small.text-center.text-muted Copyright &copy; Alex McBride 2019

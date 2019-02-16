@@ -1,0 +1,20 @@
+extends layout
+
+block script
+  script(src='javascripts/settings.js')
+
+block content
+  h2 Settings
+  div.alert.alert-primary#message
+  label Drag the marker to your location
+  span.metadata-marker(style="display: none;", data-region_tag="html-body")
+  div#map  
+  br
+  div.form-group
+    label(for='distance') Set location distance (metres)
+    input.form-control(type='number', id='distance', min='50', max='2000', step='50')
+  hr
+  div
+    p You can logout from the site
+    button.btn.btn-secondary(type='button', id='logout') Logout
+  script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDzVCYK2MsEz7ee_bz92qe-ahpD93iewQI&callback=initMap" async defer)    

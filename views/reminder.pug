@@ -1,0 +1,41 @@
+extends layout
+
+block script
+  script(src='javascripts/reminder.js')
+
+block content
+  div.row
+    div.col-lg-6
+      h2 Reminder
+      p Save details of the reminder.
+      hr
+      form#reminder-form
+        div.alert.alert-primary#message
+        div.add-reminder-what
+          h3 What
+          div.form-group
+            label(for='title') Title
+            input.form-control(type='text', id='title', required)
+          div.form-group
+            label(for='type') Type
+            select.form-control(type='text', id='type', required)
+              for typeOption in typeOptions
+                option= typeOption
+          hr
+        div.add-reminder-where
+          h3 Where
+          div.form-group
+            label(for='room') Room
+            input.form-control(type='text', id='room', required)
+          hr
+        div.add-reminder-when
+          h3 When
+          div.form-group
+            label(for='date') Date
+            input.form-control(type='datetime-local', id='date', required)
+          div.form-group
+            label(for='duration') Duration (mins)
+            input.form-control(type='number', min='0', max='240' id='duration', required, value='60')
+          hr
+        div.text-right
+          button.btn.btn-primary(type='save') Save
