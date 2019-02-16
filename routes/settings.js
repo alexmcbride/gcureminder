@@ -1,33 +1,27 @@
 const express = require('express');
-const User = require('../models/user');
+const ReminderDb = require('../models/reminder-db');
 
 const router = express.Router();
+const db = new ReminderDb();
 
-/* POST save settings */
-router.post('/distance', (req, res, next) => {
+function saveSettings(req, res, data) {
     const token = req.body.token;
+    db.saveSettings(token, data)
+        .then(user => res.json({ success: true }))
+        .catch(err => res.json({ success: false, err: err }));
+}
+
+/* POST save distance settings */
+router.post('/distance', (req, res, next) => {
     const distance = req.body.distance;
-    User.update({ token: token }, { distance: distance }, (err, user) => {
-        if (err) {
-            res.json({ success: false, err: err });
-        } else {
-            res.json({ success: true });
-        }
-    });
+    saveSettings(req, res, { distance: distance });
 });
 
-/* POST save settings */
+/* POST save location settings */
 router.post('/location', (req, res, next) => {
-    const token = req.body.token;
     const latitude = req.body.latitude;
     const longitude = req.body.longitude;
-    User.update({ token: token }, { latitude: latitude, longitude: longitude }, (err, user) => {
-        if (err) {
-            res.json({ success: false, err: err });
-        } else {
-            res.json({ success: true });
-        }
-    });
+    saveSettings(req, res, { latitude: latitude, longitude: longitude });
 });
 
 module.exports = router;

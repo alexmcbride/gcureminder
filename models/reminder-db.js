@@ -72,6 +72,18 @@ class ReminderDb {
             }).catch(reject);
         });
     }
+
+    saveSettings(token, data) {
+        return new Promise((resolve, reject) => {
+            User.update({ token: token }, data, (err, user) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(user);
+                }
+            });
+        });
+    }
 }
 
 module.exports = ReminderDb;

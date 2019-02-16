@@ -15,7 +15,8 @@ router.get('/reminder', (req, res, next) => {
         'Lab',
         'Seminar',
         'Tutorial',
-        'Other'];
+        'Other'
+    ];
     res.render('reminder', {typeOptions: typeOptions});
 });
 
