@@ -1,6 +1,8 @@
 (function () {
     class AddReminderState {
-        init() { /* nothing needed */ }
+        init() { 
+            document.getElementById('reminder-form').style.display = 'block';
+        }
 
         save() {
             const data = getData();
@@ -31,6 +33,7 @@
             document.getElementById('room').value = data.room;
             document.getElementById('date').value = util.formatDate(data.date);
             document.getElementById('duration').value = data.duration;
+            document.getElementById('reminder-form').style.display = 'block';
         }
 
         save() {

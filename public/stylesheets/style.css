@@ -35,6 +35,9 @@ input:invalid {
   padding-left: 40px;
   padding-right: 40px; }
 
+.content #reminder-form {
+  display: none; }
+
 footer {
   margin-top: 20px;
   margin-bottom: 20px; }
