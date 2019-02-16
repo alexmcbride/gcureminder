@@ -31,8 +31,17 @@ input:invalid {
 .content h3 {
   font-size: 1.4rem; }
 
+.content .save-button {
+  padding-left: 40px;
+  padding-right: 40px; }
+
 footer {
-  margin-top: 20px; }
+  margin-top: 20px;
+  margin-bottom: 20px; }
+
+.edit-icon, .delete-icon {
+  width: 24px;
+  height: 24px; }
 
 @media only screen and (min-width: 992px) {
   .sidebar {

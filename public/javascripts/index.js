@@ -35,8 +35,12 @@
         html += reminder.room;
         html += '</div>';        
         html += '<div class="col text-right">';
-        html += ' <a href="/reminder#edit/' + reminder._id + '">Edit</a> |';
-        html += ' <a href="#" class="delete-reminder" data-id="' + reminder._id + '">Delete</a>';
+        html += ' <a href="/reminder#edit/' + reminder._id + '">';
+        html += '<img src="images/edit-ic.png" class="edit-icon" alt="Edit" title="Edit">';
+        html += '</a> ';
+        html += '<a href="#" class="delete-reminder" data-id="' + reminder._id + '" >';
+        html += '<img src="images/delete-ic.png" class="delete-icon" alt="Delete" title="Delete">';
+        html += '</a>';
         html += '</div>';
         html += '</div>';
         return html;
