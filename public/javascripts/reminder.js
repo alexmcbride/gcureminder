@@ -43,7 +43,6 @@
             json.editReminder(currentUser.token, data).then(response => {
                 if (response.success) {
                     util.showMessage('Reminder successfully saved!');
-                    clearForm();
                 }
             }).catch(console.log);
         }
