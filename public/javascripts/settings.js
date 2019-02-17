@@ -73,7 +73,9 @@ const settings = (function () {
         });
     }
 
-    function onLoaded() {
+    function onPageLoaded() {
+        util.initServiceWorker();
+
         loadCurrentUser().then(user => {
             if (user) {
                 currentUser = user;
@@ -104,7 +106,7 @@ const settings = (function () {
         }).catch(console.log);
     }
 
-    util.documentLoaded().then(onLoaded);
+    util.documentLoaded().then(onPageLoaded);
 
     return {
         initMap: initMap

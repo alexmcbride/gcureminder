@@ -88,7 +88,9 @@
         util.showMessage('Reminder removed!');
     }
 
-    function fetchReminders() {
+    function onPageLoaded() {
+        util.initServiceWorker();
+
         dataStore.init().then(() => {
             dataStore.getUser().then(user => {
                 if (user) {
@@ -103,5 +105,5 @@
         }).catch(console.log);
     }
 
-    util.documentLoaded().then(fetchReminders);
+    util.documentLoaded().then(onPageLoaded);
 }());
