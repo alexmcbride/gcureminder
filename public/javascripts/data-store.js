@@ -78,6 +78,20 @@ const dataStore = (function () {
         });
     }
 
+    function getDocument(name, id) {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction([name], 'readwrite');
+            transaction.onerror = event => {
+                reject('DB error: ' + transaction.error);
+            }
+            const store = transaction.objectStore(name);
+            const request = store.get(id);
+            request.onsuccess = event => {
+                resolve(event.result);
+            }
+        });
+    }
+
     function getUsers() {
         return getCollection('users');
     }
@@ -120,7 +134,7 @@ const dataStore = (function () {
         return new Promise((resolve, reject) => {
             getUser().then(user => {
                 user.distance = distance;
-                dataStore.setUser(user).then(user => {
+                setUser(user).then(user => {
                     resolve(user);
                 }).catch(console.log);
             }).catch(reject);
@@ -132,7 +146,7 @@ const dataStore = (function () {
             getUser().then(user => {
                 user.longitude = lon;
                 user.latitude = lat;
-                dataStore.setUser(user).then(user => {
+                setUser(user).then(user => {
                     resolve(user);
                 }).catch(console.log);
             }).catch(reject);
@@ -152,6 +166,14 @@ const dataStore = (function () {
         return getCollection('reminders');
     }
 
+    function getReminder(id) {
+        return getDocument('reminders', id);
+    }
+
+    function setReminder(reminder) {
+        return setDocument('reminders', reminder, reminder._id);
+    }
+
     return {
         init: init,
         getUsers: getUsers,
@@ -162,6 +184,8 @@ const dataStore = (function () {
         updateDistance: updateDistance,
         updateLocation: updateLocation,
         addReminders: addReminders,
-        getReminders: getReminders
+        getReminders: getReminders,
+        getReminder: getReminder,
+        setReminder: setReminder
     }
 }());
