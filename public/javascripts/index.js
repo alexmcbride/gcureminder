@@ -82,6 +82,7 @@
     }
 
     function removeReminderFromList(link) {
+        // parent: col.row.li
         const li = link.parentNode.parentNode.parentNode;
         const ul = document.getElementById('reminders-list');
         ul.removeChild(li);
