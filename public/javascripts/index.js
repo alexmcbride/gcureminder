@@ -14,7 +14,7 @@
         const startMinutes = start - startHours * 60;
         const endHours = (end / 60).toFixed(0);
         const endMinutes = end - endHours * 60;
-        return startHours + ':' + util.padNumber(startMinutes) + 
+        return startHours + ':' + util.padNumber(startMinutes) +
             ' - ' + endHours + ':' + util.padNumber(endMinutes);
     }
 
@@ -33,7 +33,7 @@
         html += '</div>';
         html += '<div class="col-sm">';
         html += reminder.room;
-        html += '</div>';        
+        html += '</div>';
         html += '<div class="col text-right">';
         html += ' <a href="/reminder#edit/' + reminder._id + '">';
         html += '<img src="images/edit-ic.png" class="edit-icon" alt="Edit" title="Edit">';
@@ -88,21 +88,29 @@
         util.showMessage('Reminder removed!');
     }
 
-    function onPageLoaded() {
-        util.initServiceWorker();
-
+    function loadReminders() {
         dataStore.init().then(() => {
             dataStore.getUser().then(user => {
                 if (user) {
                     currentUser = user;
-                    json.getReminders(user.token)
-                        .then(updateReminders)
-                        .catch(console.log);
+                    if (util.offline()) {
+                        dataStore.getReminders().then(updateReminders);
+                    } else {
+                        json.getReminders(user.token).then(reminders => {
+                            dataStore.addReminders(reminders).then(updateReminders);
+                        });
+                    }
                 } else {
                     location.href = '/login';
                 }
-            }).catch(console.log);
-        }).catch(console.log);
+            });
+        });
+    }
+
+    function onPageLoaded() {
+        util.initServiceWorker();
+
+        loadReminders();
     }
 
     util.documentLoaded().then(onPageLoaded);

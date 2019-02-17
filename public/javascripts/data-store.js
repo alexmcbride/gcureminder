@@ -1,5 +1,5 @@
 const dataStore = (function () {
-    const version = 8;
+    const version = 9;
     const name = 'honours-project-db';
     let db = null;
 
@@ -12,6 +12,10 @@ const dataStore = (function () {
 
                 if (!db.objectStoreNames.contains('users')) {
                     db.createObjectStore('users');
+                }
+
+                if (!db.objectStoreNames.contains('reminders')) {
+                    db.createObjectStore('reminders');
                 }
             };
 
@@ -26,24 +30,56 @@ const dataStore = (function () {
         });
     }
 
-    function getUsers() {
+    function getCollection(name) {
         return new Promise((resolve, reject) => {
-            const transaction = db.transaction(['users'], 'readonly');
+            const transaction = db.transaction([name], 'readonly');
             transaction.onerror = event => {
                 reject('DB error: ' + transaction.error);
             };
-            const store = transaction.objectStore('users');
-            const users = [];
+            const store = transaction.objectStore(name);
+            const documents = [];
             store.openCursor().onsuccess = event => {
                 const cursor = event.target.result;
                 if (cursor) {
-                    users.push(cursor.value);
+                    documents.push(cursor.value);
                     cursor.continue();
                 } else {
-                    resolve(users);
+                    resolve(documents);
                 }
             };
         });
+    }
+
+    function addDocument(name, data, id) {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction([name], 'readwrite');
+            transaction.onerror = event => {
+                reject('DB error: ' + transaction.error);
+            }
+            const store = transaction.objectStore(name);
+            const request = store.add(data, id);
+            request.onsuccess = event => {
+                resolve(data);
+            }
+        });
+    }
+
+    function setDocument(name, data, id) {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction([name], 'readwrite');
+            transaction.onerror = event => {
+                reject('DB error: ' + transaction.error);
+            }
+            const store = transaction.objectStore(name);
+            const request = store.put(data, id);
+            request.onsuccess = event => {
+                resolve(data);
+            }
+        });
+    }
+
+    function getUsers() {
+        return getCollection('users');
     }
 
     function getUser() {
@@ -59,31 +95,11 @@ const dataStore = (function () {
     }
 
     function setUser(user) {
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction(['users'], 'readwrite');
-            transaction.onerror = event => {
-                reject('DB error: ' + transaction.error);
-            }
-            const store = transaction.objectStore('users');
-            const request = store.put(user, user.token);
-            request.onsuccess = event => {
-                resolve(user);
-            }
-        });
+        return setDocument('users', user, user.token);
     }
 
     function addUser(user) {
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction(['users'], 'readwrite');
-            transaction.onerror = event => {
-                reject('DB error: ' + transaction.error);
-            }
-            const store = transaction.objectStore('users');
-            const request = store.add(user, user.token);
-            request.onsuccess = event => {
-                resolve(user);
-            }
-        });
+        return addDocument('users', user, user.token);
     }
 
     function clearStorage() {
@@ -123,6 +139,19 @@ const dataStore = (function () {
         });
     }
 
+    function addReminders(reminders) {
+        return new Promise((resolve, reject) => {
+            const promises = reminders.map(reminder => {
+                return setDocument('reminders', reminder, reminder._id);
+            });
+            Promise.all(promises).then(resolve).catch(reject);
+        });
+    }
+
+    function getReminders() {
+        return getCollection('reminders');
+    }
+
     return {
         init: init,
         getUsers: getUsers,
@@ -131,6 +160,8 @@ const dataStore = (function () {
         setUser: setUser,
         clearStorage: clearStorage,
         updateDistance: updateDistance,
-        updateLocation: updateLocation
+        updateLocation: updateLocation,
+        addReminders: addReminders,
+        getReminders: getReminders
     }
 }());

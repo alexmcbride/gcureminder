@@ -1,5 +1,5 @@
-var CACHE_NAME = 'gcu-reminder-v1';
-var urlsToCache = [
+const CACHE_NAME = 'gcu-reminder-v1';
+const URLS_TO_CACHE = [
     '/',
     '/reminder',
     '/settings',
@@ -20,30 +20,18 @@ var urlsToCache = [
     '/images/home-ic.png',
     '/images/settings-ic.png',
     '/images/time-ic.png',
+    '/favicon.ico',
+    '/sw.js'
 ];
 
 self.addEventListener('install', event => {
-    // Perform install steps
-    console.log('SW installed, storing cache');
-    event.waitUntil(
-        caches.open(CACHE_NAME).then(cache => {
-            console.log('Opened cache');
-            return cache.addAll(urlsToCache);
-        })
-    );
+    event.waitUntil(caches.open(CACHE_NAME).then(cache => {
+        return cache.addAll(URLS_TO_CACHE);
+    }));
 });
 
 self.addEventListener('fetch', event => {
-    console.log('Fetch: ' + event.request);
-    event.respondWith(
-        caches.match(event.request).then(response => {
-            // Cache hit - return response
-            if (response) {
-                console.log('Cache hit: ' + event.request);
-                return response;
-            } else {
-                return fetch(event.request);
-            }
-        }).catch(console.log)
-    );
+    event.respondWith(caches.match(event.request).then(response => {
+        return response || fetch(event.request);
+    }));
 });
