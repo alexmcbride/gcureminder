@@ -5,6 +5,11 @@ const dataStore = (function () {
 
     function init() {
         return new Promise((resolve, reject) => {
+            if (db != null) {
+                resolve(); // already initialized.
+                return;
+            }
+
             const request = indexedDB.open(name, version);
 
             request.onupgradeneeded = event => {

@@ -66,17 +66,16 @@
         }
     }
 
-    function deleteReminder(event) {
+    async function deleteReminder(event) {
         if (confirm('Delete reminder?')) {
             const link = event.currentTarget;
             const id = link.getAttribute('data-id');
-            json.deleteReminder(currentUser.token, id).then(data => {
-                if (data.success) {
-                    removeReminderFromList(link);
-                } else {
-                    util.showMessage('Error: reminder not deleted');
-                }
-            }).catch(console.log);
+            const data = await json.deleteReminder(currentUser.token, id);
+            if (data.success) {
+                removeReminderFromList(link);
+            } else {
+                util.showMessage('Error: reminder not deleted');
+            }
         }
         return false; // Stop link from being loaded by browser.
     }
@@ -89,23 +88,16 @@
         util.showMessage('Reminder removed!');
     }
 
-    function loadReminders() {
-        dataStore.init().then(() => {
-            dataStore.getUser().then(user => {
-                if (user) {
-                    currentUser = user;
-                    if (util.offline()) {
-                        dataStore.getReminders().then(updateReminders);
-                    } else {
-                        json.getReminders(user.token).then(reminders => {
-                            dataStore.addReminders(reminders).then(updateReminders);
-                        });
-                    }
-                } else {
-                    location.href = '/login';
-                }
-            });
-        });
+    async function loadReminders() {
+        await dataStore.init();
+        const user = await dataStore.getUser();
+        if (user) {
+            currentUser = user;
+            const reminders = await repository.getReminders(user.token);
+            updateReminders(reminders);
+        } else {
+            location.href = '/login';
+        }
     }
 
     function onPageLoaded() {
