@@ -9,7 +9,7 @@
 
         save() {
             const data = getData();
-            json.addReminder(currentUser.token, data).then(response => {
+            repository.addReminder(currentUser.token, data).then(response => {
                 if (response.success) {
                     util.showMessage('Reminder successfully saved!');
                     clearForm();
@@ -25,7 +25,7 @@
 
         init() {
             // load reminder from API
-            json.getReminder(currentUser.token, this.id)
+            repository.getReminder(currentUser.token, this.id)
                 .then(EditReminderState.updateForm)
                 .catch(console.log);
         }
@@ -43,7 +43,7 @@
             // save existing reminder
             const data = getData();
             data._id = this.id;
-            json.editReminder(currentUser.token, data).then(response => {
+            repository.editReminder(currentUser.token, data).then(response => {
                 if (response.success) {
                     util.showMessage('Reminder successfully saved!');
                 }

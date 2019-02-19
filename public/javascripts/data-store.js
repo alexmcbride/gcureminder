@@ -88,14 +88,14 @@ const dataStore = (function () {
 
     function getDocument(name, id) {
         return new Promise((resolve, reject) => {
-            const transaction = db.transaction([name], 'readwrite');
+            const transaction = db.transaction([name], 'readonly');
             transaction.onerror = event => {
                 reject('DB error: ' + transaction.error);
             }
             const store = transaction.objectStore(name);
             const request = store.get(id);
             request.onsuccess = event => {
-                resolve(event.result);
+                resolve(request.result);
             }
         });
     }
