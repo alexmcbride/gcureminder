@@ -6,6 +6,14 @@ const dataStore = (function () {
     const name = 'honours-project-db';
     let db = null;
 
+    function createObjectStores(db, names) {
+        names.forEach(name => {
+            if (!db.objectStoreNames.contains(name)) {
+                db.createObjectStore(name);
+            }
+        });
+    }
+
     function init() {
         return new Promise((resolve, reject) => {
             if (db != null) {
@@ -17,18 +25,7 @@ const dataStore = (function () {
 
             request.onupgradeneeded = event => {
                 const db = event.target.result;
-
-                if (!db.objectStoreNames.contains('users')) {
-                    db.createObjectStore('users');
-                }
-
-                if (!db.objectStoreNames.contains('reminders')) {
-                    db.createObjectStore('reminders');
-                }
-
-                if (!db.objectStoreNames.contains('pendingReminders')) {
-                    db.createObjectStore('pendingReminders');
-                }
+                createObjectStores(db, ['users', 'reminders', 'pendingReminders']);
             };
 
             request.onerror = event => {
