@@ -207,7 +207,7 @@ const dataStore = (function () {
 
     function addPendingReminder(token, reminder, type) {
         const id = createTempId();
-        const data = { token: token, reminder: reminder, id: id, reminder: reminder, type: type };
+        const data = { token: token, reminder: reminder, id: id, type: type };
         return setDocument('pendingReminders', data, id);
     }
 
