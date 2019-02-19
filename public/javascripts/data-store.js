@@ -39,13 +39,17 @@ const dataStore = (function () {
         });
     }
 
+    function getObjectStore(name, mode, reject) {
+        const transaction = db.transaction([name], mode);
+        transaction.onerror = event => {
+            reject('DB error: ' + transaction.error);
+        };
+        return transaction.objectStore(name);
+    }
+
     function getCollection(name) {
         return new Promise((resolve, reject) => {
-            const transaction = db.transaction([name], 'readonly');
-            transaction.onerror = event => {
-                reject('DB error: ' + transaction.error);
-            };
-            const store = transaction.objectStore(name);
+            const store = getObjectStore(name, 'readonly', reject);
             const documents = [];
             store.openCursor().onsuccess = event => {
                 const cursor = event.target.result;
@@ -61,11 +65,7 @@ const dataStore = (function () {
 
     function addDocument(name, data, id) {
         return new Promise((resolve, reject) => {
-            const transaction = db.transaction([name], 'readwrite');
-            transaction.onerror = event => {
-                reject('DB error: ' + transaction.error);
-            }
-            const store = transaction.objectStore(name);
+            const store = getObjectStore(name, 'readwrite', reject);
             const request = store.add(data, id);
             request.onsuccess = event => {
                 resolve(data);
@@ -75,11 +75,7 @@ const dataStore = (function () {
 
     function setDocument(name, data, id) {
         return new Promise((resolve, reject) => {
-            const transaction = db.transaction([name], 'readwrite');
-            transaction.onerror = event => {
-                reject('DB error: ' + transaction.error);
-            }
-            const store = transaction.objectStore(name);
+            const store = getObjectStore(name, 'readwrite', reject);
             const request = store.put(data, id);
             request.onsuccess = event => {
                 resolve(data);
@@ -89,11 +85,7 @@ const dataStore = (function () {
 
     function getDocument(name, id) {
         return new Promise((resolve, reject) => {
-            const transaction = db.transaction([name], 'readonly');
-            transaction.onerror = event => {
-                reject('DB error: ' + transaction.error);
-            }
-            const store = transaction.objectStore(name);
+            const store = getObjectStore(name, 'readonly', reject);
             const request = store.get(id);
             request.onsuccess = event => {
                 resolve(request.result);
@@ -103,11 +95,7 @@ const dataStore = (function () {
 
     function deleteDocument(name, id) {
         return new Promise((resolve, reject) => {
-            const transaction = db.transaction([name], 'readwrite');
-            transaction.onerror = event => {
-                reject('DB error: ' + transaction.error);
-            }
-            const store = transaction.objectStore(name);
+            const store = getObjectStore(name, 'readwrite', reject);
             const request = store.delete(id);
             request.onsuccess = event => {
                 resolve();
@@ -141,11 +129,7 @@ const dataStore = (function () {
 
     function clearStorage() {
         return new Promise((resolve, reject) => {
-            const transaction = db.transaction(['users'], 'readwrite');
-            transaction.onerror = event => {
-                reject('DB error: ' + transaction.error);
-            }
-            const store = transaction.objectStore('users');
+            const store = getObjectStore(name, 'readwrite', reject);
             const request = store.clear();
             request.onsuccess = event => {
                 resolve();
