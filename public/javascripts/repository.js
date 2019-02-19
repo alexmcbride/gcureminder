@@ -63,23 +63,6 @@ const repository = (function () {
             resolve(response);
         });
     }
-    
-    async function addReminderSync() {
-        const pendingReminders = await dataStore.getPendingReminders();
-        pendingReminders.forEach(async data => {
-            console.log('handling pending reminder');
-            const result = await json.addReminder(data.token, data.reminder);
-            await dataStore.setReminder(result.reminder);
-            await dataStore.deletePendingReminder(data.id);
-        });
-    }
-
-    navigator.serviceWorker.addEventListener('sync', event => {
-        console.log('sync');
-        if (event.tag === 'add-reminder') {
-            event.waitUntil(addReminderSync());
-        }
-    });
 
     return {
         getReminders: getReminders,

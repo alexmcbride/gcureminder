@@ -54,21 +54,25 @@ self.addEventListener('fetch', event => {
 });
 
 self.addEventListener('sync', event => {
-    console.log('sync event: ' + event.tag);
+    console.log('Sync event: ' + event.tag);
     if (event.tag == 'add-reminder') {
         event.waitUntil(addReminder());
     }
 });
 
 function addReminder() {
-    return new Promise((resolve, reject) => {
-        resolve();
+    return new Promise(async (resolve, reject) => {
+        await dataStore.init();
+        const pendingReminders = await dataStore.getPendingReminders();
+        pendingReminders.forEach(async data => {
+            console.log('Handling pending reminder');
+            const result = await json.addReminder(data.token, data.reminder);
+            await dataStore.setReminder(result.reminder);
+            await dataStore.deletePendingReminder(data.id);
+            resolve();
+        });
     });
-    // const pendingReminders = await dataStore.getPendingReminders();
-    // pendingReminders.forEach(async data => {
-    //     console.log('handling pending reminder');
-    //     const reminder = await json.addReminder(data.token, data.reminder);
-    //     await dataStore.setReminder(reminder);
-    //     await dataStore.deletePendingReminder(data.is);
-    // });
 }
+
+importScripts('/javascripts/data-store.js');
+importScripts('/javascripts/json.js');
