@@ -1,3 +1,6 @@
+/*
+ * Module to wrap indexed db.
+ */
 const dataStore = (function () {
     const version = 9;
     const name = 'honours-project-db';
@@ -179,6 +182,20 @@ const dataStore = (function () {
         return setDocument('reminders', reminder, reminder._id);
     }
 
+    function deleteReminder(id) {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(['reminders'], 'readwrite');
+            transaction.onerror = event => {
+                reject('DB error: ' + transaction.error);
+            }
+            const store = transaction.objectStore('reminders');
+            const request = store.delete(id);
+            request.onsuccess = event => {
+                resolve();
+            }
+        });
+    }
+
     return {
         init: init,
         getUsers: getUsers,
@@ -191,6 +208,7 @@ const dataStore = (function () {
         addReminders: addReminders,
         getReminders: getReminders,
         getReminder: getReminder,
-        setReminder: setReminder
+        setReminder: setReminder,
+        deleteReminder: deleteReminder
     }
 }());

@@ -1,3 +1,6 @@
+/*
+ * Module to decide whether to use cached or fresh data
+ */
 const repository = (function () {
     function getReminders(token) {
         return new Promise(async (resolve, reject) => {
@@ -15,7 +18,17 @@ const repository = (function () {
         });
     }
 
+    function deleteReminder(token, id) {
+        return new Promise(async (resolve, reject) => {
+            await dataStore.init();
+            await dataStore.deleteReminder(id);
+            const data = await json.deleteReminder(token, id);
+            resolve(data);
+        });
+    }
+
     return {
-        getReminders: getReminders
+        getReminders: getReminders,
+        deleteReminder: deleteReminder
     }
 }());

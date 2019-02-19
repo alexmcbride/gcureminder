@@ -1,3 +1,6 @@
+/*
+ * Module to handle reminder add/edit page
+ */
 (function () {
     class AddReminderState {
         init() { 

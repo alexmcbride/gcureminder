@@ -1,3 +1,6 @@
+/*
+ * Module to wrap fetch api
+ */
 const json = (function () {
     function fetchJson(url) {
         return new Promise((resolve, reject) => {

@@ -1,3 +1,6 @@
+/*
+ * Module to handle settings page
+ */
 const settings = (function () {
     let currentUser = null;
     let map = null;

@@ -1,3 +1,6 @@
+/*
+ * Module to handle login page
+ */
 (function () {
     function login(user) {
         dataStore.init().then(() => {

@@ -1,3 +1,6 @@
+/*
+ * Module to handle index page.
+ */
 (function () {
     let currentUser = null;
 
@@ -70,7 +73,7 @@
         if (confirm('Delete reminder?')) {
             const link = event.currentTarget;
             const id = link.getAttribute('data-id');
-            const data = await json.deleteReminder(currentUser.token, id);
+            const data = await repository.deleteReminder(currentUser.token, id);
             if (data.success) {
                 removeReminderFromList(link);
             } else {

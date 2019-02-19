@@ -1,3 +1,6 @@
+/*
+ * Module with some utility functions.
+ */
 const util = (function () {
     function documentLoaded() {
         return new Promise((resolve, reject) => {
