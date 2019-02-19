@@ -24,4 +24,10 @@ router.post('/location', (req, res, next) => {
     saveSettings(req, res, { latitude: latitude, longitude: longitude });
 });
 
+/* POST save at location flag */
+router.post('/at-location', (req, res, next) => {
+    const atLocation = req.body.atLocation;
+    saveSettings(req, res, { atLocation: atLocation });
+});
+
 module.exports = router;
