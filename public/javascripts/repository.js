@@ -34,7 +34,7 @@ const repository = (function () {
 
     function addReminder(token, reminder) {
         return new Promise(async (resolve, reject) => {
-            await dataStore.addPendingReminder(token, reminder);
+            await dataStore.addPendingReminder(token, reminder, 'add');
             navigator.serviceWorker.ready.then(registration => {
                 registration.sync.register('add-reminder').then(event => {
                     console.log('Async add-reminder registered');

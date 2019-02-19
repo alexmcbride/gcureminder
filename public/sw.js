@@ -60,15 +60,23 @@ self.addEventListener('sync', event => {
     }
 });
 
+function jsonPostReminder(data) {
+    if (data.type == 'add') {
+        return json.addReminder(data.token, data.reminder);
+    } else {
+        return json.editReminder(data.token, data.reminder);
+    }
+}
+
 function addReminder() {
     return new Promise(async (resolve, reject) => {
         await dataStore.init();
         const pendingReminders = await dataStore.getPendingReminders();
-        pendingReminders.forEach(async data => {
+        pendingReminders.forEach(async pendingReminder => {
             console.log('Handling pending reminder');
-            const result = await json.addReminder(data.token, data.reminder);
-            await dataStore.setReminder(result.reminder);
-            await dataStore.deletePendingReminder(data.id);
+            const response = await jsonPostReminder(pendingReminder);
+            await dataStore.setReminder(response.reminder);
+            await dataStore.deletePendingReminder(pendingReminder.id);
             resolve();
         });
     });

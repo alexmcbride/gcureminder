@@ -208,9 +208,10 @@ const dataStore = (function () {
         return crypto.getRandomValues(new Uint32Array(4)).join('-');
     }
 
-    function addPendingReminder(token, reminder) {
+    function addPendingReminder(token, reminder, type) {
         const id = createTempId();
-        return setDocument('pendingReminders', { token: token, reminder: reminder, id: id, reminder: reminder }, id);
+        const data = { token: token, reminder: reminder, id: id, reminder: reminder, type: type };
+        return setDocument('pendingReminders', data, id);
     }
 
     function getPendingReminders() {
