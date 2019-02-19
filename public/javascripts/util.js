@@ -48,12 +48,17 @@ const util = (function () {
         return !window.navigator.onLine;
     }
 
+    function online() {
+        return window.navigator.onLine;
+    }
+
     return {
         documentLoaded: documentLoaded,
         showMessage: showMessage,
         formatDate: formatDate,
         padNumber: padNumber,
         initServiceWorker: initServiceWorker,
-        offline: offline
+        offline: offline,
+        online: online
     }
 }());
