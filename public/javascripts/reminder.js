@@ -3,17 +3,15 @@
  */
 (function () {
     class AddReminderState {
-        init() { 
+        init() {
             document.getElementById('reminder-form').style.display = 'block';
         }
 
         save() {
             const data = getData();
-            repository.addReminder(currentUser.token, data).then(response => {
-                if (response.success) {
-                    util.showMessage('Reminder successfully saved!');
-                    clearForm();
-                }
+            repository.addReminder(currentUser.token, data).then(() => {
+                util.showMessage('Reminder successfully saved!');
+                clearForm();
             }).catch(console.log);
         }
     }

@@ -34,10 +34,15 @@ const repository = (function () {
 
     function addReminder(token, reminder) {
         return new Promise(async (resolve, reject) => {
-            const response = await json.addReminder(token, reminder);
-            await dataStore.init();
-            await dataStore.setReminder(response.reminder);
-            resolve(response);
+            await dataStore.addPendingReminder(token, reminder);
+            navigator.serviceWorker.ready.then(registration => {
+                registration.sync.register('add-reminder').then(event => {
+                    console.log('Async add-reminder registered');
+                }).catch(error => {
+                    console.log('Error: ' + error);
+                });
+            });
+            resolve();
         });
     }
 
@@ -58,6 +63,23 @@ const repository = (function () {
             resolve(response);
         });
     }
+    
+    async function addReminderSync() {
+        const pendingReminders = await dataStore.getPendingReminders();
+        pendingReminders.forEach(async data => {
+            console.log('handling pending reminder');
+            const result = await json.addReminder(data.token, data.reminder);
+            await dataStore.setReminder(result.reminder);
+            await dataStore.deletePendingReminder(data.id);
+        });
+    }
+
+    navigator.serviceWorker.addEventListener('sync', event => {
+        console.log('sync');
+        if (event.tag === 'add-reminder') {
+            event.waitUntil(addReminderSync());
+        }
+    });
 
     return {
         getReminders: getReminders,

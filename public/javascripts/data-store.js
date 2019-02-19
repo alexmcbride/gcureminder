@@ -2,7 +2,7 @@
  * Module to wrap indexed db.
  */
 const dataStore = (function () {
-    const version = 9;
+    const version = 10;
     const name = 'honours-project-db';
     let db = null;
 
@@ -24,6 +24,10 @@ const dataStore = (function () {
 
                 if (!db.objectStoreNames.contains('reminders')) {
                     db.createObjectStore('reminders');
+                }
+
+                if (!db.objectStoreNames.contains('pendingReminders')) {
+                    db.createObjectStore('pendingReminders');
                 }
             };
 
@@ -96,6 +100,20 @@ const dataStore = (function () {
             const request = store.get(id);
             request.onsuccess = event => {
                 resolve(request.result);
+            }
+        });
+    }
+
+    function deleteDocument(name, id) {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction([name], 'readwrite');
+            transaction.onerror = event => {
+                reject('DB error: ' + transaction.error);
+            }
+            const store = transaction.objectStore(name);
+            const request = store.delete(id);
+            request.onsuccess = event => {
+                resolve();
             }
         });
     }
@@ -183,17 +201,24 @@ const dataStore = (function () {
     }
 
     function deleteReminder(id) {
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction(['reminders'], 'readwrite');
-            transaction.onerror = event => {
-                reject('DB error: ' + transaction.error);
-            }
-            const store = transaction.objectStore('reminders');
-            const request = store.delete(id);
-            request.onsuccess = event => {
-                resolve();
-            }
-        });
+        return deleteDocument('reminders', id);
+    }
+
+    function createTempId() {
+        return crypto.getRandomValues(new Uint32Array(4)).join('-');
+    }
+
+    function addPendingReminder(token, reminder) {
+        const id = createTempId();
+        return setDocument('pendingReminders', { token: token, reminder: reminder, id: id, reminder: reminder }, id);
+    }
+
+    function getPendingReminders() {
+        return getCollection('pendingReminders');
+    }
+
+    function deletePendingReminder(id) {
+        return deleteDocument('pendingReminders', id);
     }
 
     return {
@@ -209,6 +234,9 @@ const dataStore = (function () {
         getReminders: getReminders,
         getReminder: getReminder,
         setReminder: setReminder,
-        deleteReminder: deleteReminder
+        deleteReminder: deleteReminder,
+        addPendingReminder: addPendingReminder,
+        getPendingReminders: getPendingReminders,
+        deletePendingReminder: deletePendingReminder
     }
 }());

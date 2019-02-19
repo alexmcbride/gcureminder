@@ -52,3 +52,23 @@ self.addEventListener('fetch', event => {
         return response || fetch(event.request);
     }));
 });
+
+self.addEventListener('sync', event => {
+    console.log('sync event: ' + event.tag);
+    if (event.tag == 'add-reminder') {
+        event.waitUntil(addReminder());
+    }
+});
+
+function addReminder() {
+    return new Promise((resolve, reject) => {
+        resolve();
+    });
+    // const pendingReminders = await dataStore.getPendingReminders();
+    // pendingReminders.forEach(async data => {
+    //     console.log('handling pending reminder');
+    //     const reminder = await json.addReminder(data.token, data.reminder);
+    //     await dataStore.setReminder(reminder);
+    //     await dataStore.deletePendingReminder(data.is);
+    // });
+}
