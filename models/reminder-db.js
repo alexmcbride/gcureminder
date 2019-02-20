@@ -75,7 +75,7 @@ class ReminderDb {
 
     saveSettings(token, data) {
         return new Promise((resolve, reject) => {
-            User.update({ token: token }, data, (err, user) => {
+            User.updateOne({ token: token }, data, (err, user) => {
                 if (err) {
                     reject(err);
                 } else {
