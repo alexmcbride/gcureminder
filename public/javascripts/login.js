@@ -25,7 +25,7 @@
         event.preventDefault();
         const data = getLoginData();
         if (data) {
-            json.postJson('api/users/login', data).then(result => {
+            util.postJson('api/users/login', data).then(result => {
                 if (result.success) {
                     login(result.user);
                 } else {
