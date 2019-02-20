@@ -24,11 +24,11 @@
         init() {
             // load reminder from API
             repository.getReminder(currentUser.token, this.id)
-                .then(EditReminderState.updateForm)
+                .then(this.updateForm)
                 .catch(console.log);
         }
 
-        static updateForm(data) {
+        updateForm(data) {
             document.getElementById('title').value = data.title;
             document.getElementById('type').value = data.type;
             document.getElementById('room').value = data.room;

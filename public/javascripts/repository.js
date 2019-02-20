@@ -51,24 +51,51 @@ const repository = (function () {
     async function syncQueuedItems() {
         await dataStore.init();
         const items = await dataStore.getSyncItems();
-        items.forEach(async item => {
-            console.log('Handling background sync: ' + item.tag);
-            await syncItem(item);
-            await dataStore.deleteSyncItem(item.id);
-        });
+        items.forEach(syncQueuedItem);
     }
 
-    async function syncItem(item) {
-        if (item.tag == 'add-reminder') {
-            const response = await json.addReminder(item.token, item.data);
-            await dataStore.setReminder(response.reminder);
-        } else if (item.tag == 'edit-reminder') {
-            const response = await json.editReminder(item.token, item.data);
-            await dataStore.setReminder(response.reminder);
-        } else if (item.tag == 'delete-reminder') {
-            const response = await json.deleteReminder(item.token, item.data.id);
-            await dataStore.deleteReminder(item.data.id);
+    async function syncQueuedItem(item) {
+        console.log('Background sync: ' + item.tag);
+        const syncFunction = getSyncFunction(item.tag);
+        if (syncFunction == null) {
+            console.log('Sync function not found');
+        } else {
+            const response = await syncFunction(item);
+            if (response.success) {
+                await dataStore.deleteSyncItem(item.id);
+            } else {
+                console.log('Error: ' + response.error);
+            }
         }
+    }
+
+    function getSyncFunction(tag) {
+        if (tag == 'add-reminder') {
+            return syncAddReminder;
+        } else if (tag == 'edit-reminder') {
+            return syncEditReminder;
+        } else if (tag == 'delete-reminder') {
+            return syncDeleteReminder;
+        }
+        return null;
+    }
+
+    async function syncAddReminder(item) {
+        const response = await json.addReminder(item.token, item.data);
+        await dataStore.setReminder(response.reminder);
+        return response;
+    }
+
+    async function syncEditReminder(item) {
+        const response = await json.editReminder(item.token, item.data);
+        await dataStore.setReminder(response.reminder);
+        return response;
+    }
+
+    async function syncDeleteReminder(item) {
+        const response = await json.deleteReminder(item.token, item.data.id);
+        await dataStore.deleteReminder(item.data.id);
+        return response;
     }
 
     return {
@@ -80,3 +107,4 @@ const repository = (function () {
         syncQueuedItems: syncQueuedItems
     }
 }());
+
