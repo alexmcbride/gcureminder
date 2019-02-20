@@ -52,6 +52,35 @@ const util = (function () {
         return window.navigator.onLine;
     }
 
+    function fetchJson(url) {
+        return new Promise((resolve, reject) => {
+            return fetch(url).then(response => {
+                if (response.status === 200) {
+                    response.json().then(resolve);
+                } else {
+                    reject('Status ' + response.status);
+                }
+            });
+        });
+    }
+
+    function postJson(url, data) {
+        const options = {
+            method: 'post',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        };
+        return new Promise((resolve, reject) => {
+            fetch(url, options).then(response => {
+                if (response.status === 200) {
+                    response.json().then(resolve);
+                } else {
+                    reject('Status ' + response.status);
+                }
+            }).catch(reject);
+        });
+    }
+    
     return {
         documentLoaded: documentLoaded,
         showMessage: showMessage,
@@ -59,6 +88,8 @@ const util = (function () {
         padNumber: padNumber,
         initServiceWorker: initServiceWorker,
         offline: offline,
-        online: online
+        online: online,
+        postJson: postJson,
+        fetchJson: fetchJson
     }
 }());

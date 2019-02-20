@@ -7,7 +7,7 @@ const repository = (function () {
         let reminders = await dataStore.getReminders();
         if (reminders.length == 0) {
             console.log('Getting fresh reminders');
-            reminders = await json.getReminders(token);
+            reminders = await util.fetchJson('/api/reminders/list/' + token);
             await dataStore.addReminders(reminders);
         } else {
             console.log('Using cached reminders');
@@ -20,7 +20,7 @@ const repository = (function () {
         let reminder = await dataStore.getReminder(id);
         if (reminder === undefined) {
             console.log('Getting fresh reminder');
-            reminder = await json.getReminder(token, id);
+            reminder = await util.fetchJson('/api/reminders/' + token + '/' + id);
             await dataStore.setReminder(reminder);
         } else {
             console.log('Using cached reminder');
@@ -68,7 +68,7 @@ const repository = (function () {
 
     function syncQueuedItem(item) {
         console.log('Background syncing item: ' + item.url);
-        json.postJson(item.url, {
+        util.postJson(item.url, {
             token: item.token,
             data: item.data
         }).then(response => {

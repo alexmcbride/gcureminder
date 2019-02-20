@@ -10,7 +10,6 @@ const URLS_TO_CACHE = [
     '/sw.js',
     '/javascripts/data-store.js',
     '/javascripts/index.js',
-    '/javascripts/json.js',
     '/javascripts/repository.js',
     '/javascripts/login.js',
     '/javascripts/reminder.js',
@@ -59,6 +58,6 @@ self.addEventListener('sync', event => {
     }
 });
 
+importScripts('/javascripts/util.js');
 importScripts('/javascripts/repository.js');
 importScripts('/javascripts/data-store.js');
-importScripts('/javascripts/json.js');
