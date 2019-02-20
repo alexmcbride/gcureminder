@@ -58,7 +58,6 @@ const repository = (function () {
         await dataStore.addSyncItem(token, data, url);
         const registration = await navigator.serviceWorker.ready;
         await registration.sync.register('background-sync');
-        console.log('Background async registered: ' + url);
     }
 
     async function syncQueuedItems() {
@@ -68,7 +67,7 @@ const repository = (function () {
     }
 
     function syncQueuedItem(item) {
-        console.log('Syncing background item: ' + item.url);
+        console.log('Background syncing item: ' + item.url);
         json.postJson(item.url, {
             token: item.token,
             data: item.data
