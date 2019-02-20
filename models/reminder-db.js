@@ -21,7 +21,7 @@ class ReminderDb {
         return new Promise((resolve, reject) => {
             User.findOne({ token: token }).then(user => {
                 if (user) {
-                    Reminder.findOne({ _id: id, userId: user._id })
+                    Reminder.findOne({ id: id, userId: user._id })
                         .then(resolve)
                         .catch(reject);
                 } else {
@@ -51,7 +51,7 @@ class ReminderDb {
             User.findOne({ token: token }).then(user => {
                 if (user) {
                     reminder.userId = user._id;
-                    Reminder.findByIdAndUpdate(reminder._id, reminder)
+                    Reminder.findOneAndUpdate({ id: reminder.id }, reminder)
                         .then(resolve)
                         .catch(reject);
                 } else {
@@ -65,7 +65,7 @@ class ReminderDb {
         return new Promise((resolve, reject) => {
             User.findOne({ token: token }).then(user => {
                 if (user) {
-                    Reminder.findByIdAndDelete(id).then(resolve).catch(reject);
+                    Reminder.findOneAndDelete({ id: id }).then(resolve).catch(reject);
                 } else {
                     reject('Invalid auth token');
                 }

@@ -148,11 +148,11 @@ const dataStore = (function () {
         });
     }
 
-    function editLocation(lat, lon) {
+    function editLocation(lattiude, longitude) {
         return new Promise((resolve, reject) => {
             getUser().then(user => {
-                user.longitude = lon;
-                user.latitude = lat;
+                user.longitude = longitude;
+                user.latitude = lattiude;
                 setUser(user).then(user => {
                     resolve(user);
                 }).catch(console.log);
@@ -162,9 +162,7 @@ const dataStore = (function () {
 
     function addReminders(reminders) {
         return new Promise((resolve, reject) => {
-            const promises = reminders.map(reminder => {
-                return setDocument('reminders', reminder, reminder._id);
-            });
+            const promises = reminders.map(addReminder);
             Promise.all(promises).then(resolve).catch(reject);
         });
     }
@@ -177,8 +175,13 @@ const dataStore = (function () {
         return getDocument('reminders', id);
     }
 
+    function addReminder(reminder) {
+        reminder.id = createTempId();
+        return addDocument('reminders', reminder, reminder.id);
+    }
+
     function setReminder(reminder) {
-        return setDocument('reminders', reminder, reminder._id);
+        return setDocument('reminders', reminder, reminder.id);
     }
 
     function deleteReminder(id) {
@@ -189,9 +192,9 @@ const dataStore = (function () {
         return crypto.getRandomValues(new Uint32Array(4)).join('-');
     }
 
-    function addSyncItem(token, data, tag) {
+    function addSyncItem(token, data, url) {
         const id = createTempId();
-        const document = { id: id, tag: tag, token: token, data: data };
+        const document = { id: id, url: url, token: token, data: data };
         return setDocument('sync-queue', document, id);
     }
 
@@ -215,6 +218,7 @@ const dataStore = (function () {
         addReminders: addReminders,
         getReminders: getReminders,
         getReminder: getReminder,
+        addReminder: addReminder,
         setReminder: setReminder,
         deleteReminder: deleteReminder,
         addSyncItem: addSyncItem,

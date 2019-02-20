@@ -28,32 +28,37 @@ const repository = (function () {
         return reminder;
     }
 
-    function addReminder(token, reminder) {
-        return queueSyncItem(token, reminder, 'add-reminder');
+    async function addReminder(token, reminder) {
+        const data = await dataStore.addReminder(reminder);
+        await queueSyncItem(token, data, '/api/reminders/add');
     }
 
-    function editReminder(token, reminder) {
-        return queueSyncItem(token, reminder, 'edit-reminder');
+    async function editReminder(token, reminder) {
+        const data = await dataStore.setReminder(reminder);
+        queueSyncItem(token, data, '/api/reminders/edit');
     }
 
-    function deleteReminder(token, id) {
-        return queueSyncItem(token, { id: id }, 'delete-reminder');
+    async function deleteReminder(token, id) {
+        await dataStore.deleteReminder(id);
+        queueSyncItem(token, {}, '/api/reminders/delete/' + id);
     }
 
-    function editDistance(token, distance) {
-        return queueSyncItem(token, { distance: distance }, 'edit-distance');
+    async function editDistance(token, distance) {
+        await dataStore.editDistance(distance);
+        queueSyncItem(token, { distance: distance }, '/api/settings/distance');
     }
 
-    function editLocation(token, latitude, longitude) {
-        return queueSyncItem(token, { latitude: latitude, longitude: longitude }, 'edit-location');
+    async function editLocation(token, latitude, longitude) {
+        await dataStore.editLocation(latitude, longitude);
+        return queueSyncItem(token, { latitude: latitude, longitude: longitude }, '/api/settings/location');
     }
 
-    async function queueSyncItem(token, data, tag) {
+    async function queueSyncItem(token, data, url) {
         await dataStore.init();
-        await dataStore.addSyncItem(token, data, tag);
+        await dataStore.addSyncItem(token, data, url);
         const registration = await navigator.serviceWorker.ready;
         await registration.sync.register('background-sync');
-        console.log('Background async registered: ' + tag);
+        console.log('Background async registered: ' + url);
     }
 
     async function syncQueuedItems() {
@@ -62,64 +67,20 @@ const repository = (function () {
         items.forEach(syncQueuedItem);
     }
 
-    async function syncQueuedItem(item) {
-        console.log('Background sync: ' + item.tag);
-        const syncFunction = getSyncFunction(item.tag);
-        if (syncFunction == null) {
-            console.log('Sync function not found');
-        } else {
-            const response = await syncFunction(item);
+    function syncQueuedItem(item) {
+        console.log('Syncing background item: ' + item.url);
+        json.postJson(item.url, {
+            token: item.token,
+            data: item.data
+        }).then(response => {
             if (response.success) {
-                await dataStore.deleteSyncItem(item.id);
+                dataStore.deleteSyncItem(item.id).then(() => {
+                    console.log('Background item synced');
+                });
             } else {
-                console.log('Error: ' + response.error.message);
+                console.log('Error: ' + response.error);
             }
-        }
-    }
-
-    function getSyncFunction(tag) {
-        if (tag == 'add-reminder') {
-            return syncAddReminder;
-        } else if (tag == 'edit-reminder') {
-            return syncEditReminder;
-        } else if (tag == 'delete-reminder') {
-            return syncDeleteReminder;
-        } else if (tag == 'edit-distance') {
-            return syncEditDistance;
-        } else if (tag == 'edit-location') {
-            return syncEditLocation;
-        }
-        return null;
-    }
-
-    async function syncAddReminder(item) {
-        const response = await json.addReminder(item.token, item.data);
-        await dataStore.setReminder(response.reminder);
-        return response;
-    }
-
-    async function syncEditReminder(item) {
-        const response = await json.editReminder(item.token, item.data);
-        await dataStore.setReminder(response.reminder);
-        return response;
-    }
-
-    async function syncDeleteReminder(item) {
-        const response = await json.deleteReminder(item.token, item.data.id);
-        await dataStore.deleteReminder(item.data.id);
-        return response;
-    }
-
-    async function syncEditDistance(item) {
-        const response = await json.editDistance(item.token, item.data.distance);
-        await dataStore.editDistance(item.data.distance);
-        return response;
-    }
-
-    async function syncEditLocation(item) {
-        const response = await json.editLocation(item.token, item.data.latitude, item.data.longitude);
-        await dataStore.editLocation(item.data.latitude, item.data.longitude);
-        return response;
+        }).catch(console.log);
     }
 
     return {

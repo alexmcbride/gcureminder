@@ -40,7 +40,7 @@
         save() {
             // save existing reminder
             const data = getData();
-            data._id = this.id;
+            data.id = this.id;
             repository.editReminder(currentUser.token, data).then(response => {
                 util.showMessage('Reminder successfully saved!');
             }).catch(console.log);

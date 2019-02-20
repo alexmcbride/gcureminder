@@ -15,7 +15,7 @@ router.get('/list/:token', (req, res, next) => {
 /* POST add reminder to data store */
 router.post('/add', (req, res, next) => {
     const token = req.body.token;
-    const reminder = req.body.reminder;
+    const reminder = req.body.data;
     db.addReminder(token, reminder).then(reminder => {
         res.json({ success: true, reminder: reminder });
     }).catch(err => {
@@ -26,7 +26,7 @@ router.post('/add', (req, res, next) => {
 /* POST update reminder in data store */
 router.post('/edit', (req, res, next) => {
     const token = req.body.token;
-    const reminder = req.body.reminder;
+    const reminder = req.body.data;
     db.editReminder(token, reminder).then(reminder => {
         res.json({ success: true, reminder: reminder });
     }).catch(err => {
