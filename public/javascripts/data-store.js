@@ -2,7 +2,7 @@
  * Module to wrap indexed db.
  */
 const dataStore = (function () {
-    const version = 10;
+    const version = 11;
     const name = 'honours-project-db';
     let db = null;
 
@@ -25,7 +25,7 @@ const dataStore = (function () {
 
             request.onupgradeneeded = event => {
                 const db = event.target.result;
-                createObjectStores(db, ['users', 'reminders', 'pendingReminders']);
+                createObjectStores(db, ['users', 'reminders', 'sync-queue']);
             };
 
             request.onerror = event => {
@@ -189,18 +189,18 @@ const dataStore = (function () {
         return crypto.getRandomValues(new Uint32Array(4)).join('-');
     }
 
-    function addPendingReminder(token, reminder, type) {
+    function addSyncItem(token, data, tag) {
         const id = createTempId();
-        const data = { token: token, reminder: reminder, id: id, type: type };
-        return setDocument('pendingReminders', data, id);
+        const document = { id: id, tag: tag, token: token, data: data };
+        return setDocument('sync-queue', document, id);
     }
 
-    function getPendingReminders() {
-        return getCollection('pendingReminders');
+    function getSyncItems() {
+        return getCollection('sync-queue');
     }
 
-    function deletePendingReminder(id) {
-        return deleteDocument('pendingReminders', id);
+    function deleteSyncItem(id) {
+        return deleteDocument('sync-queue', id);
     }
 
     return {
@@ -217,8 +217,8 @@ const dataStore = (function () {
         getReminder: getReminder,
         setReminder: setReminder,
         deleteReminder: deleteReminder,
-        addPendingReminder: addPendingReminder,
-        getPendingReminders: getPendingReminders,
-        deletePendingReminder: deletePendingReminder
+        addSyncItem: addSyncItem,
+        getSyncItems: getSyncItems,
+        deleteSyncItem: deleteSyncItem
     }
 }());

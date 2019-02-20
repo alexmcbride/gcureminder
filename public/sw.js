@@ -54,33 +54,11 @@ self.addEventListener('fetch', event => {
 });
 
 self.addEventListener('sync', event => {
-    console.log('Sync event: ' + event.tag);
-    if (event.tag == 'add-reminder') {
-        event.waitUntil(addReminder());
+    if (event.tag == 'background-sync') {
+        event.waitUntil(repository.syncQueuedItems());
     }
 });
 
-function jsonPostReminder(data) {
-    if (data.type == 'add') {
-        return json.addReminder(data.token, data.reminder);
-    } else {
-        return json.editReminder(data.token, data.reminder);
-    }
-}
-
-function addReminder() {
-    return new Promise(async (resolve, reject) => {
-        await dataStore.init();
-        const pendingReminders = await dataStore.getPendingReminders();
-        pendingReminders.forEach(async pendingReminder => {
-            console.log('Handling pending reminder');
-            const response = await jsonPostReminder(pendingReminder);
-            await dataStore.setReminder(response.reminder);
-            await dataStore.deletePendingReminder(pendingReminder.id);
-            resolve();
-        });
-    });
-}
-
+importScripts('/javascripts/repository.js');
 importScripts('/javascripts/data-store.js');
 importScripts('/javascripts/json.js');

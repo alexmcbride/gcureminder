@@ -2,66 +2,73 @@
  * Module to decide whether to use cached or fresh data
  */
 const repository = (function () {
-    function getReminders(token) {
-        return new Promise(async (resolve, reject) => {
-            await dataStore.init();
-            const reminders = await dataStore.getReminders();
-            if (reminders.length == 0) {
-                console.log('Getting fresh reminders');
-                const reminders = json.getReminders(token);
-                await dataStore.addReminders(reminders);
-            } else {
-                console.log('Using cached reminders');
-            }
-            resolve(reminders);
-        });
+    async function getReminders(token) {
+        await dataStore.init();
+        let reminders = await dataStore.getReminders();
+        if (reminders.length == 0) {
+            console.log('Getting fresh reminders');
+            reminders = await json.getReminders(token);
+            await dataStore.addReminders(reminders);
+        } else {
+            console.log('Using cached reminders');
+        }
+        return reminders;
     }
 
-    function getReminder(token, id) {
-        return new Promise(async (resolve, reject) => {
-            await dataStore.init();
-            let reminder = await dataStore.getReminder(id);
-            if (reminder === undefined) {
-                console.log('Getting fresh reminder');
-                reminder = await json.getReminder(token, id);
-                await dataStore.setReminder(reminder);
-            } else {
-                console.log('Using cached reminder');
-            }
-            resolve(reminder);
-        });
+    async function getReminder(token, id) {
+        await dataStore.init();
+        let reminder = await dataStore.getReminder(id);
+        if (reminder === undefined) {
+            console.log('Getting fresh reminder');
+            reminder = await json.getReminder(token, id);
+            await dataStore.setReminder(reminder);
+        } else {
+            console.log('Using cached reminder');
+        }
+        return reminder;
     }
 
     function addReminder(token, reminder) {
-        return new Promise(async (resolve, reject) => {
-            await dataStore.addPendingReminder(token, reminder, 'add');
-            navigator.serviceWorker.ready.then(registration => {
-                registration.sync.register('add-reminder').then(event => {
-                    console.log('Async add-reminder registered');
-                }).catch(error => {
-                    console.log('Error: ' + error);
-                });
-            });
-            resolve();
-        });
+        return queueSyncItem(token, reminder, 'add-reminder');
     }
 
     function editReminder(token, reminder) {
-        return new Promise(async (resolve, reject) => {
-            await dataStore.init();
-            await dataStore.setReminder(reminder);
-            const response = await json.editReminder(token, reminder);
-            resolve(response);
-        });
+        return queueSyncItem(token, reminder, 'edit-reminder');
     }
 
     function deleteReminder(token, id) {
-        return new Promise(async (resolve, reject) => {
-            await dataStore.init();
-            await dataStore.deleteReminder(id);
-            const response = await json.deleteReminder(token, id);
-            resolve(response);
+        return queueSyncItem(token, { id: id }, 'delete-reminder');
+    }
+
+    async function queueSyncItem(token, data, tag) {
+        await dataStore.init();
+        await dataStore.addSyncItem(token, data, tag);
+        const registration = await navigator.serviceWorker.ready;
+        await registration.sync.register('background-sync');
+        console.log('Background async registered: ' + tag);
+    }
+
+    async function syncQueuedItems() {
+        await dataStore.init();
+        const items = await dataStore.getSyncItems();
+        items.forEach(async item => {
+            console.log('Handling background sync: ' + item.tag);
+            await syncItem(item);
+            await dataStore.deleteSyncItem(item.id);
         });
+    }
+
+    async function syncItem(item) {
+        if (item.tag == 'add-reminder') {
+            const response = await json.addReminder(item.token, item.data);
+            await dataStore.setReminder(response.reminder);
+        } else if (item.tag == 'edit-reminder') {
+            const response = await json.editReminder(item.token, item.data);
+            await dataStore.setReminder(response.reminder);
+        } else if (item.tag == 'delete-reminder') {
+            const response = await json.deleteReminder(item.token, item.data.id);
+            await dataStore.deleteReminder(item.data.id);
+        }
     }
 
     return {
@@ -69,6 +76,7 @@ const repository = (function () {
         getReminder: getReminder,
         editReminder: editReminder,
         addReminder: addReminder,
-        deleteReminder: deleteReminder
+        deleteReminder: deleteReminder,
+        syncQueuedItems: syncQueuedItems
     }
 }());

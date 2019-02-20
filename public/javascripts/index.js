@@ -73,12 +73,8 @@
         if (confirm('Delete reminder?')) {
             const link = event.currentTarget;
             const id = link.getAttribute('data-id');
-            const data = await repository.deleteReminder(currentUser.token, id);
-            if (data.success) {
-                removeReminderFromList(link);
-            } else {
-                util.showMessage('Error: reminder not deleted');
-            }
+            await repository.deleteReminder(currentUser.token, id);
+            removeReminderFromList(link);
         }
         return false; // Stop link from being loaded by browser.
     }

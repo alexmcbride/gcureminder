@@ -42,9 +42,7 @@
             const data = getData();
             data._id = this.id;
             repository.editReminder(currentUser.token, data).then(response => {
-                if (response.success) {
-                    util.showMessage('Reminder successfully saved!');
-                }
+                util.showMessage('Reminder successfully saved!');
             }).catch(console.log);
         }
     }
