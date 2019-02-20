@@ -25,29 +25,20 @@ const settings = (function () {
         }
     }
 
-    function saveInternal(update, save) {
+    function saveDistance(distance) {
         disableUi();
-        update().then(result => {
-            if (result.success) {
-                save().then(user => {
-                    currentUser = user;
-                    util.showMessage('Settings saved!');
-                    enableUi();
-                }).catch(console.log);
-            } else {
-                util.showMessage('Error: ' + result.error);
-            }
+        repository.editDistance(currentUser.token, distance).then(response => {
+            util.showMessage('Settings saved!');
+            enableUi();
         }).catch(console.log);
     }
 
-    function saveDistance(distance) {
-        saveInternal(() => json.updateDistance(currentUser.token, distance), 
-            () => dataStore.updateDistance(distance));
-    }
-
     function saveLocation(latitude, longitude) {
-        saveInternal(() => json.updateLocation(currentUser.token, latitude, longitude), 
-            () => dataStore.updateLocation(latitude, longitude));
+        disableUi();
+        repository.editLocation(currentUser.token, latitude, longitude).then(response => {
+            util.showMessage('Settings saved!');
+            enableUi();
+        }).catch(console.log);
     }
 
     function onLogout() {

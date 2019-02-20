@@ -137,7 +137,7 @@ const dataStore = (function () {
         });
     }
 
-    function updateDistance(distance) {
+    function editDistance(distance) {
         return new Promise((resolve, reject) => {
             getUser().then(user => {
                 user.distance = distance;
@@ -148,7 +148,7 @@ const dataStore = (function () {
         });
     }
 
-    function updateLocation(lat, lon) {
+    function editLocation(lat, lon) {
         return new Promise((resolve, reject) => {
             getUser().then(user => {
                 user.longitude = lon;
@@ -210,8 +210,8 @@ const dataStore = (function () {
         addUser: addUser,
         setUser: setUser,
         clearStorage: clearStorage,
-        updateDistance: updateDistance,
-        updateLocation: updateLocation,
+        editDistance: editDistance,
+        editLocation: editLocation,
         addReminders: addReminders,
         getReminders: getReminders,
         getReminder: getReminder,

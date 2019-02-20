@@ -8,7 +8,7 @@ function saveSettings(req, res, data) {
     const token = req.body.token;
     db.saveSettings(token, data)
         .then(user => res.json({ success: true }))
-        .catch(err => res.json({ success: false, err: err }));
+        .catch(err => res.json({ success: false, error: err }));
 }
 
 /* POST save distance settings */

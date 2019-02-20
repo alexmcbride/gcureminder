@@ -51,11 +51,11 @@ const json = (function () {
         return postJson('/api/reminders/delete/' + id, { token: token });
     }
 
-    function updateDistance(token, distance) {
+    function editDistance(token, distance) {
         return postJson('api/settings/distance', { token: token, distance: distance });
     }
 
-    function updateLocation(token, latitude, longitude) {
+    function editLocation(token, latitude, longitude) {
         return postJson('api/settings/location', { token: token, latitude: latitude, longitude: longitude });
     }
 
@@ -66,7 +66,7 @@ const json = (function () {
         addReminder: addReminder,
         editReminder: editReminder,
         deleteReminder: deleteReminder,
-        updateDistance: updateDistance,
-        updateLocation: updateLocation
+        editDistance: editDistance,
+        editLocation: editLocation
     };
 }());

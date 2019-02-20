@@ -40,6 +40,14 @@ const repository = (function () {
         return queueSyncItem(token, { id: id }, 'delete-reminder');
     }
 
+    function editDistance(token, distance) {
+        return queueSyncItem(token, { distance: distance }, 'edit-distance');
+    }
+
+    function editLocation(token, latitude, longitude) {
+        return queueSyncItem(token, { latitude: latitude, longitude: longitude }, 'edit-location');
+    }
+
     async function queueSyncItem(token, data, tag) {
         await dataStore.init();
         await dataStore.addSyncItem(token, data, tag);
@@ -64,7 +72,7 @@ const repository = (function () {
             if (response.success) {
                 await dataStore.deleteSyncItem(item.id);
             } else {
-                console.log('Error: ' + response.error);
+                console.log('Error: ' + response.error.message);
             }
         }
     }
@@ -76,6 +84,10 @@ const repository = (function () {
             return syncEditReminder;
         } else if (tag == 'delete-reminder') {
             return syncDeleteReminder;
+        } else if (tag == 'edit-distance') {
+            return syncEditDistance;
+        } else if (tag == 'edit-location') {
+            return syncEditLocation;
         }
         return null;
     }
@@ -98,13 +110,27 @@ const repository = (function () {
         return response;
     }
 
+    async function syncEditDistance(item) {
+        const response = await json.editDistance(item.token, item.data.distance);
+        await dataStore.editDistance(item.data.distance);
+        return response;
+    }
+
+    async function syncEditLocation(item) {
+        const response = await json.editLocation(item.token, item.data.latitude, item.data.longitude);
+        await dataStore.editLocation(item.data.latitude, item.data.longitude);
+        return response;
+    }
+
     return {
         getReminders: getReminders,
         getReminder: getReminder,
         editReminder: editReminder,
         addReminder: addReminder,
         deleteReminder: deleteReminder,
-        syncQueuedItems: syncQueuedItems
+        syncQueuedItems: syncQueuedItems,
+        editDistance: editDistance,
+        editLocation: editLocation
     }
 }());
 
