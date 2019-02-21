@@ -75,7 +75,8 @@
         if (location.hash) {
             const tokens = location.hash.split('/');
             if (tokens.length === 2 && tokens[0] === '#edit') {
-                return new EditReminderState(tokens[1]);
+                const id = tokens[1];
+                return new EditReminderState(id);
             } else {
                 console.log('Error: bad hash');
             }
