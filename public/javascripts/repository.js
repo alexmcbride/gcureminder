@@ -42,7 +42,7 @@ const repository = (function () {
     }
 
     async function addReminder(token, reminder) {
-        const data = await dataStore.addReminder(reminder);
+        const data = await dataStore.createReminder(reminder);
         await queueSyncItem(token, data, '/api/reminders/add');
     }
 
@@ -76,23 +76,21 @@ const repository = (function () {
     async function syncQueuedItems() {
         await dataStore.init();
         const items = await dataStore.getSyncItems();
-        items.forEach(syncQueuedItem);
-    }
-
-    function syncQueuedItem(item) {
-        console.log('Background syncing item: ' + item.url);
-        util.postJson(item.url, {
-            token: item.token,
-            data: item.data
-        }).then(response => {
+        items.forEach(async item => {
+            console.log('Background syncing item: ' + item.url);
+        
+            const response = await util.postJson(item.url, {
+                token: item.token,
+                data: item.data
+            });
+    
             if (response.success) {
-                dataStore.deleteSyncItem(item.id).then(() => {
-                    console.log('Background item synced');
-                });
+                await dataStore.deleteSyncItem(item.id);
+                console.log('Background item synced');
             } else {
                 console.log('Error: ' + response.error);
             }
-        }).catch(console.log);
+        });
     }
 
     return {
@@ -106,4 +104,3 @@ const repository = (function () {
         editLocation: editLocation
     }
 }());
-

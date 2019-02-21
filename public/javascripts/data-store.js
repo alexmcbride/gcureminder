@@ -175,8 +175,12 @@ const dataStore = (function () {
         return getDocument('reminders', id);
     }
 
-    function addReminder(reminder) {
+    function createReminder(reminder) {
         reminder.id = createTempId();
+        return addDocument('reminders', reminder, reminder.id);
+    }
+
+    function addReminder(reminder) {
         return addDocument('reminders', reminder, reminder.id);
     }
 
@@ -218,6 +222,7 @@ const dataStore = (function () {
         addReminders: addReminders,
         getReminders: getReminders,
         getReminder: getReminder,
+        createReminder: createReminder,
         addReminder: addReminder,
         setReminder: setReminder,
         deleteReminder: deleteReminder,
