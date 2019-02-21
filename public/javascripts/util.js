@@ -44,14 +44,6 @@ const util = (function () {
         }
     }
 
-    function offline() {
-        return !window.navigator.onLine;
-    }
-
-    function online() {
-        return window.navigator.onLine;
-    }
-
     function fetchJson(url) {
         return new Promise((resolve, reject) => {
             return fetch(url).then(response => {

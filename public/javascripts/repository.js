@@ -5,7 +5,7 @@ const repository = (function () {
     async function getReminders(token) {
         await dataStore.init();
         let reminders = await dataStore.getReminders();
-        if (reminders.length == 0) {
+        if (reminders.length == 0 && navigator.onLine) {
             console.log('Getting fresh reminders');
             reminders = await util.fetchJson('/api/reminders/list/' + token);
             await dataStore.addReminders(reminders);
@@ -18,7 +18,7 @@ const repository = (function () {
     async function getReminder(token, id) {
         await dataStore.init();
         let reminder = await dataStore.getReminder(id);
-        if (reminder === undefined) {
+        if (reminder === undefined && navigator.onLine) {
             console.log('Getting fresh reminder');
             reminder = await util.fetchJson('/api/reminders/' + token + '/' + id);
             await dataStore.setReminder(reminder);
