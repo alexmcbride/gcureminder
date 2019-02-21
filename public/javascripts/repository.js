@@ -2,6 +2,18 @@
  * Module to decide whether to use cached or fresh data
  */
 const repository = (function () {
+    function sortRemindersByTime(a, b) {
+        const timeA = new Date(a.date).getTime();
+        const timeB = new Date(b.date).getTime();
+        if (timeA > timeB) {
+            return 1;
+        } else if (timeA < timeB) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+
     async function getReminders(token) {
         await dataStore.init();
         let reminders = await dataStore.getReminders();
@@ -11,6 +23,7 @@ const repository = (function () {
             await dataStore.addReminders(reminders);
         } else {
             console.log('Using cached reminders');
+            reminders.sort(sortRemindersByTime);
         }
         return reminders;
     }

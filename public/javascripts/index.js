@@ -38,7 +38,7 @@
         html += reminder.room;
         html += '</div>';
         html += '<div class="col text-right">';
-        html += ' <a href="/reminder#edit/' + reminder.id + '">';
+        html += ' <a href="/reminder#edit/' + reminder.id + '" class="edit-link">';
         html += '<img src="images/edit-ic.png" class="edit-icon" alt="Edit" title="Edit">';
         html += '</a> ';
         html += '<a href="#" class="delete-reminder" data-id="' + reminder.id + '" >';

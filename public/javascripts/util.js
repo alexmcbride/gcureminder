@@ -44,43 +44,34 @@ const util = (function () {
         }
     }
 
-    function fetchJson(url) {
-        return new Promise((resolve, reject) => {
-            return fetch(url).then(response => {
-                if (response.status === 200) {
-                    response.json().then(resolve);
-                } else {
-                    reject('Status ' + response.status);
-                }
-            });
-        });
+    async function fetchJson(url) {
+        const response = await fetch(url);
+        if (response.status === 200) {
+            return await response.json();
+        } else {
+            throw 'Status ' + response.status;
+        }
     }
 
-    function postJson(url, data) {
-        const options = {
+    async function postJson(url, data) {
+        const response = await fetch(url, {
             method: 'post',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
-        };
-        return new Promise((resolve, reject) => {
-            fetch(url, options).then(response => {
-                if (response.status === 200) {
-                    response.json().then(resolve);
-                } else {
-                    reject('Status ' + response.status);
-                }
-            }).catch(reject);
         });
+        if (response.status === 200) {
+            return await response.json();
+        } else {
+            throw 'Status ' + response.status;
+        }
     }
-    
+
     return {
         documentLoaded: documentLoaded,
         showMessage: showMessage,
         formatDate: formatDate,
         padNumber: padNumber,
         initServiceWorker: initServiceWorker,
-        offline: offline,
-        online: online,
         postJson: postJson,
         fetchJson: fetchJson
     }
