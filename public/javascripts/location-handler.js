@@ -21,25 +21,16 @@ const locationManager = (function () {
     }
 
     function checkDistance(lat, lon) {
-        // todo: maybe update user with curr lat/lon and then do sync request?
         dataStore.init().then(() => {
             dataStore.getUser().then(user => {
                 const distance = getDistanceFromLatLonInMetres(lat, lon, user.latitude, user.longitude);
-                if (user.distance > distance) {
-                    repository.editAtLocation(user.token, true);
-                    console.log('At location');
-                } else {
-                    console.log('Not at location');
-                    repository.editAtLocation(user.token, false);
-                }
+                const atLocation = user.distance > distance;
+                repository.editAtLocation(user.token, atLocation);
             });
         });
     }
 
     function startLocationUpdates() {
-        // navigator.geolocation.getCurrentPosition(locationUpdate);
-
-        //https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/watchPosition
         navigator.geolocation.watchPosition(locationUpdate, console.log, {
             enableHighAccuracy: false,
             timeout: 5000,
