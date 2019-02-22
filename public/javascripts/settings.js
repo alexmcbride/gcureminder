@@ -42,7 +42,7 @@ const settings = (function () {
     }
 
     function onLogout() {
-        dataStore.clearStorage().then(() => {
+        dataStore.clearUsers().then(() => {
             location.href = '/';
         }).catch(console.log);
     }

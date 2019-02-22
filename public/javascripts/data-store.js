@@ -127,7 +127,7 @@ const dataStore = (function () {
         return addDocument('users', user, user.token);
     }
 
-    function clearStorage() {
+    function clearStorage(name) {
         return new Promise((resolve, reject) => {
             const store = getObjectStore(name, 'readwrite', reject);
             const request = store.clear();
@@ -135,6 +135,10 @@ const dataStore = (function () {
                 resolve();
             }
         });
+    }
+
+    function clearUsers(name) {
+        return clearStorage('users');
     }
 
     function editDistance(distance) {
@@ -227,7 +231,7 @@ const dataStore = (function () {
         getUser: getUser,
         addUser: addUser,
         setUser: setUser,
-        clearStorage: clearStorage,
+        clearUsers: clearUsers,
         editDistance: editDistance,
         editLocation: editLocation,
         editAtLocation: editAtLocation,

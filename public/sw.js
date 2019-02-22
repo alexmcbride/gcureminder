@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gcu-reminder-v1';
+const CACHE_NAME = 'gcu-reminder-v2';
 const URLS_TO_CACHE = [
     '/',
     '/reminder',
