@@ -42,7 +42,7 @@ const repository = (function () {
     }
 
     async function addReminder(token, reminder) {
-        const data = await dataStore.createReminder(reminder);
+        const data = await dataStore.addReminder(reminder);
         await queueSyncItem(token, data, '/api/reminders/add');
     }
 

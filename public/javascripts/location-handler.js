@@ -18,9 +18,11 @@ const locationManager = (function () {
         const lon = pos.coords.longitude;
         dataStore.init().then(() => {
             dataStore.getUser().then(user => {
-                const distance = getDistanceFromLatLonInMetres(lat, lon, user.latitude, user.longitude);
-                const atLocation = user.distance > distance;
-                repository.editAtLocation(user.token, atLocation);
+                if (user) {
+                    const distance = getDistanceFromLatLonInMetres(lat, lon, user.latitude, user.longitude);
+                    const atLocation = user.distance > distance;
+                    repository.editAtLocation(user.token, atLocation);
+                }
             });
         });
     }
