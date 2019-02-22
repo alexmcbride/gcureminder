@@ -15,15 +15,20 @@ var settingsRouter = require('./routes/settings');
 var ReminderDb = require('./models/reminder-db');
 
 var app = express();
+const db = new ReminderDb();
 
-function checkReminders() {
+async function checkReminders() {
   console.log('Check reminders');
   const minutes = 1;
-  const db = new ReminderDb();
-  db.getPendingReminders(minutes).then(reminders => {
-    reminders.forEach(reminder => {
+  const reminders = await db.getPendingReminders(minutes);
+  reminders.forEach(reminder => {
+    const user = await db.getUser(reminder.userId);
+    if (user.atLocation) {
+      console.log('Location push notification for ' + reminder.title);
+    } else {
       console.log('Push notification for ' + reminder.title);
-    });
+    }
+    await db.editReminded(reminder, true);
   });
 }
 

@@ -73,6 +73,10 @@ class ReminderDb {
         });
     }
 
+    editReminded(reminder, reminded) {
+        return Reminder.findByIdAndUpdate(reminder._id, { reminded: reminded });
+    }
+
     saveSettings(token, data) {
         return new Promise((resolve, reject) => {
             User.updateOne({ token: token }, data, (err, user) => {
@@ -89,7 +93,7 @@ class ReminderDb {
         return new Promise((resolve, reject) => {
             const end = new Date();
             const start = end.getTime() - (minutes * 1000);
-            Reminder.find({ date: { '$gt': start, '$lt': end } })
+            Reminder.find({ date: { '$gt': start, '$lt': end }, reminded: { '$eq': false } })
                 .then(resolve)
                 .catch(reject);
         });
