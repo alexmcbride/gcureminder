@@ -1,5 +1,4 @@
 const locationManager = (function () {
-
     // c/o: https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
     function getDistanceFromLatLonInMetres(lat1, lon1, lat2, lon2) {
         function deg2rad(deg) {
@@ -17,10 +16,6 @@ const locationManager = (function () {
     function locationUpdate(pos) {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
-        checkDistance(lat, lon);
-    }
-
-    function checkDistance(lat, lon) {
         dataStore.init().then(() => {
             dataStore.getUser().then(user => {
                 const distance = getDistanceFromLatLonInMetres(lat, lon, user.latitude, user.longitude);
@@ -30,8 +25,12 @@ const locationManager = (function () {
         });
     }
 
+    function locationError(err) {
+        console.log('Location error: ' + err);
+    }
+
     function startLocationUpdates() {
-        navigator.geolocation.watchPosition(locationUpdate, console.log, {
+        navigator.geolocation.watchPosition(locationUpdate, locationError, {
             enableHighAccuracy: false,
             timeout: 5000,
             maximumAge: 0
