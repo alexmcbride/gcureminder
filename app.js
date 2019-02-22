@@ -5,32 +5,14 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var sassMiddleware = require('node-sass-middleware');
 var mongoose = require('mongoose');
-var Agenda = require('agenda');
+var scheduler = require('./models/scheduler');
 
 var indexRouter = require('./routes/index');
 var remindersRouter = require('./routes/reminders');
 var usersRouter = require('./routes/users');
 var settingsRouter = require('./routes/settings');
 
-var ReminderDb = require('./models/reminder-db');
-
 var app = express();
-const db = new ReminderDb();
-
-async function checkReminders() {
-  console.log('Check reminders');
-  const minutes = 1;
-  const reminders = await db.getPendingReminders(minutes);
-  reminders.forEach(reminder => {
-    const user = await db.getUser(reminder.userId);
-    if (user.atLocation) {
-      console.log('Location push notification for ' + reminder.title);
-    } else {
-      console.log('Push notification for ' + reminder.title);
-    }
-    await db.editNotified(reminder, true);
-  });
-}
 
 // mongoose setup
 const mongoDbUri = process.env.MONGODB_URI
@@ -38,11 +20,8 @@ mongoose.connect(mongoDbUri, { useNewUrlParser: true, autoIndex: false }).then((
   var db = mongoose.connection;
   db.on('error', console.error.bind(console, 'Connection error:'));
 
-  // agenda scheduler
-  const agenda = new Agenda().mongo(db, 'jobs');
-  agenda.define('check reminders', checkReminders);
-  agenda.every('1 minute', 'check reminders');
-  agenda.start();
+  // Start scheduler 
+  scheduler.start(db);
 });
 
 // view engine setup
