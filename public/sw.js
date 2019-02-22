@@ -15,6 +15,7 @@ const URLS_TO_CACHE = [
     '/javascripts/reminder.js',
     '/javascripts/settings.js',
     '/javascripts/util.js',
+    '/javascripts/location-handler.js',
 
     '/images/delete-ic.png',
     '/images/edit-ic.png',
@@ -39,6 +40,10 @@ const URLS_TO_CACHE = [
     '/images/icons/favicon-16x16.png',
     '/images/icons/ms-icon-144x144.png'
 ];
+
+self.addEventListener('activate', event => {
+    console.log('Activated');
+})
 
 self.addEventListener('install', event => {
     event.waitUntil(caches.open(CACHE_NAME).then(cache => {

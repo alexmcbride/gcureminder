@@ -160,6 +160,17 @@ const dataStore = (function () {
         });
     }
 
+    function editAtLocation(atLocation) {
+        return new Promise((resolve, reject) => {
+            getUser().then(user => {
+                user.atLocation = atLocation;
+                setUser(user).then(user => {
+                    resolve(user);
+                }).catch(console.log);
+            }).catch(reject);
+        });
+    }
+
     function addReminders(reminders) {
         return new Promise((resolve, reject) => {
             const promises = reminders.map(addReminder);
@@ -219,6 +230,7 @@ const dataStore = (function () {
         clearStorage: clearStorage,
         editDistance: editDistance,
         editLocation: editLocation,
+        editAtLocation: editAtLocation,
         addReminders: addReminders,
         getReminders: getReminders,
         getReminder: getReminder,

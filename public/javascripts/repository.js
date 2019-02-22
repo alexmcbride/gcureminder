@@ -66,8 +66,16 @@ const repository = (function () {
         return queueSyncItem(token, { latitude: latitude, longitude: longitude }, '/api/settings/location');
     }
 
+    async function editAtLocation(token, atLocation) {
+        dataStore.getUser().then(async user => {
+            if (atLocation != user.atLocation) {
+                await dataStore.editAtLocation(atLocation);
+                return queueSyncItem(token, { atLocation: atLocation }, '/api/settings/at-location');
+            }
+        }) 
+    }
+
     async function queueSyncItem(token, data, url) {
-        await dataStore.init();
         await dataStore.addSyncItem(token, data, url);
         const registration = await navigator.serviceWorker.ready;
         await registration.sync.register('background-sync');
@@ -101,6 +109,7 @@ const repository = (function () {
         deleteReminder: deleteReminder,
         syncQueuedItems: syncQueuedItems,
         editDistance: editDistance,
-        editLocation: editLocation
+        editLocation: editLocation,
+        editAtLocation: editAtLocation
     }
 }());
