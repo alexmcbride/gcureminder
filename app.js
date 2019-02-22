@@ -5,18 +5,40 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var sassMiddleware = require('node-sass-middleware');
 var mongoose = require('mongoose');
+var Agenda = require('agenda');
 
 var indexRouter = require('./routes/index');
 var remindersRouter = require('./routes/reminders');
 var usersRouter = require('./routes/users');
 var settingsRouter = require('./routes/settings');
 
+var ReminderDb = require('./models/reminder-db');
+
 var app = express();
 
+function checkReminders() {
+  console.log('Check reminders');
+  const minutes = 1;
+  const db = new ReminderDb();
+  db.getPendingReminders(minutes).then(reminders => {
+    reminders.forEach(reminder => {
+      console.log('Push notification for ' + reminder.title);
+    });
+  });
+}
+
 // mongoose setup
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, autoIndex: false });
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'Connection error:'));
+const mongoDbUri = process.env.MONGODB_URI
+mongoose.connect(mongoDbUri, { useNewUrlParser: true, autoIndex: false }).then(() => {
+  var db = mongoose.connection;
+  db.on('error', console.error.bind(console, 'Connection error:'));
+
+  // agenda scheduler
+  const agenda = new Agenda().mongo(db, 'jobs');
+  agenda.define('check reminders', checkReminders);
+  agenda.every('1 minute', 'check reminders');
+  agenda.start();
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -40,7 +62,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/settings', settingsRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
@@ -51,7 +73,7 @@ if ('development' == env) {
 }
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

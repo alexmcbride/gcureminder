@@ -84,6 +84,16 @@ class ReminderDb {
             });
         });
     }
+
+    getPendingReminders(minutes) {
+        return new Promise((resolve, reject) => {
+            const end = new Date();
+            const start = end.getTime() - (minutes * 1000);
+            Reminder.find({ date: { '$gt': start, '$lt': end } })
+                .then(resolve)
+                .catch(reject);
+        });
+    }
 }
 
 module.exports = ReminderDb;
