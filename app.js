@@ -28,7 +28,7 @@ async function checkReminders() {
     } else {
       console.log('Push notification for ' + reminder.title);
     }
-    await db.editReminded(reminder, true);
+    await db.editNotified(reminder, true);
   });
 }
 

@@ -8,7 +8,7 @@ const reminderSchema = new mongoose.Schema({
     room: { type: String, trim: true, required: true },
     date: { type: Date, required: true },
     duration: { type: Number, required: true },
-    reminded: { type: Boolean, required: false },
+    notified: { type: Boolean, required: false },
 });
 
 const Reminder = mongoose.model('Reminder', reminderSchema);
