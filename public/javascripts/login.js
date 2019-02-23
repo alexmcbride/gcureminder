@@ -11,13 +11,12 @@
     }
 
     function getLoginData() {
-        const email = document.getElementById('email').value.trim();
+        const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value.trim();
-        if (email.length === 0 || password.length === 0) {
-            util.showMessage('Enter email and password');
+        if (username.length === 0 || password.length === 0) {
             return null;
         } else {
-            return { email: email, password: password };
+            return { username: username, password: password };
         }
     }
 
@@ -29,9 +28,11 @@
                 if (result.success) {
                     login(result.user);
                 } else {
-                    util.showMessage('Email or password incorrect');
+                    util.showMessage('Username or password incorrect');
                 }
             }).catch(console.log);
+        } else {
+            util.showMessage('Enter username and password');
         }
     }
 

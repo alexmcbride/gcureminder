@@ -3,11 +3,11 @@ const User = require('../models/user');
 
 const router = express.Router();
 
-/* POST auth existing email or create new account  */
+/* POST auth existing username or create new account  */
 router.post('/login', (req, res, next) => {
-    const email = req.body.email;
+    const username = req.body.username;
     const password = req.body.password;
-    User.login(email, password).then(user => {
+    User.login(username, password).then(user => {
         res.json({
             success: true, user: {
                 token: user.token,
@@ -17,7 +17,7 @@ router.post('/login', (req, res, next) => {
             }
         });
     }).catch(err => {
-        res.json({ success: false, message: err });
+        res.json({ success: false, error: err });
     });
 });
 
