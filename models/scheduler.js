@@ -6,7 +6,6 @@ const scheduler = (function () {
     let agenda = null;
 
     async function checkReminders() {
-        console.log('Check reminders');
         const minutes = 1;
         const reminders = await db.getPendingReminders(minutes);
         reminders.forEach(async reminder => {

@@ -72,32 +72,38 @@ const repository = (function () {
                 await dataStore.editAtLocation(atLocation);
                 return queueSyncItem(token, { atLocation: atLocation }, '/api/settings/at-location');
             }
-        }) 
+        })
     }
 
     async function queueSyncItem(token, data, url) {
-        await dataStore.addSyncItem(token, data, url);
         const registration = await navigator.serviceWorker.ready;
-        await registration.sync.register('background-sync');
+        if ('sync' in registration) {
+            await dataStore.addSyncItem(token, data, url);
+            await registration.sync.register('background-sync');
+        } else {
+            console.log('Background sync not available');
+            await postJsonItem(token, data, url);
+        }
     }
 
     async function syncQueuedItems() {
         await dataStore.init();
         const items = await dataStore.getSyncItems();
         items.forEach(async item => {
-            console.log('Background syncing item: ' + item.url);
-        
-            const response = await util.postJson(item.url, {
-                token: item.token,
-                data: item.data
-            });
-    
+            const response = await postJsonItem(item.token, item.data, item.url);
             if (response.success) {
                 await dataStore.deleteSyncItem(item.id);
-                console.log('Background item synced');
+                console.log('Background synced item: ' + item.url);
             } else {
                 console.log('Error: ' + response.error);
             }
+        });
+    }
+
+    function postJsonItem(token, data, url) {
+        return util.postJson(url, {
+            token: token,
+            data: data
         });
     }
 
