@@ -98,12 +98,6 @@
             location.href = '/login';
         }
     }
-
-    function onPageLoaded() {
-        util.initServiceWorker();
-
-        loadReminders();
-    }
-
-    util.documentLoaded().then(onPageLoaded);
+    
+    util.start().then(loadReminders);
 }());

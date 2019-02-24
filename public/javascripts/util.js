@@ -2,6 +2,11 @@
  * Module with some utility functions.
  */
 const util = (function () {
+    function start() {
+        initServiceWorker();
+        return documentLoaded();
+    };
+
     function documentLoaded() {
         return new Promise((resolve, reject) => {
             if (document.readyState === "loading") {
@@ -10,7 +15,7 @@ const util = (function () {
                 resolve();
             }
         });
-    };
+    }
 
     function showMessage(message) {
         const el = document.getElementById('message');
@@ -67,7 +72,7 @@ const util = (function () {
     }
 
     return {
-        documentLoaded: documentLoaded,
+        start: start,
         showMessage: showMessage,
         formatDate: formatDate,
         padNumber: padNumber,

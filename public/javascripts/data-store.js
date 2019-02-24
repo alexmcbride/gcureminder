@@ -2,8 +2,8 @@
  * Module to wrap indexed db.
  */
 const dataStore = (function () {
-    const version = 11;
-    const name = 'honours-project-db';
+    const version = 12;
+    const name = 'gcu-reminders-db';
     let db = null;
 
     function createObjectStores(db, names) {

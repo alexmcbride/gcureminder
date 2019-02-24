@@ -36,7 +36,7 @@
         }
     }
 
-    util.documentLoaded().then(() => {
+    util.start().then(() => {
         document.getElementById('login-form').addEventListener('submit', onLogin);
     });
 }());

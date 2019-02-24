@@ -102,8 +102,6 @@
     }
 
     function onPageLoaded() {
-        util.initServiceWorker();
-
         dataStore.init().then(() => {
             dataStore.getUser().then(user => {
                 if (user) {
@@ -118,5 +116,5 @@
         });
     }
 
-    util.documentLoaded().then(onPageLoaded);
+    util.start().then(onPageLoaded);
 }());

@@ -100,7 +100,7 @@ const settings = (function () {
         }).catch(console.log);
     }
 
-    util.documentLoaded().then(onPageLoaded);
+    util.start().then(onPageLoaded);
 
     return {
         initMap: initMap
