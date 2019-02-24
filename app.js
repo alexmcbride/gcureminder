@@ -21,7 +21,7 @@ mongoose.connect(mongoDbUri, { useNewUrlParser: true, autoIndex: false }).then((
   db.on('error', console.error.bind(console, 'Connection error:'));
 
   // Start scheduler 
-  scheduler.start(db);
+  // scheduler.start(db);
 });
 
 // view engine setup

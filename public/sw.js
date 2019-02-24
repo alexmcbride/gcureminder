@@ -7,7 +7,9 @@ const URLS_TO_CACHE = [
     '/stylesheets/style.css',
     '/stylesheets/bootstrap.min.css',
 
+    '/manifest.json',
     '/sw.js',
+
     '/javascripts/data-store.js',
     '/javascripts/index.js',
     '/javascripts/repository.js',
@@ -24,7 +26,6 @@ const URLS_TO_CACHE = [
     '/images/time-ic.png',
     '/favicon.ico',
 
-    '/manifest.json',
     '/images/icons/apple-icon-57x57.png',
     '/images/icons/apple-icon-60x60.png',
     '/images/icons/apple-icon-72x72.png',
@@ -58,7 +59,7 @@ self.addEventListener('fetch', event => {
 });
 
 self.addEventListener('sync', event => {
-    if (event.tag == 'background-sync') {
+    if (event.tag === 'background-sync') {
         event.waitUntil(repository.syncQueuedItems());
     }
 });
