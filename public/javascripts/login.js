@@ -7,6 +7,7 @@
             location.href = '/';
         }
 
+        // todo: subscription check should happen every page not on login
         dataStore.init().then(() => {
             dataStore.setUser(user).then(user => {
                 if (user.subscription) {

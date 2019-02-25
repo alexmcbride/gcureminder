@@ -133,11 +133,10 @@ const dataStore = (function () {
     }
 
     function setUser(user) {
+        if (user.subscription === undefined) {
+            user.subscription = false;
+        }
         return setDocument('users', user, user.token);
-    }
-
-    function addUser(user) {
-        return addDocument('users', user, user.token);
     }
 
     function clearUsers(name) {
@@ -222,7 +221,6 @@ const dataStore = (function () {
         init: init,
         getUsers: getUsers,
         getUser: getUser,
-        addUser: addUser,
         setUser: setUser,
         clearUsers: clearUsers,
         editDistance: editDistance,
