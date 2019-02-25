@@ -74,16 +74,18 @@ const util = (function () {
     }
 
     function createJson(url, data) {
-        return fetch(url, {
-            method: 'post',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-        }).then(response => {
-            if (response.status === 201) {
-                return response.text();
-            } else {
-                throw 'Status ' + response.status;
-            }
+        return new Promise((resolve, reject) => {
+            fetch(url, {
+                method: 'post',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            }).then(response => {
+                if (response.status === 201) {
+                    resolve(response);
+                } else {
+                    reject('Status ' + response.status);
+                }
+            });
         });
     }
 

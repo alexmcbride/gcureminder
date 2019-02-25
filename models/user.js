@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
     latitude: Number,
     distance: Number,
     atLocation: Boolean,
-    subscription: String
+    subscriptions: [{ type: String, unique: true }]
 });
 
 function comparePassword(password, hash) {
@@ -49,7 +49,7 @@ function hashPassword(password) {
     });
 }
 
-function createUser(username, hash) {
+function defaultUser(username, hash) {
     return {
         username: username,
         token: uuid(),
@@ -57,7 +57,8 @@ function createUser(username, hash) {
         longitude: -4.250346,
         latitude: 55.867245,
         distance: 500,
-        atLocation: false
+        atLocation: false,
+        subscriptions: []
     };
 }
 
@@ -75,7 +76,7 @@ userSchema.statics.login = function (username, password) {
                 }).catch(reject);
             } else {
                 hashPassword(password).then(hash => {
-                    this.model('User').create(createUser(username, hash)).then(user => {
+                    this.model('User').create(defaultUser(username, hash)).then(user => {
                         resolve(user);
                     });
                 }).catch(reject)

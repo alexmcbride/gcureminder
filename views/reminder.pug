@@ -18,8 +18,14 @@ block content
           div.form-group
             label(for='type') Type
             select.form-control(type='text', id='type', required)
-              for typeOption in typeOptions
-                option= typeOption
+              option Lecture
+              option Class
+              option Lab
+              option Seminar
+              option Tutorial
+              option Exam
+              option Coursework
+              option Other
           hr
         div.add-reminder-where
           h3 Where

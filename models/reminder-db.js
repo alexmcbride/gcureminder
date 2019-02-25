@@ -102,6 +102,22 @@ class ReminderDb {
     editUser(token, data) {
         return User.updateOne({ token: token }, data).exec();
     }
+
+    addSubscription(token, subscription) {
+        return new Promise((resolve, reject) => {
+            subscription = JSON.stringify(subscription);
+            User.find({ token: token, subscriptions: subscription }).exec().then(users => {
+                if (users.length > 0) {
+                    resolve(); // already subscribed
+                } else {
+                    User.updateOne({ token: token }, { '$push': { subscriptions: subscription } })
+                        .exec()
+                        .then(resolve)
+                        .catch(reject);
+                }
+            }).catch(reject);
+        });
+    }
 }
 
 module.exports = ReminderDb;

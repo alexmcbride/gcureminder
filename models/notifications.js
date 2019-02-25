@@ -10,19 +10,19 @@ const notifications = (function () {
         process.env.VAPID_PRIVATE_KEY
     );
 
-    function send(token, payload) {
-        return db.getUser(token).then(user => {
-            if (user && user.subscription) {
-                const subscription = JSON.parse(user.subscription);
-                return webPush.sendNotification(subscription, payload);
-            } else {
-                throw 'Could not find subscription for push notification';
-            }
-        });
+    async function send(token, payload) {
+        const user = await db.getUser(token);
+        if (user) {
+            user.subscriptions.forEach(async subscription => {
+                await webPush.sendNotification(JSON.parse(subscription), payload);
+            })
+        } else {
+            throw 'Could not find user for push notification';
+        }
     }
 
     function register(token, subscription) {
-        return db.editUser(token, { subscription: JSON.stringify(subscription) });
+        return db.addSubscription(token, subscription);
     }
 
     return {

@@ -9,7 +9,10 @@ router.get('/list/:token', (req, res, next) => {
     const token = req.params.token;
     db.getAllReminders(token).then(reminders => {
         res.json(reminders);
-    }).catch(console.log);
+    }).catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+    });
 });
 
 /* POST add reminder to data store */
@@ -51,7 +54,10 @@ router.get('/:token/:id', (req, res, next) => {
     const token = req.params.token;
     db.getReminder(token, id)
         .then(reminder => res.json(reminder))
-        .catch(console.log);
+        .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+        });
 });
 
 module.exports = router;

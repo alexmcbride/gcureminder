@@ -14,11 +14,11 @@ router.post('/login', (req, res, next) => {
                 token: user.token,
                 longitude: user.longitude,
                 latitude: user.latitude,
-                distance: user.distance,
-                subscription: new Boolean(user.subscription)
+                distance: user.distance
             }
         });
     }).catch(err => {
+        console.log(err);
         res.json({ success: false, error: err });
     });
 });

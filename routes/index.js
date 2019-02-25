@@ -9,15 +9,7 @@ router.get('/', (req, res, next) => {
 
 /* GET add/edit reminder page. */
 router.get('/reminder', (req, res, next) => {
-    const typeOptions = [
-        'Lecture',
-        'Class',
-        'Lab',
-        'Seminar',
-        'Tutorial',
-        'Other'
-    ];
-    res.render('reminder', {typeOptions: typeOptions});
+    res.render('reminder');
 });
 
 /* GET settings page. */
