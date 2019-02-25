@@ -33,7 +33,7 @@ input:invalid {
 .content h3 {
   color: #50514F; }
 
-.content .save-button {
+.content #save-button {
   padding-left: 40px;
   padding-right: 40px; }
 

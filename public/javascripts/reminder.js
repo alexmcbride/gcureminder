@@ -9,10 +9,10 @@
 
         save() {
             const data = getData();
-            repository.addReminder(currentUser.token, data).then(() => {
+            return repository.addReminder(currentUser.token, data).then(() => {
                 util.showMessage('Reminder successfully saved!');
                 clearForm();
-            }).catch(console.log);
+            });
         }
     }
 
@@ -41,14 +41,18 @@
             // save existing reminder
             const data = getData();
             data.id = this.id;
-            repository.editReminder(currentUser.token, data).then(response => {
+            return repository.editReminder(currentUser.token, data).then(response => {
                 util.showMessage('Reminder successfully saved!');
-            }).catch(console.log);
+            });
         }
     }
 
     let currentUser = null;
     let state = null;
+
+    function disableSaveButton(disabled) {
+        document.getElementById('save-button').disabled = disabled;
+    }
 
     function clearForm() {
         document.getElementById('title').value = '';
@@ -92,13 +96,15 @@
             document.getElementById('duration').checkValidity();
     }
 
-    function onSaveClick(event) {
+    async function onSaveClick(event) {
+        disableSaveButton(true);
         event.preventDefault();
         if (checkValidity()) {
-            state.save();
+            await state.save();
         } else {
             util.showMessage('Validation errors!');
         }
+        disableSaveButton(false);
     }
 
     function onPageLoaded() {
