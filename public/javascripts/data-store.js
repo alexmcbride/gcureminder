@@ -106,6 +106,16 @@ const dataStore = (function () {
         });
     }
 
+    function clearStorage(name) {
+        return new Promise((resolve, reject) => {
+            const store = getObjectStore(name, 'readwrite', reject);
+            const request = store.clear();
+            request.onsuccess = event => {
+                resolve();
+            }
+        });
+    }
+
     function getUsers() {
         return getCollection('users');
     }
@@ -130,59 +140,35 @@ const dataStore = (function () {
         return addDocument('users', user, user.token);
     }
 
-    function clearStorage(name) {
-        return new Promise((resolve, reject) => {
-            const store = getObjectStore(name, 'readwrite', reject);
-            const request = store.clear();
-            request.onsuccess = event => {
-                resolve();
-            }
-        });
-    }
-
     function clearUsers(name) {
         return clearStorage('users');
     }
 
     function editDistance(distance) {
-        return new Promise((resolve, reject) => {
-            getUser().then(user => {
-                user.distance = distance;
-                setUser(user).then(user => {
-                    resolve(user);
-                }).catch(console.log);
-            }).catch(reject);
+        return getUser().then(user => {
+            user.distance = distance;
+            return setUser(user);
         });
     }
 
     function editLocation(lattiude, longitude) {
-        return new Promise((resolve, reject) => {
-            getUser().then(user => {
-                user.longitude = longitude;
-                user.latitude = lattiude;
-                setUser(user).then(user => {
-                    resolve(user);
-                }).catch(console.log);
-            }).catch(reject);
+        return getUser().then(user => {
+            user.longitude = longitude;
+            user.latitude = lattiude;
+            return setUser(user);
         });
     }
 
     function editAtLocation(atLocation) {
-        return new Promise((resolve, reject) => {
-            getUser().then(user => {
-                user.atLocation = atLocation;
-                setUser(user).then(user => {
-                    resolve(user);
-                }).catch(console.log);
-            }).catch(reject);
+        return getUser().then(user => {
+            user.atLocation = atLocation;
+            return setUser(user);
         });
     }
 
     function addReminders(reminders) {
-        return new Promise((resolve, reject) => {
-            const promises = reminders.map(addReminder);
-            Promise.all(promises).then(resolve).catch(reject);
-        });
+        const promises = reminders.map(addReminder);
+        return Promise.all(promises);
     }
 
     function getReminders(userId) {
