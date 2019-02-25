@@ -40,9 +40,12 @@ const dataStore = (function () {
     }
 
     function getObjectStore(name, mode, reject) {
+        if (db == null) {
+            throw 'DB not initialized!';
+        }
         const transaction = db.transaction([name], mode);
         transaction.onerror = event => {
-            reject('DB error: ' + transaction.error);
+            reject('DB transaction error: ' + transaction.error);
         };
         return transaction.objectStore(name);
     }
@@ -182,8 +185,13 @@ const dataStore = (function () {
         });
     }
 
-    function getReminders() {
-        return getCollection('reminders');
+    function getReminders(userId) {
+        return new Promise((resolve, reject) => {
+            getCollection('reminders').then(reminders => {
+                const filtered = reminders.filter(reminder => reminder.userId === userId);
+                resolve(filtered);
+            }).catch(reject);
+        });
     }
 
     function getReminder(id) {

@@ -39,15 +39,17 @@ const notifications = (function () {
         return util.createJson('/api/notifications/test', { token: user.token, payload: payload });
     }
 
-    util.documentLoaded().then(() => {
-        document.getElementById('test-notifications').addEventListener('click', event => {
-            dataStore.init().then(() => {
-                return dataStore.getUser();
-            }).then(user => {
-                return test(user, 'This is a test!');
+    if ('document' in this) {
+        util.documentLoaded().then(() => {
+            document.getElementById('test-notifications').addEventListener('click', event => {
+                dataStore.init().then(() => {
+                    return dataStore.getUser();
+                }).then(user => {
+                    return test(user, 'This is a test!');
+                });
             });
         });
-    })
+    }
 
     return {
         subscribe: subscribe,

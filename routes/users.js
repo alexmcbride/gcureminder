@@ -10,6 +10,7 @@ router.post('/login', (req, res, next) => {
     User.login(username, password).then(user => {
         res.json({
             success: true, user: {
+                _id: user._id,
                 token: user.token,
                 longitude: user.longitude,
                 latitude: user.latitude,

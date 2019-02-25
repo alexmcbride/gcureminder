@@ -44,7 +44,7 @@ const URLS_TO_CACHE = [
 
 self.addEventListener('activate', event => {
     // cause SW to take control of pages in scope immediately
-    event.waitUntil(self.clients.claim());
+    // event.waitUntil(self.clients.claim());
 })
 
 function cacheAllUrls() {

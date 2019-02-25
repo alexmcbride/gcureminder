@@ -92,7 +92,7 @@
         const user = await dataStore.getUser();
         if (user) {
             currentUser = user;
-            const reminders = await repository.getReminders(user.token);
+            const reminders = await repository.getReminders(user._id, user.token);
             updateReminders(reminders);
         } else {
             location.href = '/login';
