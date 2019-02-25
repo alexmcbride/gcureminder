@@ -35,8 +35,8 @@ const notifications = (function () {
         });
     }
 
-    function test(user, payload) {
-        return util.createJson('/api/notifications/test', { token: user.token, payload: payload });
+    function test(user) {
+        return util.createJson('/api/notifications/test', { token: user.token });
     }
 
     if ('document' in this) {
@@ -44,9 +44,7 @@ const notifications = (function () {
             document.getElementById('test-notifications').addEventListener('click', event => {
                 dataStore.init().then(() => {
                     return dataStore.getUser();
-                }).then(user => {
-                    return test(user, 'This is a test!');
-                });
+                }).then(test);
             });
         });
     }

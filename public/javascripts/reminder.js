@@ -59,7 +59,7 @@
         document.getElementById('type').value = 'Lecture';
         document.getElementById('room').value = '';
         document.getElementById('date').value = '';
-        document.getElementById('duration').value = '';
+        document.getElementById('duration').value = '60';
     }
 
     function getData() {

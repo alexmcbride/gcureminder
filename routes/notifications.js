@@ -20,8 +20,7 @@ router.post('/register', (req, res) => {
 
 router.post('/test', (req, res) => {
     const token = req.body.token;
-    const payload = req.body.payload;
-    notifications.send(token, payload).then(() => {
+    notifications.send(token, 'Sent from the server!').then(() => {
         res.sendStatus(201);
     }).catch(error => {
         console.log(error);
