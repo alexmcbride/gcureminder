@@ -3,9 +3,26 @@
  */
 (function () {
     function login(user) {
+        function redirect() {
+            location.href = '/';
+        }
+
         dataStore.init().then(() => {
             dataStore.setUser(user).then(user => {
-                location.href = '/';
+                if (user.subscription) {
+                    redirect();
+                }
+                else {
+                    notifications.subscribe(user).then(response => {
+                        if (response.status === 201) {
+                            user.subscription = true;
+                            dataStore.setUser(user);
+                            redirect();
+                        } else {
+                            console.log('Status: ' + response.status);
+                        }
+                    }).catch(console.log);
+                }
             });
         });
     }

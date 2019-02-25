@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gcu-reminder-v5';
+const CACHE_NAME = 'gcu-reminder-v6';
 const URLS_TO_CACHE = [
     '/',
     '/reminder',
@@ -8,7 +8,6 @@ const URLS_TO_CACHE = [
     '/stylesheets/bootstrap.min.css',
 
     '/manifest.json',
-    '/sw.js',
 
     '/javascripts/data-store.js',
     '/javascripts/index.js',
@@ -18,6 +17,7 @@ const URLS_TO_CACHE = [
     '/javascripts/settings.js',
     '/javascripts/util.js',
     '/javascripts/location-handler.js',
+    '/javascripts/notifications.js',
 
     '/images/delete-ic.png',
     '/images/edit-ic.png',
@@ -43,13 +43,18 @@ const URLS_TO_CACHE = [
 ];
 
 self.addEventListener('activate', event => {
-    console.log('Activated');
+    // cause SW to take control of pages in scope immediately
+    event.waitUntil(self.clients.claim());
 })
 
-self.addEventListener('install', event => {
-    event.waitUntil(caches.open(CACHE_NAME).then(cache => {
+function cacheAllUrls() {
+    return caches.open(CACHE_NAME).then(cache => {
         return cache.addAll(URLS_TO_CACHE);
-    }));
+    });
+}
+
+self.addEventListener('install', event => {
+    event.waitUntil(cacheAllUrls());
 });
 
 self.addEventListener('fetch', event => {
@@ -64,6 +69,11 @@ self.addEventListener('sync', event => {
     }
 });
 
+self.addEventListener('push', event => {
+    event.waitUntil(notifications.show(event));
+});
+
 importScripts('/javascripts/util.js');
 importScripts('/javascripts/repository.js');
 importScripts('/javascripts/data-store.js');
+importScripts('/javascripts/notifications.js');

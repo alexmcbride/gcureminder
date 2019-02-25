@@ -90,13 +90,17 @@ class ReminderDb {
     }
 
     getPendingReminders(minutes) {
-        return new Promise((resolve, reject) => {
-            const end = new Date();
-            const start = end.getTime() - (minutes * 1000);
-            Reminder.find({ date: { '$gt': start, '$lt': end }, notified: { '$eq': false } })
-                .then(resolve)
-                .catch(reject);
-        });
+        const end = new Date();
+        const start = end.getTime() - (minutes * 1000);
+        return Reminder.find({ date: { '$gt': start, '$lt': end }, notified: { '$eq': false } }).exec();
+    }
+
+    getUser(token) {
+        return User.findOne({ token: token }).exec();
+    }
+
+    editUser(token, data) {
+        return User.updateOne({ token: token }, data).exec();
     }
 }
 

@@ -11,6 +11,7 @@ var indexRouter = require('./routes/index');
 var remindersRouter = require('./routes/reminders');
 var usersRouter = require('./routes/users');
 var settingsRouter = require('./routes/settings');
+var notificationsRouter = require('./routes/notifications');
 
 var app = express();
 
@@ -44,6 +45,7 @@ app.use('/', indexRouter);
 app.use('/api/reminders', remindersRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/settings', settingsRouter);
+app.use('/api/notifications', notificationsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

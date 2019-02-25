@@ -49,35 +49,53 @@ const util = (function () {
         }
     }
 
-    async function fetchJson(url) {
-        const response = await fetch(url);
-        if (response.status === 200) {
-            return await response.json();
-        } else {
-            throw 'Status ' + response.status;
-        }
+    function fetchJson(url) {
+        return fetch(url).then(response => {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                throw 'Status ' + response.status;
+            }
+        });
     }
 
-    async function postJson(url, data) {
-        const response = await fetch(url, {
+    function postJson(url, data) {
+        return fetch(url, {
             method: 'post',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
+        }).then(response => {
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                throw 'Status ' + response.status;
+            }
         });
-        if (response.status === 200) {
-            return await response.json();
-        } else {
-            throw 'Status ' + response.status;
-        }
+    }
+
+    function createJson(url, data) {
+        return fetch(url, {
+            method: 'post',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        }).then(response => {
+            if (response.status === 201) {
+                return response.text();
+            } else {
+                throw 'Status ' + response.status;
+            }
+        });
     }
 
     return {
         start: start,
+        documentLoaded: documentLoaded,
         showMessage: showMessage,
         formatDate: formatDate,
         padNumber: padNumber,
         initServiceWorker: initServiceWorker,
         postJson: postJson,
-        fetchJson: fetchJson
+        fetchJson: fetchJson,
+        createJson: createJson
     }
 }());

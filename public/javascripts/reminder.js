@@ -52,7 +52,7 @@
 
     function clearForm() {
         document.getElementById('title').value = '';
-        document.getElementById('type').value = '';
+        document.getElementById('type').value = 'Lecture';
         document.getElementById('room').value = '';
         document.getElementById('date').value = '';
         document.getElementById('duration').value = '';

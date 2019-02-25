@@ -14,7 +14,8 @@ const userSchema = new mongoose.Schema({
     longitude: Number,
     latitude: Number,
     distance: Number,
-    atLocation: Boolean
+    atLocation: Boolean,
+    subscription: String
 });
 
 function comparePassword(password, hash) {

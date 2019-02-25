@@ -2,7 +2,7 @@
  * Module to wrap indexed db.
  */
 const dataStore = (function () {
-    const version = 12;
+    const version = 13;
     const name = 'gcu-reminders-db';
     let db = null;
 
