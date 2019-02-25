@@ -10,7 +10,6 @@ block content
       p Save details of the reminder.
       hr
       form#reminder-form
-        div.alert.alert-primary#message
         div.add-reminder-what
           h3 What
           div.form-group
@@ -37,5 +36,8 @@ block content
             label(for='duration') Duration (mins)
             input.form-control(type='number', min='0', max='240' id='duration', required, value='60')
           hr
-        div.text-right
-          button#save-button.btn.btn-secondary(type='save') Save
+        div.row
+          div.col
+            div#message
+          div.col.text-right
+            button#save-button.btn.btn-secondary(type='save') Save

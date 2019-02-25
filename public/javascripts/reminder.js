@@ -10,7 +10,7 @@
         save() {
             const data = getData();
             return repository.addReminder(currentUser.token, data).then(() => {
-                util.showMessage('Reminder successfully saved!');
+                util.showMessage('Reminder saved!');
                 clearForm();
             });
         }
@@ -42,7 +42,7 @@
             const data = getData();
             data.id = this.id;
             return repository.editReminder(currentUser.token, data).then(response => {
-                util.showMessage('Reminder successfully saved!');
+                util.showMessage('Reminder saved!');
             });
         }
     }
