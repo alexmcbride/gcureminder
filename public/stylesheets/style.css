@@ -5,7 +5,8 @@ input:invalid {
   margin-top: 20px; }
 
 #message {
-  display: none; }
+  display: none;
+  color: green; }
 
 #map {
   height: 400px;

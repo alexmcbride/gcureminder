@@ -77,11 +77,12 @@ const repository = (function () {
 
     async function queueSyncItem(token, data, url) {
         const registration = await navigator.serviceWorker.ready;
-        if ('sync' in registration) {
+        if ('sync' in registration && !navigator.onLine) {
+            console.log('Background syncing item: ' + url);
             await dataStore.addSyncItem(token, data, url);
             await registration.sync.register('background-sync');
         } else {
-            console.log('Background sync not available');
+            console.log('Syncing item: ' + url);
             await postJsonItem(token, data, url);
         }
     }

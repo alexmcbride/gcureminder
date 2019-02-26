@@ -64,6 +64,7 @@ self.addEventListener('fetch', event => {
 });
 
 self.addEventListener('sync', event => {
+    console.log('SW sync event: ' + event.tag)
     if (event.tag === 'background-sync') {
         event.waitUntil(repository.syncQueuedItems());
     }
