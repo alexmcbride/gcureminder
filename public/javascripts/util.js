@@ -6,6 +6,7 @@ const util = (function () {
         return documentLoaded()
             .then(initServiceWorker)
             .then(dataStore.init)
+            .then(notificationsInit)
             .catch(console.log);
     }
 
@@ -25,6 +26,14 @@ const util = (function () {
                 document.addEventListener("DOMContentLoaded", resolve);
             } else {
                 resolve();
+            }
+        });
+    }
+
+    function notificationsInit() {
+        dataStore.getUser().then(user => {
+            if (user != null && !user.subscription) {
+                notifications.subscribe(user);
             }
         });
     }

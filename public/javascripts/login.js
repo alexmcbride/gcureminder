@@ -2,29 +2,10 @@
  * Module to handle login page
  */
 (function () {
-    function login(user) {
-        function redirect() {
-            location.href = '/';
-        }
-
-        // todo: subscription check should happen every page not on login
-        dataStore.setUser(user).then(user => {
-            if (user.subscription) {
-                redirect();
-            }
-            else {
-                notifications.subscribe(user).then(response => {
-                    if (response.status === 201) {
-                        user.subscription = true;
-                        dataStore.clearUsers();
-                        dataStore.setUser(user);
-                        redirect();
-                    } else {
-                        console.log('Status: ' + response.status);
-                    }
-                }).catch(console.log);
-            }
-        });
+    async function login(user) {
+        await dataStore.clearUsers();
+        await dataStore.setUser(user);
+        location.href = '/';
     }
 
     function getLoginData() {

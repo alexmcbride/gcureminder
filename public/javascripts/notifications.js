@@ -25,6 +25,10 @@ const notifications = (function () {
                 });
             }).then(subscription => {
                 return util.createJson('/api/notifications/register', { token: user.token, subscription: subscription })
+            }).then(async () => {
+                user.subscription = true;
+                await dataStore.setUser(user);
+                console.log('Subscribed to push notifications');
             });
         })
     }
@@ -38,7 +42,7 @@ const notifications = (function () {
             body: body
         });
     }
- 
+
     function test(user) {
         return util.createJson('/api/notifications/test', { token: user.token });
     }
