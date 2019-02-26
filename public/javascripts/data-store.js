@@ -139,7 +139,7 @@ const dataStore = (function () {
         return setDocument('users', user, user.token);
     }
 
-    function clearUsers(name) {
+    function clearUsers() {
         return clearStorage('users');
     }
 

@@ -3,7 +3,7 @@
  */
 (function () {
     class AddReminderState {
-        init() {
+        constructor() {
             document.getElementById('reminder-form').style.display = 'block';
         }
 
@@ -19,10 +19,6 @@
     class EditReminderState {
         constructor(id) {
             this.id = id;
-        }
-
-        init() {
-            // load reminder from API
             repository.getReminder(currentUser.token, this.id)
                 .then(this.updateForm)
                 .catch(console.log);
@@ -112,7 +108,6 @@
             if (user) {
                 currentUser = user;
                 state = getStateFromHash();
-                state.init();
                 document.getElementById('reminder-form').addEventListener('submit', onSaveClick);
             } else {
                 location.href = '/login';

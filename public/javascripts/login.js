@@ -16,6 +16,7 @@
                 notifications.subscribe(user).then(response => {
                     if (response.status === 201) {
                         user.subscription = true;
+                        dataStore.clearUsers();
                         dataStore.setUser(user);
                         redirect();
                     } else {

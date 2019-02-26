@@ -66,7 +66,9 @@ const settings = (function () {
     }
 
     function onPageLoaded() {
-        loadCurrentUser().then(user => {
+        return util.start().then(() => {
+            return dataStore.getUser();
+        }).then(user => {
             if (user) {
                 currentUser = user;
                 document.getElementById('distance').value = user.distance;
