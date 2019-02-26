@@ -75,16 +75,18 @@ const repository = (function () {
         })
     }
 
-    async function queueSyncItem(token, data, url) {
-        const registration = await navigator.serviceWorker.ready;
-        if ('sync' in registration && !navigator.onLine) {
-            console.log('Background syncing item: ' + url);
-            await dataStore.addSyncItem(token, data, url);
-            await registration.sync.register('background-sync');
-        } else {
-            console.log('Syncing item: ' + url);
-            await postJsonItem(token, data, url);
-        }
+    function queueSyncItem(token, data, url) {
+        return navigator.serviceWorker.ready.then(registration => {
+            if ('sync' in registration && !navigator.onLine) {
+                console.log('Background syncing item: ' + url);
+                return dataStore.addSyncItem(token, data, url).then(() => {
+                    return registration.sync.register('background-sync');
+                });
+            } else {
+                console.log('Syncing item: ' + url);
+                return postJsonItem(token, data, url);
+            }
+        });
     }
 
     async function syncQueuedItems() {

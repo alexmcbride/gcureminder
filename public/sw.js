@@ -35,6 +35,7 @@ const URLS_TO_CACHE = [
     '/images/icons/apple-icon-144x144.png',
     '/images/icons/apple-icon-152x152.png',
     '/images/icons/apple-icon-180x180.png',
+    '/images/icons/android-icon-144x144.png',
     '/images/icons/android-icon-192x192.png',
     '/images/icons/favicon-32x32.png',
     '/images/icons/favicon-96x96.png',
@@ -64,7 +65,6 @@ self.addEventListener('fetch', event => {
 });
 
 self.addEventListener('sync', event => {
-    console.log('SW sync event: ' + event.tag)
     if (event.tag === 'background-sync') {
         event.waitUntil(repository.syncQueuedItems());
     }
