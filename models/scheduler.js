@@ -28,13 +28,18 @@ const scheduler = (function () {
         if (reminder.shortNotification) {
             return true; // already sent
         } else if (user.atLocation) {
+            // todo: fix this
             const oneMinute = 60 * 1000;
             const now = new Date();
-            const difference = now.getTime() - reminder.date.getTime();
+            const difference = reminder.date.getTime() - now.getTime();
             return difference > oneMinute;
         } else {
             return false; // not needed
         }
+    }
+
+    function longNotificationDue(reminder) {
+        return !reminder.longNotification;
     }
 
     async function checkReminders() {
@@ -45,7 +50,7 @@ const scheduler = (function () {
             if (shortNotificationDue(user, reminder)) {
                 await send(user.token, reminder);
                 await db.editShortNotification(reminder, true);
-            } else if (!reminder.longNotification) {
+            } else if (longNotificationDue(reminder)) {
                 await send(user.token, reminder);
                 await db.editLongNotification(reminder, true);
             }
