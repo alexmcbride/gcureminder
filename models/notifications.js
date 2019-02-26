@@ -11,7 +11,7 @@ const notifications = (function () {
         process.env.VAPID_PRIVATE_KEY
     );
 
-    async function send(token, payload) {
+    function send(token, payload) {
         const user = await db.getUser(token);
         if (user) {
             const promises = user.subscriptions.map(subscription => {
