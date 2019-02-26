@@ -1,38 +1,27 @@
 const Agenda = require('agenda');
 const ReminderDb = require('./reminder-db');
 const notifications = require('./notifications');
-
+const moment = require('moment');
 
 const scheduler = (function () {
     const db = new ReminderDb();
     let agenda = null;
 
-    function padNumber(num) {
-        return num >= 0 && num <= 9 ? '0' + num : '' + num;
-    }
-
-    function getTime(date) {
-        const hours = padNumber(date.getHours());
-        const minutes = padNumber(date.getMinutes());
-        return hours + ":" + minutes;
-    }
-
     function send(token, reminder) {
-        const text = reminder.title +
-            ' (' + reminder.type + ') at ' + getTime(reminder.date) + ' in ' + reminder.room;
+        const time = moment(reminder.date).format('hh:mm');
+        const text = reminder.title + ' (' + reminder.type + ') at ' + time + ' in ' + reminder.room;
         console.log(text);
         return notifications.send(token, text);
     }
 
     function shortNotificationDue(user, reminder) {
         if (reminder.shortNotification) {
-            return true; // already sent
+            return false; // already sent
         } else if (user.atLocation) {
-            // todo: fix this
-            const oneMinute = 60 * 1000;
-            const now = new Date();
-            const difference = reminder.date.getTime() - now.getTime();
-            return difference > oneMinute;
+            const reminderTime = moment(reminder.date);
+            const triggerTime = moment();
+            triggerTime.subtract(5, 'minutes');
+            return reminderTime.isSameOrAfter(triggerTime);
         } else {
             return false; // not needed
         }
