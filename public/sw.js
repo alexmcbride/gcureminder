@@ -74,7 +74,7 @@ self.addEventListener('push', event => {
     event.waitUntil(notifications.show(event));
 });
 
+importScripts('/javascripts/data-store.js');
 importScripts('/javascripts/util.js');
 importScripts('/javascripts/repository.js');
-importScripts('/javascripts/data-store.js');
 importScripts('/javascripts/notifications.js');

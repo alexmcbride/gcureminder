@@ -108,17 +108,15 @@
     }
 
     function onPageLoaded() {
-        dataStore.init().then(() => {
-            dataStore.getUser().then(user => {
-                if (user) {
-                    currentUser = user;
-                    state = getStateFromHash();
-                    state.init();
-                    document.getElementById('reminder-form').addEventListener('submit', onSaveClick);
-                } else {
-                    location.href = '/login';
-                }
-            });
+        dataStore.getUser().then(user => {
+            if (user) {
+                currentUser = user;
+                state = getStateFromHash();
+                state.init();
+                document.getElementById('reminder-form').addEventListener('submit', onSaveClick);
+            } else {
+                location.href = '/login';
+            }
         });
     }
 

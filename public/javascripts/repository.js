@@ -15,7 +15,6 @@ const repository = (function () {
     }
 
     async function getReminders(userId, token) {
-        await dataStore.init();
         let reminders = await dataStore.getReminders(userId);
         if (reminders.length == 0 && navigator.onLine) {
             console.log('Getting fresh reminders');
@@ -29,7 +28,6 @@ const repository = (function () {
     }
 
     async function getReminder(token, id) {
-        await dataStore.init();
         let reminder = await dataStore.getReminder(id);
         if (reminder === undefined && navigator.onLine) {
             console.log('Getting fresh reminder');
@@ -92,15 +90,20 @@ const repository = (function () {
     async function syncQueuedItems() {
         await dataStore.init();
         const items = await dataStore.getSyncItems();
+        // let synced = false;
         items.forEach(async item => {
             const response = await postJsonItem(item.token, item.data, item.url);
             if (response.success) {
                 await dataStore.deleteSyncItem(item.id);
                 console.log('Background synced item: ' + item.url);
+                // synced = true;
             } else {
                 console.log('Error: ' + response.error);
             }
         });
+        // if (synced) {
+        //     notifications.showLocal('Synced queued updates');
+        // }
     }
 
     function postJsonItem(token, data, url) {

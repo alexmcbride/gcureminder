@@ -50,16 +50,14 @@ const settings = (function () {
     function loadCurrentUser() {
         return new Promise((resolve, reject) => {
             if (currentUser == null) {
-                dataStore.init().then(() => {
-                    dataStore.getUser().then(user => {
-                        if (user) {
-                            currentUser = user;
-                            resolve(user);
-                        } else {
-                            location.href = '/login';
-                            reject();
-                        }
-                    }).catch(reject);
+                dataStore.getUser().then(user => {
+                    if (user) {
+                        currentUser = user;
+                        resolve(user);
+                    } else {
+                        location.href = '/login';
+                        reject();
+                    }
                 }).catch(reject);
             } else {
                 resolve(currentUser);
@@ -68,8 +66,6 @@ const settings = (function () {
     }
 
     function onPageLoaded() {
-        util.initServiceWorker();
-
         loadCurrentUser().then(user => {
             if (user) {
                 currentUser = user;

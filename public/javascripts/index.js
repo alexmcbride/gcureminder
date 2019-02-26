@@ -88,7 +88,6 @@
     }
 
     async function loadReminders() {
-        await dataStore.init();
         const user = await dataStore.getUser();
         if (user) {
             currentUser = user;

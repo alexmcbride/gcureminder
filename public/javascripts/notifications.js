@@ -30,15 +30,20 @@ const notifications = (function () {
     }
 
     function show(event) {
-        return self.registration.showNotification('GCU Reminder', {
-            body: event.data.text()
-        });
+        return showLocal(event.data.text());
     }
 
+    function showLocal(body) {
+        return self.registration.showNotification('GCU Reminder', {
+            body: body
+        });
+    }
+ 
     function test(user) {
         return util.createJson('/api/notifications/test', { token: user.token });
     }
 
+    // Hook up button if running in a web document.
     if ('document' in this) {
         util.documentLoaded().then(() => {
             document.getElementById('test-notifications').addEventListener('click', event => {
@@ -52,6 +57,7 @@ const notifications = (function () {
     return {
         subscribe: subscribe,
         show: show,
+        showLocal: showLocal,
         test: test
     }
 }());

@@ -3,9 +3,22 @@
  */
 const util = (function () {
     function start() {
-        initServiceWorker();
-        return documentLoaded();
+        return dataStore.init().then(() => {
+            return documentLoaded();
+        }).then(() => {
+            return initServiceWorker();
+        }).catch(console.log);
     };
+
+    function initServiceWorker() {
+        return new Promise((resolve, reject) => {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js').then(resolve).catch(reject);
+            } else {
+                reject('No service worker supported');
+            }
+        });
+    }
 
     function documentLoaded() {
         return new Promise((resolve, reject) => {
@@ -35,18 +48,6 @@ const util = (function () {
         const hours = padNumber(date.getHours());
         const minutes = padNumber(date.getMinutes());
         return date.getFullYear() + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
-    }
-
-    function initServiceWorker() {
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').then(registration => {
-                // Registration was successful
-                // console.log('ServiceWorker registration successful with scope: ', registration.scope);
-            }, err => {
-                // registration failed :(
-                console.log('ServiceWorker registration failed: ', err);
-            });
-        }
     }
 
     function fetchJson(url) {
@@ -95,7 +96,6 @@ const util = (function () {
         showMessage: showMessage,
         formatDate: formatDate,
         padNumber: padNumber,
-        initServiceWorker: initServiceWorker,
         postJson: postJson,
         fetchJson: fetchJson,
         createJson: createJson
