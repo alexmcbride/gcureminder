@@ -55,6 +55,12 @@ const notifications = (function () {
                     return dataStore.getUser();
                 }).then(test);
             });
+
+            document.getElementById('check-reminders').addEventListener('click', event => {
+                fetch('/api/notifications/check-reminders').then(() => {
+                    console.log('Request check reminders');
+                });
+            });
         });
     }
 

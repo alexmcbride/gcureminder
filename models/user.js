@@ -58,7 +58,9 @@ function defaultUser(username, hash) {
         latitude: 55.867245,
         distance: 500,
         atLocation: false,
-        subscriptions: []
+        subscriptions: [],
+        shortNotification: false,
+        longNotification: false,
     };
 }
 

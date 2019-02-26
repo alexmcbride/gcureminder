@@ -35,8 +35,7 @@ class ReminderDb {
         return new Promise((resolve, reject) => {
             User.findOne({ token: token }).then(user => {
                 if (user) {
-                    reminder.userId = user._id;
-                    Reminder.create(reminder)
+                    Reminder.createReminder(user, reminder)
                         .then(resolve)
                         .catch(reject);
                 } else {
@@ -59,6 +58,14 @@ class ReminderDb {
                 }
             }).catch(reject);
         });
+    }
+
+    editLongNotification(reminder, sent) {
+        return Reminder.findOneAndUpdate({ id: reminder.id }, { longNotification: sent }).exec();
+    }
+
+    editShortNotification(reminder, sent) {
+        return Reminder.findOneAndUpdate({ id: reminder.id }, { shortNotification: sent }).exec();
     }
 
     deleteReminder(token, id) {
@@ -89,14 +96,22 @@ class ReminderDb {
         });
     }
 
-    getPendingReminders(minutes) {
-        const end = new Date();
-        const start = end.getTime() - (minutes * 1000);
-        return Reminder.find({ date: { '$gt': start, '$lt': end }, notified: { '$eq': false } }).exec();
+    getPendingReminders() {
+        const hours = 1;
+        const now = new Date();
+        const start = new Date(now.getTime() - (hours * 60000));
+        return Reminder.where('date')
+            .gt(start)
+            .or([{ shortNotification: false }, { longNotification: false }])
+            .exec();
     }
 
     getUser(token) {
         return User.findOne({ token: token }).exec();
+    }
+
+    getUserFromId(id) {
+        return User.findById(id).exec();
     }
 
     editUser(token, data) {

@@ -1,21 +1,54 @@
 const Agenda = require('agenda');
 const ReminderDb = require('./reminder-db');
+const notifications = require('./notifications');
+
 
 const scheduler = (function () {
     const db = new ReminderDb();
     let agenda = null;
 
+    function padNumber(num) {
+        return num >= 0 && num <= 9 ? '0' + num : '' + num;
+    }
+
+    function getTime(date) {
+        const hours = padNumber(date.getHours());
+        const minutes = padNumber(date.getMinutes());
+        return hours + ":" + minutes;
+    }
+
+    function send(token, reminder) {
+        const text = reminder.title +
+            ' (' + reminder.type + ') at ' + getTime(reminder.date) + ' in ' + reminder.room;
+        console.log(text);
+        return notifications.send(token, text);
+    }
+
+    function shortNotificationDue(user, reminder) {
+        if (reminder.shortNotification) {
+            return true; // already sent
+        } else if (user.atLocation) {
+            const oneMinute = 60 * 1000;
+            const now = new Date();
+            const difference = now.getTime() - reminder.date.getTime();
+            return difference > oneMinute;
+        } else {
+            return false; // not needed
+        }
+    }
+
     async function checkReminders() {
-        const minutes = 1;
-        const reminders = await db.getPendingReminders(minutes);
+        console.log('Checking reminders');
+        const reminders = await db.getPendingReminders();
         reminders.forEach(async reminder => {
-            const user = await db.getUser(reminder.userId);
-            if (user.atLocation) {
-                console.log('Location push notification for ' + reminder.title);
-            } else {
-                console.log('Push notification for ' + reminder.title);
+            const user = await db.getUserFromId(reminder.userId);
+            if (shortNotificationDue(user, reminder)) {
+                await send(user.token, reminder);
+                await db.editShortNotification(reminder, true);
+            } else if (!reminder.longNotification) {
+                await send(user.token, reminder);
+                await db.editLongNotification(reminder, true);
             }
-            await db.editNotified(reminder, true);
         });
     }
 
@@ -27,7 +60,8 @@ const scheduler = (function () {
     }
 
     return {
-        start: start
+        start: start,
+        checkReminders: checkReminders
     }
 }());
 
