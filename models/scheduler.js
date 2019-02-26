@@ -27,21 +27,18 @@ const scheduler = (function () {
         }
     }
 
-    function longNotificationDue(reminder) {
-        return !reminder.longNotification;
-    }
-
     async function checkReminders() {
         console.log('Checking reminders');
         const reminders = await db.getPendingReminders();
         reminders.forEach(async reminder => {
             const user = await db.getUserFromId(reminder.userId);
-            if (shortNotificationDue(user, reminder)) {
-                await send(user.token, reminder);
-                await db.editShortNotification(reminder, true);
-            } else if (longNotificationDue(reminder)) {
+            if (!reminder.longNotification) {
                 await send(user.token, reminder);
                 await db.editLongNotification(reminder, true);
+            }
+            else if (shortNotificationDue(user, reminder)) {
+                await send(user.token, reminder);
+                await db.editShortNotification(reminder, true);
             }
         });
     }

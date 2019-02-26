@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const Reminder = require('../models/reminder');
+const moment = require('moment');
 
 class ReminderDb {
     getAllReminders(token) {
@@ -97,9 +98,7 @@ class ReminderDb {
     }
 
     getPendingReminders() {
-        const hours = 1;
-        const now = new Date();
-        const start = new Date(now.getTime() - (hours * 60000));
+        const start = moment().subtract(1, 'hour').toDate();
         return Reminder.where('date')
             .gt(start)
             .or([{ shortNotification: false }, { longNotification: false }])
