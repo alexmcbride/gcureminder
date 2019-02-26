@@ -12,20 +12,21 @@ const notifications = (function () {
     );
 
     function send(token, payload) {
-        const user = await db.getUser(token);
-        if (user) {
-            const promises = user.subscriptions.map(subscription => {
-                return webPush.sendNotification(JSON.parse(subscription), payload);
-            });
-            Promise.all(promises);
-        } else {
-            throw 'Could not find user for push notification';
-        }
+        return db.getUser(token).then(user => {
+            if (user) {
+                const promises = user.subscriptions.map(subscription => {
+                    return webPush.sendNotification(JSON.parse(subscription), payload);
+                });
+                return Promise.all(promises);
+            } else {
+                throw 'Could not find user for push notification';
+            }
+        });
     }
 
     function register(token, subscription) {
         return new Promise((resolve, reject) => {
-            subscription = JSON.stringify(subscription);
+            subscription = JSON.stringify(subscription); // mongo db expects a string
             User.find({ token: token, subscriptions: subscription }).exec().then(users => {
                 if (users.length > 0) {
                     resolve(); // already subscribed
