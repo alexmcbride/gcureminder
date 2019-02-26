@@ -88,22 +88,23 @@ const repository = (function () {
     }
 
     async function syncQueuedItems() {
+        let synced = false;
         await dataStore.init();
         const items = await dataStore.getSyncItems();
-        // let synced = false;
         items.forEach(async item => {
             const response = await postJsonItem(item.token, item.data, item.url);
             if (response.success) {
                 await dataStore.deleteSyncItem(item.id);
                 console.log('Background synced item: ' + item.url);
-                // synced = true;
+                synced = true;
             } else {
                 console.log('Error: ' + response.error);
             }
         });
-        // if (synced) {
-        //     notifications.showLocal('Synced queued updates');
-        // }
+
+        if (synced) {
+            console.log('Synced queued updates');
+        }
     }
 
     function postJsonItem(token, data, url) {
