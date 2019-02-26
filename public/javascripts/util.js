@@ -3,12 +3,11 @@
  */
 const util = (function () {
     function start() {
-        return dataStore.init().then(() => {
-            return documentLoaded();
-        }).then(() => {
-            return initServiceWorker();
-        }).catch(console.log);
-    };
+        return documentLoaded()
+            .then(initServiceWorker)
+            .then(dataStore.init)
+            .catch(console.log);
+    }
 
     function initServiceWorker() {
         return new Promise((resolve, reject) => {
