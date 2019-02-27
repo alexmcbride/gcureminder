@@ -3,8 +3,8 @@
  */
 const repository = (function () {
     function sortRemindersByTime(a, b) {
-        const timeA = new Date(a.date).getTime();
-        const timeB = new Date(b.date).getTime();
+        const timeA = a.dateObj.getTime();
+        const timeB = b.dateObj.getTime();
         if (timeA > timeB) {
             return 1;
         } else if (timeA < timeB) {

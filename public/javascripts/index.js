@@ -22,17 +22,16 @@
     }
 
     function getReminderHtml(reminder) {
-        const date = new Date(reminder.date);
         let html = '<h3>' + reminder.title + '</h3>';
         html += '<div class="row">';
         html += '<div class="col-sm">';
         html += reminder.type;
         html += '</div>';
         html += '<div class="col-sm">';
-        html += getDate(date);
+        html += getDate(reminder.dateObj);
         html += '</div>';
         html += '<div class="col-sm">';
-        html += getDuration(date, reminder.duration);
+        html += getDuration(reminder.dateObj, reminder.duration);
         html += '</div>';
         html += '<div class="col-sm">';
         html += reminder.room;
@@ -111,13 +110,16 @@
     function filterActiveReminders(reminders) {
         const now = new Date();
         return reminders.filter(reminder => {
-            const date = new Date(reminder.date);
-            return date.getTime() > now;
+            return reminder.dateObj.getTime() > now;
         });
     }
 
+    function getAllReminders() {
+        return repository.getReminders(currentUser._id, currentUser.token);
+    }
+
     async function loadReminders() {
-        let reminders = await repository.getReminders(currentUser._id, currentUser.token);
+        let reminders = await getAllReminders();
         const activeTab = getActiveTab();
         if (activeTab === 'active') {
             reminders = filterActiveReminders(reminders);

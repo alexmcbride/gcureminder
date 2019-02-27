@@ -184,9 +184,12 @@ const dataStore = (function () {
     }
 
     function addReminder(reminder) {
-        // Give it a new id if it lacks one
+        // Add any missing properties if needed
         if (reminder.id === undefined) {
-            reminder.id = createTempId();
+            reminder.id = createRandomId();
+        }
+        if (reminder.dateObj === undefined) {
+            reminder.dateObj = new Date(reminder.date);
         }
         return addDocument('reminders', reminder, reminder.id);
     }
@@ -199,12 +202,12 @@ const dataStore = (function () {
         return deleteDocument('reminders', id);
     }
 
-    function createTempId() {
+    function createRandomId() {
         return crypto.getRandomValues(new Uint32Array(4)).join('-');
     }
 
     function addSyncItem(token, data, url) {
-        const id = createTempId();
+        const id = createRandomId();
         const document = { id: id, url: url, token: token, data: data };
         return setDocument('sync-queue', document, id);
     }
