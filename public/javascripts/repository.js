@@ -75,7 +75,8 @@ const repository = (function () {
 
     function queueSyncItem(token, data, url) {
         return navigator.serviceWorker.ready.then(registration => {
-            if ('sync' in registration && !navigator.onLine) {
+            if ('sync' in registration) {
+                // set notification on page saying background sync in use
                 console.log('Background syncing item: ' + url);
                 return dataStore.addSyncItem(token, data, url).then(() => {
                     return registration.sync.register('background-sync');
@@ -87,24 +88,21 @@ const repository = (function () {
         });
     }
 
-    async function syncQueuedItems() {
-        let synced = false;
-        await dataStore.init();
-        const items = await dataStore.getSyncItems();
-        items.forEach(async item => {
-            const response = await postJsonItem(item.token, item.data, item.url);
-            if (response.success) {
-                await dataStore.deleteSyncItem(item.id);
-                console.log('Background synced item: ' + item.url);
-                synced = true;
-            } else {
-                console.log('Error: ' + response.error);
-            }
+    function syncQueuedItems() {
+        return dataStore.init().then(() => {
+            return dataStore.getSyncItems();
+        }).then(items => {
+            const promises = items.map(item => {
+                return postJsonItem(item.token, item.data, item.url).then(response => {
+                    if (response.success) {
+                        return dataStore.deleteSyncItem(item.id);
+                    } else {
+                        throw 'Error: ' + response.error;
+                    }
+                });
+            })
+            return Promise.all(promises);
         });
-
-        if (synced) {
-            console.log('Synced queued updates');
-        }
     }
 
     function postJsonItem(token, data, url) {

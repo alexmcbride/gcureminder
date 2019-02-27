@@ -45,17 +45,13 @@ const URLS_TO_CACHE = [
 
 self.addEventListener('activate', event => {
     // cause SW to take control of pages in scope immediately
-    // event.waitUntil(self.clients.claim());
+    event.waitUntil(self.clients.claim());
 })
 
-function cacheAllUrls() {
-    return caches.open(CACHE_NAME).then(cache => {
-        return cache.addAll(URLS_TO_CACHE);
-    });
-}
-
 self.addEventListener('install', event => {
-    event.waitUntil(cacheAllUrls());
+    event.waitUntil(caches.open(CACHE_NAME).then(cache => {
+        return cache.addAll(URLS_TO_CACHE);
+    }));
 });
 
 self.addEventListener('fetch', event => {
@@ -66,7 +62,13 @@ self.addEventListener('fetch', event => {
 
 self.addEventListener('sync', event => {
     if (event.tag === 'background-sync') {
-        event.waitUntil(repository.syncQueuedItems());
+        event.waitUntil(repository.syncQueuedItems().then(() => {
+            return self.clients.matchAll();
+        }).then(clients => {
+            clients.forEach(client => {
+                client.postMessage({ message: 'Background sync complete' });
+            });
+        }).catch(console.log));
     }
 });
 
