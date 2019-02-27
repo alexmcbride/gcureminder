@@ -100,9 +100,10 @@ class ReminderDb {
     getPendingReminders() {
         const start = moment().toDate();
         const end = moment().add(1, 'hour').toDate();
-        return Reminder.where('date').gt(start).lt(end)
-            .or([{ shortNotification: false }, { longNotification: false }])
-            .exec();
+        return Reminder.find({
+            date: { '$gt': start, '$lt': end },
+            '$or': [{ shortNotification: false }, { longNotification: false }]
+        }).exec();
     }
 
     getUser(token) {
