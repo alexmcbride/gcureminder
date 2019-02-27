@@ -58,6 +58,7 @@
 
     function updateReminders(reminders) {
         const ul = document.getElementById('reminders-list');
+        ul.innerHTML = ''; //remove old elements
         reminders.forEach(reminder => addReminder(ul, reminder));
         addDeleteReminderEvents();
     }
@@ -87,16 +88,54 @@
         util.showMessage('Reminder removed!');
     }
 
+    function getActiveTab() {
+        if (location.hash && location.hash === '#active' || location.hash === '#all') {
+            return location.hash.substring(1);
+        } else {
+            return 'active'; // default
+        }
+    }
+
+    function activateTab(activeTab) {
+        const activeTabLink = document.getElementById('active-tab-link');
+        const allTabLink = document.getElementById('all-tab-link');
+        if (activeTab == 'active') {
+            activeTabLink.classList.add('active');
+            allTabLink.classList.remove('active');
+        } else if (activeTab == 'all') {
+            allTabLink.classList.add('active');
+            activeTabLink.classList.remove('active');
+        }
+    }
+
+    function filterActiveReminders(reminders) {
+        const now = new Date();
+        return reminders.filter(reminder => {
+            const date = new Date(reminder.date);
+            return date.getTime() > now;
+        });
+    }
+
     async function loadReminders() {
+        let reminders = await repository.getReminders(currentUser._id, currentUser.token);
+        const activeTab = getActiveTab();
+        if (activeTab === 'active') {
+            reminders = filterActiveReminders(reminders);
+        }
+        updateReminders(reminders);
+        activateTab(activeTab);
+    }
+
+    async function loadPage() {
         const user = await dataStore.getUser();
         if (user) {
             currentUser = user;
-            const reminders = await repository.getReminders(user._id, user.token);
-            updateReminders(reminders);
+            await loadReminders();
+            window.onhashchange = loadReminders;
         } else {
             location.href = '/login';
         }
     }
-    
-    util.start().then(loadReminders);
+
+    util.start().then(loadPage);
 }());

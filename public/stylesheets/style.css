@@ -52,6 +52,9 @@ input:invalid {
     width: 32px;
     height: 32px; }
 
+.content .reminder-tabs {
+  margin-bottom: 10px; }
+
 footer {
   margin-top: 20px;
   margin-bottom: 20px; }

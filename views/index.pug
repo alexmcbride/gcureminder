@@ -4,6 +4,11 @@ block script
   script(src='javascripts/index.js')
 
 block content
+  ul.nav.nav-tabs.reminder-tabs.justify-content-end
+    li.nav-item
+      a#active-tab-link.nav-link.active(href="#active") Active
+    li.nav-item      
+      a#all-tab-link.nav-link(href="#all") All
   div.alert.alert-primary#message
   ul.list-group#reminders-list
-    
+  
