@@ -60,14 +60,24 @@ self.addEventListener('fetch', event => {
     }));
 });
 
+function sendMessage(message) {
+    return self.clients.matchAll().then(clients => {
+        clients.forEach(client => {
+            client.postMessage({ message: message });
+        });
+    });
+}
+
+function sendMessageToClient(message, clientId) {
+    return self.clients.get(clientId).then(client => {
+        client.postMessage({ message: message });
+    });
+}
+
 self.addEventListener('sync', event => {
     if (event.tag === 'background-sync') {
         event.waitUntil(repository.syncQueuedItems().then(() => {
-            return self.clients.matchAll();
-        }).then(clients => {
-            clients.forEach(client => {
-                client.postMessage({ message: 'Background sync complete' });
-            });
+            return sendMessage('Queued updates background synced');
         }).catch(console.log));
     }
 });
