@@ -70,13 +70,13 @@
     }
 
     async function deleteReminder(event) {
+        event.preventDefault();
         if (confirm('Delete reminder?')) {
             const link = event.currentTarget;
             const id = link.getAttribute('data-id');
             await repository.deleteReminder(currentUser.token, id);
             removeReminderFromList(link);
         }
-        return false; // Stop link from being loaded by browser.
     }
 
     function removeReminderFromList(link) {
