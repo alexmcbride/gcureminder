@@ -10,7 +10,6 @@ const scheduler = (function () {
     function send(token, reminder) {
         const time = moment(reminder.date).format('HH:mm');
         const text = reminder.title + ' (' + reminder.type + ') at ' + time + ' in ' + reminder.room;
-        console.log(text);
         return notifications.send(token, text);
     }
 

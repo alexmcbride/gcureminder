@@ -195,6 +195,9 @@ const dataStore = (function () {
     }
 
     function setReminder(reminder) {
+        if (reminder.dateObj === undefined) {
+            reminder.dateObj = new Date(reminder.date);
+        }
         return setDocument('reminders', reminder, reminder.id);
     }
 
