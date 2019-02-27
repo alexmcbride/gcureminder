@@ -4,60 +4,43 @@ const moment = require('moment');
 
 class ReminderDb {
     getAllReminders(token) {
-        return new Promise((resolve, reject) => {
-            User.findOne({ token: token }).then(user => {
-                if (user) {
-                    Reminder.find({ userId: user._id })
-                        .sort('date')
-                        .then(resolve)
-                        .catch(reject);
-                } else {
-                    resolve([]);
-                }
-            }).catch(reject);
-        });
+        return User.findOne({ token: token }).exec().then(user => {
+            if (user) {
+                return Reminder.find({ userId: user._id }).sort('date').exec();
+            } else {
+                throw 'Invalid auth token';
+            }
+        })
     }
 
     getReminder(token, id) {
-        return new Promise((resolve, reject) => {
-            User.findOne({ token: token }).then(user => {
-                if (user) {
-                    Reminder.findOne({ id: id, userId: user._id })
-                        .then(resolve)
-                        .catch(reject);
-                } else {
-                    reject('Invalid auth token');
-                }
-            }).catch(reject);
+        return User.findOne({ token: token }).exec().then(user => {
+            if (user) {
+                return Reminder.findOne({ id: id, userId: user._id }).exec();
+            } else {
+                throw 'Invalid auth token';
+            }
         });
     }
 
     addReminder(token, reminder) {
-        return new Promise((resolve, reject) => {
-            User.findOne({ token: token }).then(user => {
-                if (user) {
-                    Reminder.createReminder(user, reminder)
-                        .then(resolve)
-                        .catch(reject);
-                } else {
-                    reject('Invalid auth token');
-                }
-            }).catch(reject);
-        });
+        return User.findOne({ token: token }).exec().then(user => {
+            if (user) {
+                return Reminder.createReminder(user, reminder).exec();
+            } else {
+                throw 'Invalid auth token';
+            }
+        })
     }
 
     editReminder(token, reminder) {
-        return new Promise((resolve, reject) => {
-            User.findOne({ token: token }).then(user => {
-                if (user) {
-                    reminder.userId = user._id;
-                    Reminder.findOneAndUpdate({ id: reminder.id }, reminder)
-                        .then(resolve)
-                        .catch(reject);
-                } else {
-                    reject('Invalid auth token');
-                }
-            }).catch(reject);
+        return User.findOne({ token: token }).exec().then(user => {
+            if (user) {
+                reminder.userId = user._id;
+                return Reminder.findOneAndUpdate({ id: reminder.id }, reminder).exec();
+            } else {
+                throw 'Invalid auth token';
+            }
         });
     }
 
@@ -70,31 +53,21 @@ class ReminderDb {
     }
 
     deleteReminder(token, id) {
-        return new Promise((resolve, reject) => {
-            User.findOne({ token: token }).then(user => {
-                if (user) {
-                    Reminder.findOneAndDelete({ id: id }).then(resolve).catch(reject);
-                } else {
-                    reject('Invalid auth token');
-                }
-            }).catch(reject);
+        return User.findOne({ token: token }).exec().then(user => {
+            if (user) {
+                return Reminder.findOneAndDelete({ id: id }).exec();
+            } else {
+                throw 'Invalid auth token';
+            }
         });
     }
 
     editNotified(reminder, notified) {
-        return Reminder.findByIdAndUpdate(reminder._id, { notified: notified });
+        return Reminder.findByIdAndUpdate(reminder._id, { notified: notified }).exec();
     }
 
     saveSettings(token, data) {
-        return new Promise((resolve, reject) => {
-            User.updateOne({ token: token }, data, (err, user) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(user);
-                }
-            });
-        });
+        return User.updateOne({ token: token }, data).exec();
     }
 
     getPendingReminders() {
