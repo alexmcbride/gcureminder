@@ -44,6 +44,11 @@ const util = (function () {
         el.style.display = 'block';
     };
 
+    function hideMessage() {
+        const el = document.getElementById('message');
+        el.style.display = 'none';
+    }
+
     function padNumber(num) {
         return num >= 0 && num <= 9 ? '0' + num : '' + num;
     }
@@ -102,6 +107,7 @@ const util = (function () {
         start: start,
         documentLoaded: documentLoaded,
         showMessage: showMessage,
+        hideMessage: hideMessage,
         formatDate: formatDate,
         padNumber: padNumber,
         postJson: postJson,

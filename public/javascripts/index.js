@@ -106,6 +106,7 @@
             allTabLink.classList.add('active');
             activeTabLink.classList.remove('active');
         }
+        util.hideMessage();
     }
 
     function filterActiveReminders(reminders) {
