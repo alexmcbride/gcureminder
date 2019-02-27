@@ -26,7 +26,7 @@ class ReminderDb {
     addReminder(token, reminder) {
         return User.findOne({ token: token }).exec().then(user => {
             if (user) {
-                return Reminder.createReminder(user, reminder).exec();
+                return Reminder.createReminder(user, reminder);
             } else {
                 throw 'Invalid auth token';
             }

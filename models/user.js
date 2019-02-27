@@ -88,10 +88,8 @@ userSchema.statics.login = function (username, password) {
 };
 
 userSchema.methods.logout = function () {
-    return new Promise((resolve, reject) => {
-        this.token = '';
-        this.save().then(resolve).catch(reject);
-    });
+    this.token = '';
+    return this.save().exec();
 };
 
 const User = mongoose.model('User', userSchema);

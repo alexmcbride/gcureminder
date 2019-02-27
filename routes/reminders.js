@@ -23,7 +23,7 @@ router.post('/add', (req, res, next) => {
         res.json({ success: true, reminder: reminder });
     }).catch(err => {
         // todo: clean up errors, as dumping whole obj is a bit weird.
-        res.json({ success: false, error: err });
+        res.json({ success: false, error: err.message });
     });
 });
 
