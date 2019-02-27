@@ -55,21 +55,30 @@
         ul.appendChild(li);
     }
 
-    function updateReminders(reminders) {
+    function showNoRemindersMessage() {
         const content = document.getElementById('reminders-content');
+        let html = '<div class="text-center no-reminders">'
+        html += '<em>There are no reminders to display</em>';
+        html += '</div>';
+        content.innerHTML = html;
+    }
+
+    function addRemindersList(reminders) {
+        const content = document.getElementById('reminders-content');
+        content.innerHTML = '';
+        const ul = document.createElement('li');
+        ul.setAttribute('class', 'list-group');
+        ul.setAttribute('id', 'reminders-list');
+        reminders.forEach(reminder => addReminder(ul, reminder));
+        content.appendChild(ul);
+        addDeleteReminderEvents();
+    }
+
+    function updateReminders(reminders) {
         if (reminders.length === 0) {
-            let html = '<div class="text-center no-reminders">'
-            html += '<em>There are no reminders to display</em>';
-            html += '</div>';
-            content.innerHTML = html;
+            showNoRemindersMessage();
         } else {
-            content.innerHTML = '';
-            const ul = document.createElement('li');
-            ul.setAttribute('class', 'list-group');
-            ul.setAttribute('id', 'reminders-list');
-            reminders.forEach(reminder => addReminder(ul, reminder));
-            content.appendChild(ul);
-            addDeleteReminderEvents();
+            addRemindersList(reminders);
         }
     }
 
