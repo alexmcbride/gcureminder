@@ -48,6 +48,7 @@ const notifications = (function () {
     }
 
     // Hook up button if running in a web document.
+    // todo: these should be somewhere else
     if ('document' in this) {
         util.documentLoaded().then(() => {
             document.getElementById('test-notifications').addEventListener('click', event => {

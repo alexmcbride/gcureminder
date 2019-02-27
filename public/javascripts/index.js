@@ -56,10 +56,21 @@
     }
 
     function updateReminders(reminders) {
-        const ul = document.getElementById('reminders-list');
-        ul.innerHTML = ''; //remove old elements
-        reminders.forEach(reminder => addReminder(ul, reminder));
-        addDeleteReminderEvents();
+        const content = document.getElementById('reminders-content');
+        if (reminders.length === 0) {
+            let html = '<div class="text-center no-reminders">'
+            html += '<em>There are no reminders to display</em>';
+            html += '</div>';
+            content.innerHTML = html;
+        } else {
+            content.innerHTML = '';
+            const ul = document.createElement('li');
+            ul.setAttribute('class', 'list-group');
+            ul.setAttribute('id', 'reminders-list');
+            reminders.forEach(reminder => addReminder(ul, reminder));
+            content.appendChild(ul);
+            addDeleteReminderEvents();
+        }
     }
 
     function addDeleteReminderEvents() {
