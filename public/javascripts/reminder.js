@@ -5,6 +5,7 @@
     class AddReminderState {
         constructor() {
             document.getElementById('reminder-form').style.display = 'block';
+            setMinimumDate();
         }
 
         save() {
@@ -22,6 +23,7 @@
             repository.getReminder(currentUser.token, this.id)
                 .then(this.updateForm)
                 .catch(console.log);
+            setMinimumDate();
         }
 
         updateForm(data) {
@@ -45,6 +47,10 @@
 
     let currentUser = null;
     let state = null;
+
+    function setMinimumDate() {
+        document.getElementById('date').setAttribute('min', util.formatDate(new Date()));
+    }
 
     function disableSaveButton(disabled) {
         document.getElementById('save-button').disabled = disabled;
