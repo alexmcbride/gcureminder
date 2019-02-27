@@ -18,6 +18,7 @@ const URLS_TO_CACHE = [
     '/javascripts/util.js',
     '/javascripts/location-handler.js',
     '/javascripts/notifications.js',
+    '/javascripts/background-sync.js',
 
     '/images/delete-ic.png',
     '/images/edit-ic.png',
@@ -76,7 +77,7 @@ function sendMessageToClient(message, clientId) {
 
 self.addEventListener('sync', event => {
     if (event.tag === 'background-sync') {
-        event.waitUntil(repository.syncQueuedItems().then(() => {
+        event.waitUntil(backgroundSync.sync().then(() => {
             return sendMessage('Queued updates background synced');
         }).catch(console.log));
     }
@@ -86,7 +87,7 @@ self.addEventListener('push', event => {
     event.waitUntil(notifications.show(event));
 });
 
-importScripts('/javascripts/data-store.js');
 importScripts('/javascripts/util.js');
-importScripts('/javascripts/repository.js');
+importScripts('/javascripts/data-store.js');
+importScripts('/javascripts/background-sync.js');
 importScripts('/javascripts/notifications.js');

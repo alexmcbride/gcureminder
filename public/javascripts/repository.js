@@ -41,75 +41,36 @@ const repository = (function () {
 
     async function addReminder(token, reminder) {
         const data = await dataStore.addReminder(reminder);
-        await queueSyncItem(token, data, '/api/reminders/add');
+        await backgroundSync.queue(token, data, '/api/reminders/add');
     }
 
     async function editReminder(token, reminder) {
         const data = await dataStore.setReminder(reminder);
-        queueSyncItem(token, data, '/api/reminders/edit');
+        backgroundSync.queue(token, data, '/api/reminders/edit');
     }
 
     async function deleteReminder(token, id) {
         await dataStore.deleteReminder(id);
-        queueSyncItem(token, {}, '/api/reminders/delete/' + id);
+        backgroundSync.queue(token, {}, '/api/reminders/delete/' + id);
     }
 
     async function editDistance(token, distance) {
         await dataStore.editDistance(distance);
-        queueSyncItem(token, { distance: distance }, '/api/settings/distance');
+        backgroundSync.queue(token, { distance: distance }, '/api/settings/distance');
     }
 
     async function editLocation(token, latitude, longitude) {
         await dataStore.editLocation(latitude, longitude);
-        return queueSyncItem(token, { latitude: latitude, longitude: longitude }, '/api/settings/location');
+        return backgroundSync.queue(token, { latitude: latitude, longitude: longitude }, '/api/settings/location');
     }
 
     async function editAtLocation(token, atLocation) {
         dataStore.getUser().then(async user => {
             if (atLocation != user.atLocation) {
                 await dataStore.editAtLocation(atLocation);
-                return queueSyncItem(token, { atLocation: atLocation }, '/api/settings/at-location');
+                return backgroundSync.queue(token, { atLocation: atLocation }, '/api/settings/at-location');
             }
         })
-    }
-
-    function queueSyncItem(token, data, url) {
-        return navigator.serviceWorker.ready.then(registration => {
-            if ('sync' in registration) {
-                // set notification on page saying background sync in use
-                console.log('Background syncing item: ' + url);
-                return dataStore.addSyncItem(token, data, url).then(() => {
-                    return registration.sync.register('background-sync');
-                });
-            } else {
-                console.log('Syncing item: ' + url);
-                return postJsonItem(token, data, url);
-            }
-        });
-    }
-
-    function syncQueuedItems() {
-        return dataStore.init().then(() => {
-            return dataStore.getSyncItems();
-        }).then(items => {
-            const promises = items.map(item => {
-                return postJsonItem(item.token, item.data, item.url).then(response => {
-                    if (response.success) {
-                        return dataStore.deleteSyncItem(item.id);
-                    } else {
-                        throw 'Error: ' + response.error;
-                    }
-                });
-            })
-            return Promise.all(promises);
-        });
-    }
-
-    function postJsonItem(token, data, url) {
-        return util.postJson(url, {
-            token: token,
-            data: data
-        });
     }
 
     return {
@@ -118,7 +79,6 @@ const repository = (function () {
         editReminder: editReminder,
         addReminder: addReminder,
         deleteReminder: deleteReminder,
-        syncQueuedItems: syncQueuedItems,
         editDistance: editDistance,
         editLocation: editLocation,
         editAtLocation: editAtLocation
