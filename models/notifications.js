@@ -12,6 +12,7 @@ const notifications = (function () {
     );
 
     function send(token, payload) {
+        // todo: if not registered then remove from subscriptions
         return db.getUser(token).then(user => {
             if (user) {
                 const promises = user.subscriptions.map(subscription => {
