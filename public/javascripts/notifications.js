@@ -62,10 +62,6 @@ const notifications = (function () {
                     console.log('Request check reminders');
                 });
             });
-
-            navigator.serviceWorker.addEventListener('message', event => {
-                console.log('Message from SW: ' + event.data.message);
-            });
         });
     }
 
