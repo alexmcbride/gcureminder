@@ -20,8 +20,8 @@ const scheduler = (function () {
         } else if (user.atLocation) {
             const reminderTime = moment(reminder.date);
             const triggerTime = moment();
-            triggerTime.subtract(5, 'minutes');
-            return reminderTime.isSameOrAfter(triggerTime);
+            triggerTime.add(5, 'minutes');
+            return reminderTime.isSameOrBefore(triggerTime);
         } else {
             return false; // not needed
         }

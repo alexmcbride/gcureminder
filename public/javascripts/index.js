@@ -95,6 +95,7 @@
         }
     }
 
+    // adds active class to tab so it displays correctly
     function activateTab(activeTab) {
         const activeTabLink = document.getElementById('active-tab-link');
         const allTabLink = document.getElementById('all-tab-link');
