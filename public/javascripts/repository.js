@@ -24,38 +24,40 @@ const repository = (function () {
         });
     }
 
-    async function addReminder(token, reminder) {
-        const data = await dataStore.addReminder(reminder);
-        await backgroundSync.queue(token, data, '/api/reminders/add');
+    function addReminder(token, reminder) {
+        return dataStore.addReminder(reminder).then(data => {
+            return backgroundSync.queue(token, data, '/api/reminders/add');
+        });
     }
 
-    async function editReminder(token, reminder) {
-        const data = await dataStore.setReminder(reminder);
-        backgroundSync.queue(token, data, '/api/reminders/edit');
+    function editReminder(token, reminder) {
+        return dataStore.setReminder(reminder).then(data => {
+            return backgroundSync.queue(token, data, '/api/reminders/edit');
+        });
     }
 
-    async function deleteReminder(token, id) {
-        await dataStore.deleteReminder(id);
-        backgroundSync.queue(token, {}, '/api/reminders/delete/' + id);
+    function deleteReminder(token, id) {
+        return dataStore.deleteReminder(id).then(() => {
+            return backgroundSync.queue(token, {}, '/api/reminders/delete/' + id);
+        });
     }
 
-    async function editDistance(token, distance) {
-        await dataStore.editDistance(distance);
-        backgroundSync.queue(token, { distance: distance }, '/api/settings/distance');
+    function editDistance(token, distance) {
+        dataStore.editDistance(distance).then(() => {
+            return backgroundSync.queue(token, { distance: distance }, '/api/settings/distance');
+        });
     }
 
-    async function editLocation(token, latitude, longitude) {
-        await dataStore.editLocation(latitude, longitude);
-        return backgroundSync.queue(token, { latitude: latitude, longitude: longitude }, '/api/settings/location');
+    function editLocation(token, latitude, longitude) {
+        return dataStore.editLocation(latitude, longitude).then(() => {
+            return backgroundSync.queue(token, { latitude: latitude, longitude: longitude }, '/api/settings/location');
+        });
     }
 
-    async function editAtLocation(token, atLocation) {
-        dataStore.getUser().then(async user => {
-            if (atLocation != user.atLocation) {
-                await dataStore.editAtLocation(atLocation);
-                return backgroundSync.queue(token, { atLocation: atLocation }, '/api/settings/at-location');
-            }
-        })
+    function editAtLocation(token, atLocation) {
+        return dataStore.editAtLocation(atLocation).then(() => {
+            return backgroundSync.queue(token, { atLocation: atLocation }, '/api/settings/at-location');
+        });
     }
 
     return {
