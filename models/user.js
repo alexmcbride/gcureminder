@@ -113,7 +113,7 @@ userSchema.statics.authorizeToken = async function (token) {
 }
 
 userSchema.statics.logout = function (token) {
-    this.model('User').findOneAndUpdate({ tokens: token }, { '$pull': { tokens: token } }).exec();
+    return this.model('User').findOneAndUpdate({ tokens: token }, { '$pull': { tokens: token } }).exec();
 };
 
 const User = mongoose.model('User', userSchema);

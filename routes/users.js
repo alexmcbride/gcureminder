@@ -28,7 +28,7 @@ router.post('/login', (req, res, next) => {
 router.post('/logout', (req, res, next) => {
     const token = req.body.token;
     User.logout(token).then(() => {
-        res.sendStatus({ success: true });
+        res.send({ success: true });
     }).catch(err => {
         console.log(err);
         res.sendStatus(500);

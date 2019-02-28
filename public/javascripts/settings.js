@@ -49,7 +49,7 @@ const settings = (function () {
         }).then(response => {
             if (response.ok) {
                 return dataStore.clearUsers().then(() => {
-                    location.href = '/';
+                    location.href = '/login';
                 });
             } else {
                 throw 'Logout status not OK';
