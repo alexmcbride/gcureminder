@@ -87,14 +87,13 @@
             } else {
                 console.log('Error: bad hash');
             }
-        } else {
-            return new AddReminderState();
         }
+        return new AddReminderState();
     }
 
     function checkValidity() {
         const fields = ['title', 'type', 'room', 'date', 'duration'];
-        return fields.every(field => document.getElementById(field).checkValidity());
+        return fields.every(f => document.getElementById(f).checkValidity());
     }
 
     async function onSaveClick(event) {
