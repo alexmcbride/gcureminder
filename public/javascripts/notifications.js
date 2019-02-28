@@ -52,7 +52,7 @@ const notifications = (function () {
         return fetch('/api/notifications/test', {
             method: 'post',
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token: user.token }),
+            body: JSON.stringify({ userId: user._id }),
         });
     }
 

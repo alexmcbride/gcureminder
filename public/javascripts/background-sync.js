@@ -20,6 +20,8 @@ const backgroundSync = (function () {
         }).then(items => {
             const promises = items.map(item => {
                 return postJsonItem(item.token, item.data, item.url).then(response => {
+                    return response.json();
+                }).then(response => {
                     if (response.success) {
                         return dataStore.deleteSyncItem(item.id);
                     } else {
