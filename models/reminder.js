@@ -20,7 +20,6 @@ const reminderSchema = new mongoose.Schema({
     longNotification: { type: Boolean, required: true },
 });
 
-
 reminderSchema.statics.createReminder = function (user, reminder) {
     return new Promise((resolve, reject) => {
         reminder.userId = user._id;

@@ -27,7 +27,7 @@ const repository = (function () {
     }
 
     function addReminder(token, reminder) {
-        return dataStore.addReminder(reminder).then(data => {
+        return dataStore.setReminder(reminder).then(data => {
             return backgroundSync.queue(token, data, '/api/reminders/add');
         });
     }

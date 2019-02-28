@@ -42,23 +42,35 @@ const settings = (function () {
     }
 
     function onLogout() {
-        dataStore.clearUsers().then(() => {
-            location.href = '/';
+        fetch('/api/users/logout', {
+            method: 'post',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token: currentUser.token }),
+        }).then(response => {
+            if (response.ok) {
+                return dataStore.clearUsers().then(() => {
+                    location.href = '/';
+                });
+            } else {
+                throw 'Logout status not OK';
+            }
         }).catch(console.log);
     }
 
     function loadCurrentUser() {
         return new Promise((resolve, reject) => {
             if (currentUser == null) {
-                dataStore.getUser().then(user => {
-                    if (user) {
-                        currentUser = user;
-                        resolve(user);
-                    } else {
-                        location.href = '/login';
-                        reject();
-                    }
-                }).catch(reject);
+                dataStore.init().then(() => {
+                    dataStore.getUser().then(user => {
+                        if (user) {
+                            currentUser = user;
+                            resolve(user);
+                        } else {
+                            location.href = '/login';
+                            reject();
+                        }
+                    }).catch(reject);
+                });
             } else {
                 resolve(currentUser);
             }
