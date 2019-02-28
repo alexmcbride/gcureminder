@@ -20,15 +20,8 @@
     class EditReminderState {
         constructor(id) {
             this.id = id;
-            repository.getReminderCached(this.id).then(reminder => {
-                this.updateForm(reminder);
-                repository.getReminderFresh(currentUser.token, this.id).then(reminder => {
-                    if (reminder != null) {
-                        this.updateForm(reminder);
-                    }
-                }).catch(error => {
-                    console.log('Fresh load failed: ' + error);
-                });
+            repository.getReminder(currentUser, this.id).then(this.updateForm).catch(error => {
+                console.log('Fresh load failed: ' + error);
             });
             setMinimumDate();
         }

@@ -136,7 +136,7 @@
         });
     }
 
-    async function updatePage(reminders) {
+    function updatePage(reminders) {
         const activeTab = getActiveTab();
         if (activeTab === 'active') {
             reminders = filterActiveReminders(reminders);
@@ -146,17 +146,7 @@
     }
 
     function loadReminders() {
-        return repository.getRemindersCached(currentUser._id).then(reminders => {
-            updatePage(reminders);
-            return repository.getRemindersFresh(currentUser.token).then(reminders => {
-                // check to see if reminders have changed, if so then ask user if they want to refresh them?
-                if (reminders != null) {
-                    updatePage(reminders);
-                }
-            }).catch(error => {
-                console.log('Fresh load failed: ' + error);
-            });
-        });
+        return repository.getReminders(currentUser).then(updatePage);
     }
 
     async function loadPage() {

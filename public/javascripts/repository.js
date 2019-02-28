@@ -2,46 +2,25 @@
  * Module to decide whether to use cached or fresh data
  */
 const repository = (function () {
-    function sortRemindersByTime(a, b) {
-        const timeA = a.dateObj.getTime();
-        const timeB = b.dateObj.getTime();
-        if (timeA > timeB) {
-            return 1;
-        } else if (timeA < timeB) {
-            return -1;
-        } else {
-            return 0;
-        }
-    }
-
-    function getRemindersCached(userId) {
-        return dataStore.getReminders(userId).then(reminders => {
-            reminders.sort(sortRemindersByTime);
-            return Promise.resolve(reminders);
-        });
-    }
-
-    function getRemindersFresh(token) {
-        return util.fetchJson('/api/reminders/list/' + token).then(reminders => {
-            if (reminders !== undefined) {
+    function getReminders(user) {
+        return fetch('/api/reminders/list/' + user.token).then(response => {
+            return response.json().then(reminders => {
                 return dataStore.setReminders(reminders);
-            } else {
-                return Promise.resolve(null);
-            }
+            });
+        }).catch(err => {
+            console.log('Fetch error: ' + err);
+            return dataStore.getReminders(user._id);
         });
     }
 
-    function getReminderCached(id) {
-        return dataStore.getReminder(id);
-    }
-
-    function getReminderFresh(token, id) {
-        return util.fetchJson('/api/reminders/' + token + '/' + id).then(reminder => {
-            if (reminder !== undefined) {
+    function getReminder(user, id) {
+        return fetch('/api/reminders/' + user.token + '/' + id).then(response => {
+            return response.json().then(reminder => {
                 return dataStore.setReminder(reminder);
-            } else {
-                return Promise.resolve(null);
-            }
+            });
+        }).catch(err => {
+            console.log('Fetch error: ' + err);
+            return dataStore.getReminder(id);
         });
     }
 
@@ -80,10 +59,8 @@ const repository = (function () {
     }
 
     return {
-        getRemindersCached: getRemindersCached,
-        getRemindersFresh: getRemindersFresh,
-        getReminderCached: getReminderCached,
-        getReminderFresh: getReminderFresh,
+        getReminders: getReminders,
+        getReminder: getReminder,
         editReminder: editReminder,
         addReminder: addReminder,
         deleteReminder: deleteReminder,

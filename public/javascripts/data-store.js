@@ -165,10 +165,23 @@ const dataStore = (function () {
         });
     }
 
+    function sortRemindersByTime(a, b) {
+        const timeA = a.dateObj.getTime();
+        const timeB = b.dateObj.getTime();
+        if (timeA > timeB) {
+            return 1;
+        } else if (timeA < timeB) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+
     function getReminders(userId) {
         return new Promise((resolve, reject) => {
             getCollection('reminders').then(reminders => {
                 const filtered = reminders.filter(reminder => reminder.userId === userId);
+                filtered.sort(sortRemindersByTime);
                 resolve(filtered);
             }).catch(reject);
         });
