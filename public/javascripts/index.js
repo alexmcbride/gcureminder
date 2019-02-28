@@ -146,7 +146,9 @@
     }
 
     function loadReminders() {
-        return repository.getReminders(currentUser).then(updatePage);
+        return repository.getReminders(currentUser)
+            .then(updatePage)
+            .catch(console.log);
     }
 
     async function loadPage() {

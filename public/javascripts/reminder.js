@@ -87,16 +87,14 @@
             } else {
                 console.log('Error: bad hash');
             }
+        } else {
+            return new AddReminderState();
         }
-        return new AddReminderState();
     }
 
     function checkValidity() {
-        return document.getElementById('title').checkValidity() &&
-            document.getElementById('type').checkValidity() &&
-            document.getElementById('room').checkValidity() &&
-            document.getElementById('date').checkValidity() &&
-            document.getElementById('duration').checkValidity();
+        const fields = ['title', 'type', 'room', 'date', 'duration'];
+        return fields.every(field => document.getElementById(field).checkValidity());
     }
 
     async function onSaveClick(event) {
