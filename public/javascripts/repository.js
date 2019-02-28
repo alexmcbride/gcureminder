@@ -2,24 +2,26 @@
  * Module to decide whether to use cached or fresh data
  */
 const repository = (function () {
+    function fetchJson(url) {
+        return fetch(url).then(response => {
+            return response.json();
+        });
+    }
+
     function getReminders(user) {
-        return fetch('/api/reminders/list/' + user.token).then(response => {
-            return response.json().then(reminders => {
-                return dataStore.setReminders(reminders);
-            });
+        return fetchJson('/api/reminders/list/' + user.token).then(reminder => {
+            return dataStore.setReminders(reminder);
         }).catch(err => {
-            console.log('Fetch error: ' + err);
+            console.log('Fetch error (using cache): ' + err);
             return dataStore.getReminders(user._id);
         });
     }
 
     function getReminder(user, id) {
-        return fetch('/api/reminders/' + user.token + '/' + id).then(response => {
-            return response.json().then(reminder => {
-                return dataStore.setReminder(reminder);
-            });
+        return fetchJson('/api/reminders/' + user.token + '/' + id).then(reminder => {
+            return dataStore.setReminder(reminder);
         }).catch(err => {
-            console.log('Fetch error: ' + err);
+            console.log('Fetch error (using cache): ' + err);
             return dataStore.getReminder(id);
         });
     }
@@ -55,8 +57,14 @@ const repository = (function () {
     }
 
     function editAtLocation(token, atLocation) {
-        return dataStore.editAtLocation(atLocation).then(() => {
-            return backgroundSync.queue(token, { atLocation: atLocation }, '/api/settings/at-location');
+        return dataStore.getUser().then(user =>{
+            if (user.atLocation !== atLocation) {
+                return dataStore.editAtLocation(atLocation).then(() => {
+                    return backgroundSync.queue(token, { atLocation: atLocation }, '/api/settings/at-location');
+                });
+            } else {
+                return Promise.resolve();
+            }
         });
     }
 

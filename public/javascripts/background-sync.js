@@ -1,7 +1,7 @@
 const backgroundSync = (function () {
     function queue(token, data, url) {
         return navigator.serviceWorker.ready.then(registration => {
-            if ('sync' in registration) {
+            if ('sync' in registration && !navigator.onLine) {
                 // set notification on page saying background sync in use
                 console.log('Background syncing item: ' + url);
                 return dataStore.addSyncItem(token, data, url).then(() => {
