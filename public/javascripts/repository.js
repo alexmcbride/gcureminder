@@ -23,7 +23,11 @@ const repository = (function () {
 
     function getRemindersFresh(token) {
         return util.fetchJson('/api/reminders/list/' + token).then(reminders => {
-            return dataStore.setReminders(reminders);
+            if (reminders !== undefined) {
+                return dataStore.setReminders(reminders);
+            } else {
+                return Promise.resolve(null);
+            }
         });
     }
 
@@ -32,8 +36,12 @@ const repository = (function () {
     }
 
     function getReminderFresh(token, id) {
-        return util.fetchJson('/api/reminders/' + token + '/' + id).then(reminder =>{
-            return dataStore.setReminder(reminder);
+        return util.fetchJson('/api/reminders/' + token + '/' + id).then(reminder => {
+            if (reminder !== undefined) {
+                return dataStore.setReminder(reminder);
+            } else {
+                return Promise.resolve(null);
+            }
         });
     }
 

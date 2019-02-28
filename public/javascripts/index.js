@@ -150,7 +150,9 @@
             updatePage(reminders);
             return repository.getRemindersFresh(currentUser.token).then(reminders => {
                 // check to see if reminders have changed, if so then ask user if they want to refresh them?
-                updatePage(reminders);
+                if (reminders != null) {
+                    updatePage(reminders);
+                }
             }).catch(error => {
                 console.log('Fresh load failed: ' + error);
             });

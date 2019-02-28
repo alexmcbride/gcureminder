@@ -23,7 +23,9 @@
             repository.getReminderCached(this.id).then(reminder => {
                 this.updateForm(reminder);
                 repository.getReminderFresh(currentUser.token, this.id).then(reminder => {
-                    this.updateForm(reminder);
+                    if (reminder != null) {
+                        this.updateForm(reminder);
+                    }
                 }).catch(error => {
                     console.log('Fresh load failed: ' + error);
                 });
