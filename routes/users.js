@@ -7,11 +7,12 @@ const router = express.Router();
 router.post('/login', (req, res, next) => {
     const username = req.body.username;
     const password = req.body.password;
-    User.login(username, password).then(user => {
+    User.login(username, password).then(data => {
+        const user = data.user;
         res.json({
             success: true, user: {
                 _id: user._id,
-                token: user.token,
+                token: data.token,
                 longitude: user.longitude,
                 latitude: user.latitude,
                 distance: user.distance
@@ -19,7 +20,17 @@ router.post('/login', (req, res, next) => {
         });
     }).catch(err => {
         console.log(err);
-        res.json({ success: false, error: err });
+        res.sendStatus(500);
+    });
+});
+
+router.post('/logout', (req, res, next) => {
+    const token = req.body.token;
+    User.logout(token).then(() => {
+        res.sendStatus({ success: true });
+    }).catch(err => {
+        console.log(err);
+        res.sendStatus(500);
     });
 });
 

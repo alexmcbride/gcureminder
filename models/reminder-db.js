@@ -3,44 +3,37 @@ const Reminder = require('../models/reminder');
 const moment = require('moment');
 
 class ReminderDb {
+    async getAuthUser(token) {
+        const user = await User.findByToken(token);
+        if (user == null) {
+            throw 'Invalid auth token';
+        } else {
+            return user;
+        }
+    }
+
     getAllReminders(token) {
-        return User.findOne({ token: token }).exec().then(user => {
-            if (user) {
-                return Reminder.find({ userId: user._id }).sort('date').exec();
-            } else {
-                throw 'Invalid auth token';
-            }
-        })
+        return this.getAuthUser(token).then(user => {
+            return Reminder.find({ userId: user._id }).sort('date').exec();
+        });
     }
 
     getReminder(token, id) {
-        return User.findOne({ token: token }).exec().then(user => {
-            if (user) {
-                return Reminder.findOne({ id: id, userId: user._id }).exec();
-            } else {
-                throw 'Invalid auth token';
-            }
+        return this.getAuthUser(token).then(user => {
+            return Reminder.findOne({ id: id, userId: user._id }).exec();
         });
     }
 
     addReminder(token, reminder) {
-        return User.findOne({ token: token }).exec().then(user => {
-            if (user) {
-                return Reminder.createReminder(user, reminder);
-            } else {
-                throw 'Invalid auth token';
-            }
+        return this.getAuthUser(token).then(user => {
+            return Reminder.createReminder(user, reminder);
         })
     }
 
     editReminder(token, reminder) {
-        return User.findOne({ token: token }).exec().then(user => {
-            if (user) {
-                reminder.userId = user._id;
-                return Reminder.findOneAndUpdate({ id: reminder.id }, reminder).exec();
-            } else {
-                throw 'Invalid auth token';
-            }
+        return this.getAuthUser(token).then(user => {
+            reminder.userId = user._id;
+            return Reminder.findOneAndUpdate({ id: reminder.id }, reminder).exec();
         });
     }
 
@@ -53,12 +46,8 @@ class ReminderDb {
     }
 
     deleteReminder(token, id) {
-        return User.findOne({ token: token }).exec().then(user => {
-            if (user) {
-                return Reminder.findOneAndDelete({ id: id }).exec();
-            } else {
-                throw 'Invalid auth token';
-            }
+        return this.getAuthUser(token).then(user => {
+            return Reminder.findOneAndDelete({ id: id }).exec();
         });
     }
 
@@ -67,7 +56,7 @@ class ReminderDb {
     }
 
     saveSettings(token, data) {
-        return User.updateOne({ token: token }, data).exec();
+        return User.updateOne({ tokens: token }, data).exec();
     }
 
     getPendingReminders() {
@@ -80,7 +69,7 @@ class ReminderDb {
     }
 
     getUser(token) {
-        return User.findOne({ token: token }).exec();
+        return User.findByToken(token);
     }
 
     getUserFromId(id) {
@@ -88,7 +77,7 @@ class ReminderDb {
     }
 
     editUser(token, data) {
-        return User.updateOne({ token: token }, data).exec();
+        return User.updateOne({ tokens: token }, data).exec();
     }
 }
 

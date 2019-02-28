@@ -7,10 +7,10 @@ const scheduler = (function () {
     const db = new ReminderDb();
     let agenda = null;
 
-    function send(token, reminder) {
+    function send(userId, reminder) {
         const time = moment(reminder.date).format('HH:mm');
         const text = reminder.title + ' (' + reminder.type + ') at ' + time + ' in ' + reminder.room;
-        return notifications.send(token, text);
+        return notifications.send(userId, text);
     }
 
     function shortNotificationDue(user, reminder) {
@@ -32,11 +32,11 @@ const scheduler = (function () {
         reminders.forEach(async reminder => {
             const user = await db.getUserFromId(reminder.userId);
             if (!reminder.longNotification) {
-                await send(user.token, reminder);
+                await send(user._id, reminder);
                 await db.editLongNotification(reminder, true);
             }
             else if (shortNotificationDue(user, reminder)) {
-                await send(user.token, reminder);
+                await send(user._id, reminder);
                 await db.editShortNotification(reminder, true);
             }
         });

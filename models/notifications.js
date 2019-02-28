@@ -11,9 +11,9 @@ const notifications = (function () {
         process.env.VAPID_PRIVATE_KEY
     );
 
-    function send(token, payload) {
+    function send(userId, payload) {
         // todo: if not registered then remove from subscriptions
-        return db.getUser(token).then(user => {
+        return db.getUserFromId(userId).then(user => {
             if (user) {
                 const promises = user.subscriptions.map(subscription => {
                     return webPush.sendNotification(JSON.parse(subscription), payload);
@@ -26,19 +26,18 @@ const notifications = (function () {
     }
 
     function register(token, subscription) {
-        return new Promise((resolve, reject) => {
-            subscription = JSON.stringify(subscription); // mongo db expects a string
-            User.find({ token: token, subscriptions: subscription }).exec().then(users => {
-                if (users.length > 0) {
-                    resolve(); // already subscribed
-                } else {
-                    User.updateOne({ token: token }, { '$push': { subscriptions: subscription } })
-                        .exec()
-                        .then(resolve)
-                        .catch(reject);
-                }
-            }).catch(reject);
-        });
+        subscription = JSON.stringify(subscription); // mongo db expects a string
+        return User.findByToken(token).then(user => {
+            if (user == null) {
+                throw 'Invalid auth token';
+            } else if (user.subscriptions.includes(subscription)) {
+                throw 'Subscription already in list';
+            } else {
+                console.log('Subscribed to push notification');
+                user.subscriptions.push(subscription);
+                return user.save();
+            }
+        })
     }
 
     return {

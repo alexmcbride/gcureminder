@@ -25,7 +25,7 @@ const repository = (function () {
     }
 
     function addReminder(token, reminder) {
-        return dataStore.addReminder(reminder).then(data => {
+        return dataStore.setReminder(reminder).then(data => {
             return backgroundSync.queue(token, data, '/api/reminders/add');
         });
     }
@@ -43,7 +43,7 @@ const repository = (function () {
     }
 
     function editDistance(token, distance) {
-        dataStore.editDistance(distance).then(() => {
+        return dataStore.editDistance(distance).then(() => {
             return backgroundSync.queue(token, { distance: distance }, '/api/settings/distance');
         });
     }
