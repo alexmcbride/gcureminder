@@ -10,7 +10,8 @@ router.post('/login', (req, res, next) => {
     User.login(username, password).then(data => {
         const user = data.user;
         res.json({
-            success: true, user: {
+            success: true,
+            user: {
                 _id: user._id,
                 token: data.token,
                 longitude: user.longitude,

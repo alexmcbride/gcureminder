@@ -22,17 +22,19 @@
         event.preventDefault();
         const data = getLoginData();
         if (data) {
-            fetch(url, {
+            fetch('/api/users/login', {
                 method: 'post',
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
-            }).then(result => {
-                if (result.success) {
-                    login(result.user);
+            }).then(response =>{
+                return response.json();
+            }).then(data => {
+                if (data.success) {
+                    login(data.user);
                 } else {
                     util.showMessage('Username or password incorrect');
                 }
-            }).catch(console.log);
+            }).catch(console.log);;
         } else {
             util.showMessage('Enter username and password');
         }
