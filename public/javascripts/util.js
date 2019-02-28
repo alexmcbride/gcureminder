@@ -63,55 +63,12 @@ const util = (function () {
         return date.getFullYear() + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
     }
 
-    function fetchJson(url) {
-        return fetch(url).then(response => {
-            if (response.status === 200) {
-                return response.json();
-            } else {
-                throw 'Status ' + response.status;
-            }
-        });
-    }
-
-    function postJson(url, data) {
-        return fetch(url, {
-            method: 'post',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-        }).then(response => {
-            if (response.status === 200) {
-                return response.json();
-            } else {
-                throw 'Status ' + response.status;
-            }
-        });
-    }
-
-    function createJson(url, data) {
-        return new Promise((resolve, reject) => {
-            fetch(url, {
-                method: 'post',
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-            }).then(response => {
-                if (response.status === 201) {
-                    resolve(response);
-                } else {
-                    reject('Status ' + response.status);
-                }
-            });
-        });
-    }
-
     return {
         start: start,
         documentLoaded: documentLoaded,
         showMessage: showMessage,
         hideMessage: hideMessage,
         formatDate: formatDate,
-        padNumber: padNumber,
-        postJson: postJson,
-        fetchJson: fetchJson,
-        createJson: createJson
+        padNumber: padNumber
     }
 }());

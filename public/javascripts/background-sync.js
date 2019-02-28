@@ -32,9 +32,13 @@ const backgroundSync = (function () {
     }
 
     function postJsonItem(token, data, url) {
-        return util.postJson(url, {
-            token: token,
-            data: data
+        return fetch(url, {
+            method: 'post',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                token: token,
+                data: data
+            })
         });
     }
 

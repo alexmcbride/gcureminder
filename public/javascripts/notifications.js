@@ -1,4 +1,20 @@
 const notifications = (function () {
+    function createJson(url, data) {
+        return new Promise((resolve, reject) => {
+            fetch(url, {
+                method: 'post',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            }).then(response => {
+                if (response.status === 201) {
+                    resolve(response);
+                } else {
+                    reject('Status ' + response.status);
+                }
+            }).catch(console.log);
+        });
+    }
+
     // This function is needed because Chrome doesn't accept a base64 encoded string
     // as value for applicationServerKey in pushManager.subscribe yet
     // https://bugs.chromium.org/p/chromium/issues/detail?id=802280
@@ -24,7 +40,7 @@ const notifications = (function () {
                     applicationServerKey: convertedPublicKey
                 });
             }).then(subscription => {
-                return util.createJson('/api/notifications/register', { token: user.token, subscription: subscription })
+                return createJson('/api/notifications/register', { token: user.token, subscription: subscription })
             }).then(async () => {
                 user.subscription = true;
                 await dataStore.setUser(user);
@@ -44,7 +60,7 @@ const notifications = (function () {
     }
 
     function test(user) {
-        return util.createJson('/api/notifications/test', { token: user.token });
+        return createJson('/api/notifications/test', { token: user.token });
     }
 
     // Hook up button if running in a web document.

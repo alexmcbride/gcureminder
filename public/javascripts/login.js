@@ -22,7 +22,11 @@
         event.preventDefault();
         const data = getLoginData();
         if (data) {
-            util.postJson('api/users/login', data).then(result => {
+            fetch(url, {
+                method: 'post',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            }).then(result => {
                 if (result.success) {
                     login(result.user);
                 } else {
