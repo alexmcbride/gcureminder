@@ -103,6 +103,15 @@ userSchema.statics.findByToken = function (token) {
     return this.model('User').findOne({ tokens: token }).exec();
 };
 
+userSchema.statics.authorizeToken = async function (token) {
+    const user = await User.findByToken(token);
+    if (user == null) {
+        throw 'Invalid auth token';
+    } else {
+        return user;
+    }
+}
+
 userSchema.statics.logout = function (token) {
     this.model('User').findOneAndUpdate({ tokens: token }, { '$pull': { tokens: token } }).exec();
 };

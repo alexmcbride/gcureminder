@@ -27,10 +27,8 @@ const notifications = (function () {
 
     function register(token, subscription) {
         subscription = JSON.stringify(subscription); // mongo db expects a string
-        return User.findByToken(token).then(user => {
-            if (user == null) {
-                throw 'Invalid auth token';
-            } else if (user.subscriptions.includes(subscription)) {
+        return User.authorizeToken(token).then(user => {
+            if (user.subscriptions.includes(subscription)) {
                 throw 'Subscription already in list';
             } else {
                 console.log('Subscribed to push notification');

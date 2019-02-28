@@ -3,35 +3,26 @@ const Reminder = require('../models/reminder');
 const moment = require('moment');
 
 class ReminderDb {
-    async getAuthUser(token) {
-        const user = await User.findByToken(token);
-        if (user == null) {
-            throw 'Invalid auth token';
-        } else {
-            return user;
-        }
-    }
-
     getAllReminders(token) {
-        return this.getAuthUser(token).then(user => {
+        return User.authorizeToken(token).then(user => {
             return Reminder.find({ userId: user._id }).sort('date').exec();
         });
     }
 
     getReminder(token, id) {
-        return this.getAuthUser(token).then(user => {
+        return User.authorizeToken(token).then(user => {
             return Reminder.findOne({ id: id, userId: user._id }).exec();
         });
     }
 
     addReminder(token, reminder) {
-        return this.getAuthUser(token).then(user => {
+        return User.authorizeToken(token).then(user => {
             return Reminder.createReminder(user, reminder);
         })
     }
 
     editReminder(token, reminder) {
-        return this.getAuthUser(token).then(user => {
+        return User.authorizeToken(token).then(user => {
             reminder.userId = user._id;
             return Reminder.findOneAndUpdate({ id: reminder.id }, reminder).exec();
         });
@@ -46,7 +37,7 @@ class ReminderDb {
     }
 
     deleteReminder(token, id) {
-        return this.getAuthUser(token).then(user => {
+        return User.authorizeToken(token).then(user => {
             return Reminder.findOneAndDelete({ id: id }).exec();
         });
     }
@@ -69,7 +60,7 @@ class ReminderDb {
     }
 
     getUser(token) {
-        return User.findByToken(token);
+        return User.authorizeToken(token);
     }
 
     getUserFromId(id) {
