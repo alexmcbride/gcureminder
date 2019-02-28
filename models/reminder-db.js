@@ -4,25 +4,25 @@ const moment = require('moment');
 
 class ReminderDb {
     getAllReminders(token) {
-        return User.authorizeToken(token).then(user => {
+        return User.authToken(token).then(user => {
             return Reminder.find({ userId: user._id }).sort('date').exec();
         });
     }
 
     getReminder(token, id) {
-        return User.authorizeToken(token).then(user => {
+        return User.authToken(token).then(user => {
             return Reminder.findOne({ id: id, userId: user._id }).exec();
         });
     }
 
     addReminder(token, reminder) {
-        return User.authorizeToken(token).then(user => {
+        return User.authToken(token).then(user => {
             return Reminder.createReminder(user, reminder);
         })
     }
 
     editReminder(token, reminder) {
-        return User.authorizeToken(token).then(user => {
+        return User.authToken(token).then(user => {
             reminder.userId = user._id;
             return Reminder.findOneAndUpdate({ id: reminder.id }, reminder).exec();
         });
@@ -37,7 +37,7 @@ class ReminderDb {
     }
 
     deleteReminder(token, id) {
-        return User.authorizeToken(token).then(user => {
+        return User.authToken(token).then(user => {
             return Reminder.findOneAndDelete({ id: id }).exec();
         });
     }
@@ -60,7 +60,7 @@ class ReminderDb {
     }
 
     getUser(token) {
-        return User.authorizeToken(token);
+        return User.authToken(token);
     }
 
     getUserFromId(id) {

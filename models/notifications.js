@@ -12,7 +12,6 @@ const notifications = (function () {
     );
 
     function send(userId, payload) {
-        // todo: if not registered then remove from subscriptions
         return db.getUserFromId(userId).then(user => {
             if (user) {
                 const promises = user.subscriptions.map(subscription => {
@@ -27,15 +26,16 @@ const notifications = (function () {
 
     function register(token, subscription) {
         subscription = JSON.stringify(subscription); // mongo db expects a string
-        return User.authorizeToken(token).then(user => {
+        return User.authToken(token).then(user => {
             if (user.subscriptions.includes(subscription)) {
-                throw 'Subscription already in list';
+                console.log('Subscription already in list');
+                return Promise.resolve();
             } else {
                 console.log('Subscribed to push notification');
                 user.subscriptions.push(subscription);
                 return user.save();
             }
-        })
+        });
     }
 
     return {
