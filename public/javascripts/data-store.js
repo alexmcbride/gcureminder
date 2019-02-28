@@ -165,11 +165,6 @@ const dataStore = (function () {
         });
     }
 
-    function addReminders(reminders) {
-        const promises = reminders.map(addReminder);
-        return Promise.all(promises);
-    }
-
     function getReminders(userId) {
         return new Promise((resolve, reject) => {
             getCollection('reminders').then(reminders => {
@@ -183,18 +178,16 @@ const dataStore = (function () {
         return getDocument('reminders', id);
     }
 
-    function addReminder(reminder) {
+    function setReminders(reminders) {
+        const promises = reminders.map(setReminder);
+        return Promise.all(promises);
+    }
+
+    function setReminder(reminder) {
         // Add any missing properties if needed
         if (reminder.id === undefined) {
             reminder.id = createRandomId();
         }
-        if (reminder.dateObj === undefined) {
-            reminder.dateObj = new Date(reminder.date);
-        }
-        return addDocument('reminders', reminder, reminder.id);
-    }
-
-    function setReminder(reminder) {
         if (reminder.dateObj === undefined) {
             reminder.dateObj = new Date(reminder.date);
         }
@@ -232,11 +225,10 @@ const dataStore = (function () {
         editDistance: editDistance,
         editLocation: editLocation,
         editAtLocation: editAtLocation,
-        addReminders: addReminders,
         getReminders: getReminders,
         getReminder: getReminder,
-        addReminder: addReminder,
         setReminder: setReminder,
+        setReminders: setReminders,
         deleteReminder: deleteReminder,
         addSyncItem: addSyncItem,
         getSyncItems: getSyncItems,

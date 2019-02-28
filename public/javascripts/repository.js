@@ -14,29 +14,27 @@ const repository = (function () {
         }
     }
 
-    async function getReminders(userId, token) {
-        let reminders = await dataStore.getReminders(userId);
-        if (reminders.length == 0 && navigator.onLine) {
-            console.log('Getting fresh reminders');
-            reminders = await util.fetchJson('/api/reminders/list/' + token);
-            await dataStore.addReminders(reminders);
-        } else {
-            console.log('Using cached reminders');
+    function getRemindersCached(userId) {
+        return dataStore.getReminders(userId).then(reminders => {
             reminders.sort(sortRemindersByTime);
-        }
-        return reminders;
+            return Promise.resolve(reminders);
+        });
     }
 
-    async function getReminder(token, id) {
-        let reminder = await dataStore.getReminder(id);
-        if (reminder === undefined && navigator.onLine) {
-            console.log('Getting fresh reminder');
-            reminder = await util.fetchJson('/api/reminders/' + token + '/' + id);
-            await dataStore.setReminder(reminder);
-        } else {
-            console.log('Using cached reminder');
-        }
-        return reminder;
+    function getRemindersFresh(token) {
+        return util.fetchJson('/api/reminders/list/' + token).then(reminders => {
+            return dataStore.setReminders(reminders);
+        });
+    }
+
+    function getReminderCached(id) {
+        return dataStore.getReminder(id);
+    }
+
+    function getReminderFresh(token, id) {
+        return util.fetchJson('/api/reminders/' + token + '/' + id).then(reminder =>{
+            return dataStore.setReminder(reminder);
+        });
     }
 
     async function addReminder(token, reminder) {
@@ -74,8 +72,10 @@ const repository = (function () {
     }
 
     return {
-        getReminders: getReminders,
-        getReminder: getReminder,
+        getRemindersCached: getRemindersCached,
+        getRemindersFresh: getRemindersFresh,
+        getReminderCached: getReminderCached,
+        getReminderFresh: getReminderFresh,
         editReminder: editReminder,
         addReminder: addReminder,
         deleteReminder: deleteReminder,

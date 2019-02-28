@@ -48,7 +48,7 @@
         return html;
     }
 
-    function addReminder(ul, reminder) {
+    function addReminderItem(ul, reminder) {
         const li = document.createElement('li');
         li.setAttribute('class', 'list-group-item reminder-list-item');
         li.innerHTML = getReminderHtml(reminder);
@@ -69,9 +69,8 @@
         const ul = document.createElement('li');
         ul.setAttribute('class', 'list-group');
         ul.setAttribute('id', 'reminders-list');
-        reminders.forEach(reminder => addReminder(ul, reminder));
+        reminders.forEach(reminder => addReminderItem(ul, reminder));
         content.appendChild(ul);
-        addDeleteReminderEvents();
     }
 
     function updateReminders(reminders) {
@@ -79,6 +78,7 @@
             showNoRemindersMessage();
         } else {
             addRemindersList(reminders);
+            addDeleteReminderEvents();
         }
     }
 
@@ -89,6 +89,14 @@
         }
     }
 
+    function removeReminderFromList(link) {
+        // parent: col.row.li
+        const li = link.parentNode.parentNode.parentNode;
+        const ul = document.getElementById('reminders-list');
+        ul.removeChild(li);
+        util.showMessage('Reminder removed!');
+    }
+
     async function deleteReminder(event) {
         event.preventDefault();
         if (confirm('Delete reminder?')) {
@@ -97,14 +105,6 @@
             await repository.deleteReminder(currentUser.token, id);
             removeReminderFromList(link);
         }
-    }
-
-    function removeReminderFromList(link) {
-        // parent: col.row.li
-        const li = link.parentNode.parentNode.parentNode;
-        const ul = document.getElementById('reminders-list');
-        ul.removeChild(li);
-        util.showMessage('Reminder removed!');
     }
 
     function getActiveTab() {
@@ -136,18 +136,25 @@
         });
     }
 
-    function getAllReminders() {
-        return repository.getReminders(currentUser._id, currentUser.token);
-    }
-
-    async function loadReminders() {
-        let reminders = await getAllReminders();
+    async function updatePage(reminders) {
         const activeTab = getActiveTab();
         if (activeTab === 'active') {
             reminders = filterActiveReminders(reminders);
         }
         updateReminders(reminders);
         activateTab(activeTab);
+    }
+
+    function loadReminders() {
+        return repository.getRemindersCached(currentUser._id).then(reminders => {
+            updatePage(reminders);
+            return repository.getRemindersFresh(currentUser.token).then(reminders => {
+                // check to see if reminders have changed, if so then ask user if they want to refresh them?
+                updatePage(reminders);
+            }).catch(error => {
+                console.log('Fresh load failed: ' + error);
+            });
+        });
     }
 
     async function loadPage() {
