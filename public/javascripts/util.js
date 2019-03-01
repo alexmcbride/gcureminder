@@ -13,9 +13,13 @@ const util = (function () {
     function initServiceWorker() {
         return new Promise((resolve, reject) => {
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/sw.js').then(resolve).catch(reject);
+                console.log('registering sw');
+                navigator.serviceWorker.register('/sw.js').then(()=>{
+                    console.log('resolved');
+                    resolve();
+                }).catch(reject);
             } else {
-                reject('No service worker supported');
+                reject('Service worker not supported');
             }
         });
     }
