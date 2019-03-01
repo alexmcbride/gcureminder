@@ -82,9 +82,11 @@ const notifications = (function () {
         });
     }
 
-    util.documentLoaded().then(() => {
-        self.addEventListener('pushsubscriptionchange', onPageSubscriptionChange);
-    });
+    if ('document' in this) {
+        util.documentLoaded().then(() => {
+            self.addEventListener('pushsubscriptionchange', onPageSubscriptionChange);
+        });
+    }
 
     return {
         subscribe: subscribe,

@@ -78,9 +78,7 @@ const settings = (function () {
     }
 
     function onPageLoaded() {
-        return util.start().then(() => {
-            return dataStore.getUser();
-        }).then(user => {
+        loadCurrentUser().then(user => {
             if (user) {
                 currentUser = user;
                 document.getElementById('distance').value = user.distance;

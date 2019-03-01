@@ -13,11 +13,16 @@ const util = (function () {
     function initServiceWorker() {
         return new Promise((resolve, reject) => {
             if ('serviceWorker' in navigator) {
-                console.log('registering sw');
-                navigator.serviceWorker.register('/sw.js').then(() => {
-                    console.log('resolved');
-                    resolve();
-                }).catch(reject);
+                // if (navigator.serviceWorker.state === 'activated') {
+                //     console.log('SW already activated');
+                //     resolve();
+                // } else {
+                    console.log('registering sw');
+                    navigator.serviceWorker.register('/sw.js').then(() => {
+                        console.log('resolved');
+                        resolve();
+                    }).catch(reject);
+                // }
             } else {
                 reject('Service worker not supported');
             }
