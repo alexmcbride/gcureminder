@@ -3,7 +3,7 @@ const backgroundSync = (function () {
         const registration = await navigator.serviceWorker.ready;
         if ('sync' in registration) {
             // set notification on page saying background sync in use
-            console.log('Background syncing item: ' + url);
+            console.log('Background queueing item: ' + url);
             await dataStore.addSyncItem(token, data, url);
             await registration.sync.register('background-sync');
         } else {

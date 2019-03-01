@@ -9,21 +9,29 @@ const repository = (function () {
     }
 
     function getReminders(user) {
-        return fetchJson('/api/reminders/list/' + user.token).then(reminder => {
-            return dataStore.setReminders(reminder);
-        }).catch(err => {
-            console.log('Fetch error (using cache): ' + err);
+        if (navigator.onLine) {
+            return fetchJson('/api/reminders/list/' + user.token).then(reminder => {
+                return dataStore.setReminders(reminder);
+            }).catch(err => {
+                console.log('Fetch error (using cache): ' + err);
+                return dataStore.getReminders(user._id);
+            });
+        } else {
             return dataStore.getReminders(user._id);
-        });
+        }
     }
 
     function getReminder(user, id) {
-        return fetchJson('/api/reminders/' + user.token + '/' + id).then(reminder => {
-            return dataStore.setReminder(reminder);
-        }).catch(err => {
-            console.log('Fetch error (using cache): ' + err);
+        if (navigator.onLine) {
+            return fetchJson('/api/reminders/' + user.token + '/' + id).then(reminder => {
+                return dataStore.setReminder(reminder);
+            }).catch(err => {
+                console.log('Fetch error (using cache): ' + err);
+                return dataStore.getReminder(id);
+            });
+        } else {
             return dataStore.getReminder(id);
-        });
+        }
     }
 
     function addReminder(token, reminder) {
@@ -57,7 +65,7 @@ const repository = (function () {
     }
 
     function editAtLocation(token, atLocation) {
-        return dataStore.getUser().then(user =>{
+        return dataStore.getUser().then(user => {
             if (user.atLocation !== atLocation) {
                 return dataStore.editAtLocation(atLocation).then(() => {
                     return backgroundSync.queue(token, { atLocation: atLocation }, '/api/settings/at-location');
