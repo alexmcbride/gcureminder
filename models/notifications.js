@@ -35,11 +35,11 @@ const notifications = (function () {
     }
 
     function register(token, subscription) {
-        subscription = JSON.stringify(subscription); // mongo db expects a string
+        subscription = JSON.stringify(subscription);
         return User.authToken(token).then(user => {
             if (user.subscriptions.includes(subscription)) {
                 console.log('Subscription already in list');
-                return Promise.resolve();
+                return Promise.resolve(); // smile and go with it
             } else {
                 console.log('Subscribed to push notification');
                 user.subscriptions.push(subscription);
@@ -49,7 +49,7 @@ const notifications = (function () {
     }
 
     function reregister(token, subscription, oldSubscription) {
-        subscription = JSON.stringify(subscription); // mongo db expects a string
+        subscription = JSON.stringify(subscription);
         oldSubscription = JSON.stringify(oldSubscription);
         return User.authToken(token).then(user => {
             user.subscriptions.pull(oldSubscription);
