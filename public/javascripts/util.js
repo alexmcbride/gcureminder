@@ -13,7 +13,7 @@ const util = (function () {
     function initServiceWorker() {
         return new Promise((resolve, reject) => {
             if ('serviceWorker' in navigator) {
-                if (navigator.serviceWorker.state === 'activated') {
+                if (navigator.serviceWorker.controller.state === 'activated') {
                     console.log('SW already activated');
                     resolve();
                 } else {
