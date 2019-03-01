@@ -194,8 +194,10 @@ const dataStore = (function () {
     }
 
     function setReminders(reminders) {
-        const promises = reminders.map(setReminder);
-        return Promise.all(promises);
+        return clearStorage('reminders').then(() => {
+            const promises = reminders.map(setReminder);
+            return Promise.all(promises);
+        });
     }
 
     function setReminder(reminder) {

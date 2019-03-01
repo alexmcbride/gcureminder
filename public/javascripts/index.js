@@ -66,7 +66,7 @@
     function addRemindersList(reminders) {
         const content = document.getElementById('reminders-content');
         content.innerHTML = '';
-        const ul = document.createElement('li');
+        const ul = document.createElement('ul');
         ul.setAttribute('class', 'list-group');
         ul.setAttribute('id', 'reminders-list');
         reminders.forEach(reminder => addReminderItem(ul, reminder));
