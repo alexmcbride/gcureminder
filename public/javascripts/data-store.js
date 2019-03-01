@@ -2,13 +2,15 @@
  * Module to wrap indexed db.
  */
 const dataStore = (function () {
-    const version = 13;
+    const version = 14;
     const name = 'gcu-reminders-db';
     let db = null;
 
     function createObjectStores(db, names) {
-        names.forEach(name => {
-            if (!db.objectStoreNames.contains(name)) {
+        names.forEach(async name => {
+            if (db.objectStoreNames.contains(name)) {
+                await clearStorage(name);
+            } else {
                 db.createObjectStore(name);
             }
         });

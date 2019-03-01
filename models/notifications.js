@@ -29,7 +29,7 @@ const notifications = (function () {
                 });
                 return Promise.all(promises);
             } else {
-                throw 'Could not find user for push notification';
+                return Promise.reject('Could not find user for push notification');
             }
         });
     }
