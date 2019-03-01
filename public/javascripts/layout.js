@@ -3,7 +3,7 @@ const layout = (function() {
         document.getElementById('test-notifications').addEventListener('click', event => {
             dataStore.init().then(() => {
                 return dataStore.getUser();
-            }).then(test);
+            }).then(notifications.test);
         });
     
         // todo: this probably shouldn't be here.
