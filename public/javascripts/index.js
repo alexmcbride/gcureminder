@@ -130,7 +130,7 @@
     }
 
     function filterActiveReminders(reminders) {
-        const now = new Date();
+        const now = new Date().getTime();
         return reminders.filter(reminder => {
             return reminder.dateObj.getTime() > now;
         });
