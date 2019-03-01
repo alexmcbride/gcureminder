@@ -27,7 +27,9 @@ const notifications = (function () {
                         return removeSubscription(user, subscription);
                     });
                 });
-                return Promise.all(promises);
+                promises.forEach(async promise => {
+                    await promise;
+                });
             } else {
                 return Promise.reject('Could not find user for push notification');
             }
