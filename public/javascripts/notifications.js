@@ -82,25 +82,9 @@ const notifications = (function () {
         });
     }
 
-    // Check the notifications module is not loaded from inside service worker
-    if ('document' in this) {
-        util.documentLoaded().then(() => {
-            document.getElementById('test-notifications').addEventListener('click', event => {
-                dataStore.init().then(() => {
-                    return dataStore.getUser();
-                }).then(test);
-            });
-
-            // todo: this probably shouldn't be here.
-            document.getElementById('check-reminders').addEventListener('click', event => {
-                fetch('/api/notifications/check-reminders').then(() => {
-                    console.log('Request check reminders');
-                });
-            });
-        });
-
+    util.documentLoaded().then(() => {
         self.addEventListener('pushsubscriptionchange', onPageSubscriptionChange);
-    }
+    });
 
     return {
         subscribe: subscribe,

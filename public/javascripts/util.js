@@ -14,7 +14,7 @@ const util = (function () {
         return new Promise((resolve, reject) => {
             if ('serviceWorker' in navigator) {
                 console.log('registering sw');
-                navigator.serviceWorker.register('/sw.js').then(()=>{
+                navigator.serviceWorker.register('/sw.js').then(() => {
                     console.log('resolved');
                     resolve();
                 }).catch(reject);

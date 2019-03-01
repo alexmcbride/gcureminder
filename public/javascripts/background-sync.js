@@ -38,13 +38,13 @@ const backgroundSync = (function () {
         });
     }
 
-    if ('document' in this) {
-        util.documentLoaded().then(() => {
-            navigator.serviceWorker.addEventListener('message', event => {
-                console.log('Message from SW: ' + event.data.message);
-            });
-        });
-    }
+    // if ('document' in this) {
+    //     util.documentLoaded().then(() => {
+    //         navigator.serviceWorker.addEventListener('message', event => {
+    //             console.log('Message from SW: ' + event.data.message);
+    //         });
+    //     });
+    // }
 
     return {
         queue: queue,
