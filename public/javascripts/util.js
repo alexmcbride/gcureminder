@@ -31,7 +31,7 @@ const util = (function () {
     }
 
     function notificationsInit() {
-        dataStore.getUser().then(user => {
+        return dataStore.getUser().then(user => {
             if (user != null && !user.subscription) {
                 notifications.subscribe(user);
             }

@@ -1,36 +1,30 @@
 const backgroundSync = (function () {
-    function queue(token, data, url) {
-        return navigator.serviceWorker.ready.then(registration => {
-            if ('sync' in registration) {
-                // set notification on page saying background sync in use
-                console.log('Background syncing item: ' + url);
-                return dataStore.addSyncItem(token, data, url).then(() => {
-                    return registration.sync.register('background-sync');
-                });
-            } else {
-                console.log('Syncing item: ' + url);
-                return postJsonItem(token, data, url);
-            }
-        });
+    async function queue(token, data, url) {
+        const registration = await navigator.serviceWorker.ready;
+        if ('sync' in registration) {
+            // set notification on page saying background sync in use
+            console.log('Background syncing item: ' + url);
+            await dataStore.addSyncItem(token, data, url);
+            await registration.sync.register('background-sync');
+        } else {
+            console.log('Syncing item: ' + url);
+            await postJsonItem(token, data, url);
+        }
     }
 
-    function sync() {
-        return dataStore.init().then(() => {
-            return dataStore.getSyncItems();
-        }).then(items => {
-            const promises = items.map(item => {
-                return postJsonItem(item.token, item.data, item.url).then(response => {
-                    return response.json();
-                }).then(response => {
-                    if (response.success) {
-                        return dataStore.deleteSyncItem(item.id);
-                    } else {
-                        throw 'Error: ' + response.error;
-                    }
-                });
-            })
-            return Promise.all(promises);
-        });
+    async function sync() {
+        await dataStore.init();
+        const items = await dataStore.getSyncItems();
+        const promises = items.map(async item => {
+            const response = await postJsonItem(item.token, item.data, item.url);
+            const result = await response.json();
+            if (result.success) {
+                await dataStore.deleteSyncItem(item.id);
+            } else {
+                throw 'Error: ' + response.error;
+            }
+        })
+        await Promise.all(promises);
     }
 
     function postJsonItem(token, data, url) {

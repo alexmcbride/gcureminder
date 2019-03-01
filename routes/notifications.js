@@ -19,6 +19,18 @@ router.post('/register', (req, res) => {
     });
 });
 
+router.post('/re-register', (req, res) => {
+    const token = req.body.token;
+    const subscription = req.body.subscription;
+    const oldSubscription = req.body.oldSubscription;
+    notifications.reregister(token, subscription, oldSubscription).then(() => {
+        res.sendStatus(201);
+    }).catch(error => {
+        console.log(error);
+        res.sendStatus(500);
+    });
+});
+
 router.post('/test', (req, res) => {
     const userId = req.body.userId;
     notifications.send(userId, 'Sent from the server!').then(() => {

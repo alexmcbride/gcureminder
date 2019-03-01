@@ -145,7 +145,7 @@
         activateTab(activeTab);
     }
 
-    function loadReminders() {
+    async function loadReminders() {
         return repository.getReminders(currentUser)
             .then(updatePage)
             .catch(console.log);

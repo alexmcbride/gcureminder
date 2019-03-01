@@ -14,37 +14,63 @@ const notifications = (function () {
     }
 
     function subscribe(user) {
-        return fetch('/api/notifications/vapidPublicKey').then(response => {
-            return response.text();
-        }).then(vapidPublicKey => {
-            const convertedPublicKey = urlBase64ToUint8Array(vapidPublicKey);
-            return navigator.serviceWorker.ready.then(registration => {
-                return registration.pushManager.subscribe({
-                    userVisibleOnly: true,
-                    applicationServerKey: convertedPublicKey
-                });
-            }).then(subscription => {
-                return fetch('/api/notifications/register', {
-                    method: 'post',
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ token: user.token, subscription: subscription }),
-                });
-            }).then(() => {
-                user.subscription = true;
-                return dataStore.setUser(user).then(() => {
-                    console.log('Subscribed to push notifications');
-                });
+        return createSubscription().then(subscription => {
+            return registerSubscription(user, subscription);
+        }).then(() => {
+            user.subscription = true;
+            return dataStore.setUser(user).then(() => {
+                console.log('Subscribed to push notifications');
             });
         });
     }
 
-    function show(event) {
-        return showLocal(event.data.text());
+    function createSubscription() {
+        let convertedPublicKey;
+        return fetch('/api/notifications/vapidPublicKey').then(response => {
+            return response.text();
+        }).then(vapidPublicKey => {
+            convertedPublicKey = urlBase64ToUint8Array(vapidPublicKey);
+            return navigator.serviceWorker.ready;
+        }).then(registration => {
+            return registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: convertedPublicKey
+            });;
+        });
     }
 
-    function showLocal(body) {
+    function registerSubscription(user, subscription) {
+        return fetch('/api/notifications/register', {
+            method: 'post',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token: user.token, subscription: subscription }),
+        });
+    }
+
+    function reRegisterSubscription(user, subscription) {
+        return serviceWorker.pushManager.getSubscription().then(oldSubscription => {
+            return fetch('/api/notifications/re-register', {
+                method: 'post',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token: user.token, subscription: subscription, oldSubscription: oldSubscription }),
+            });
+        });
+    }
+
+    function onPageSubscriptionChange() {
+        console.log('Subscription changed');
+        return dataStore.getUser().then(user => {
+            return createSubscription().then(subscription => {
+                return reRegisterSubscription(user, subscription).then(() => {
+                    console.log('Re-registered push notification subscription');
+                });
+            });
+        }).catch(console.log);
+    }
+
+    function show(event) {
         return self.registration.showNotification('GCU Reminder', {
-            body: body
+            body: event.data.text()
         });
     }
 
@@ -56,8 +82,7 @@ const notifications = (function () {
         });
     }
 
-    // Hook up button if running in a web document.
-    // todo: these should be somewhere else
+    // Check the notifications module is not loaded from inside service worker
     if ('document' in this) {
         util.documentLoaded().then(() => {
             document.getElementById('test-notifications').addEventListener('click', event => {
@@ -66,18 +91,20 @@ const notifications = (function () {
                 }).then(test);
             });
 
+            // todo: this probably shouldn't be here.
             document.getElementById('check-reminders').addEventListener('click', event => {
                 fetch('/api/notifications/check-reminders').then(() => {
                     console.log('Request check reminders');
                 });
             });
         });
+
+        self.addEventListener('pushsubscriptionchange', onPageSubscriptionChange);
     }
 
     return {
         subscribe: subscribe,
         show: show,
-        showLocal: showLocal,
         test: test
     }
 }());

@@ -11,11 +11,21 @@ const notifications = (function () {
         process.env.VAPID_PRIVATE_KEY
     );
 
+    function removeSubscription(user, subscription) {
+        user.subscriptions.pull(subscription);
+        return user.save().then(() => {
+            console.log('Removed problem subscription');
+        });
+    }
+
     function send(userId, payload) {
         return db.getUserFromId(userId).then(user => {
             if (user) {
                 const promises = user.subscriptions.map(subscription => {
-                    return webPush.sendNotification(JSON.parse(subscription), payload);
+                    return webPush.sendNotification(JSON.parse(subscription), payload).catch(err => {
+                        console.log(err);
+                        return removeSubscription(user, subscription);
+                    });
                 });
                 return Promise.all(promises);
             } else {
@@ -38,9 +48,22 @@ const notifications = (function () {
         });
     }
 
+    function reregister(token, subscription, oldSubscription) {
+        subscription = JSON.stringify(subscription); // mongo db expects a string
+        oldSubscription = JSON.stringify(oldSubscription);
+        return User.authToken(token).then(user => {
+            user.subscriptions.pull(oldSubscription);
+            user.subscriptions.push(subscription);
+            return user.save().then(() => {
+                console.log('Re-subscribed to push notification');
+            });
+        });
+    }
+
     return {
         send: send,
-        register: register
+        register: register,
+        reregister: reregister
     }
 }());
 
