@@ -17,7 +17,7 @@ router.get('/settings', (req, res, next) => {
     res.render('settings');
 });
 
-/* GET add/edit reminder page. */
+/* GET login page. */
 router.get('/login', (req, res, next) => {
     res.render('login');
 });
