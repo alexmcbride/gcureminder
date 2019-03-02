@@ -4,6 +4,10 @@
  * posts each one. If successful the item is then dequeued.
  */
 const backgroundSync = (function () {
+    function getFutureTime(minutes) {
+        return new Date(new Date().getTime() + (minutes * 1000));
+    }
+
     // Add item to the background sync queue.
     async function queue(token, data, url) {
         const registration = await navigator.serviceWorker.ready;
@@ -30,6 +34,7 @@ const backgroundSync = (function () {
             } else {
                 throw 'Error: ' + response.error;
             }
+            return item;
         })
         await Promise.all(promises);
     }
@@ -45,14 +50,6 @@ const backgroundSync = (function () {
             })
         });
     }
-
-    // if ('document' in this) {
-    //     util.documentLoaded().then(() => {
-    //         navigator.serviceWorker.addEventListener('message', event => {
-    //             console.log('Message from SW: ' + event.data.message);
-    //         });
-    //     });
-    // }
 
     return {
         queue: queue,

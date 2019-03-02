@@ -28,7 +28,6 @@ const settings = (function () {
     function saveDistance(distance) {
         disableUi();
         repository.editDistance(currentUser.token, distance).then(response => {
-            util.showMessage('Settings saved!');
             enableUi();
         }).catch(console.log);
     }
@@ -36,7 +35,6 @@ const settings = (function () {
     function saveLocation(latitude, longitude) {
         disableUi();
         repository.editLocation(currentUser.token, latitude, longitude).then(response => {
-            util.showMessage('Settings saved!');
             enableUi();
         }).catch(console.log);
     }

@@ -11,7 +11,7 @@
         save() {
             const data = getData();
             return repository.addReminder(currentUser.token, data).then(() => {
-                util.showMessage('Reminder saved!');
+                util.showMessage('Saved reminder!');
                 clearForm();
             });
         }
@@ -41,7 +41,7 @@
             data.id = this.id;
             data.userId = currentUser._id;
             return repository.editReminder(currentUser.token, data).then(response => {
-                util.showMessage('Reminder saved!');
+                util.showMessage('Saved reminder!');
             });
         }
     }

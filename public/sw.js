@@ -79,7 +79,7 @@ function sendMessageToClient(message, clientId) {
 self.addEventListener('sync', event => {
     if (event.tag === 'background-sync') {
         event.waitUntil(backgroundSync.sync().then(() => {
-            return sendMessage('Queued updates background synced');
+            return sendMessage('Updates synced with server');
         }).catch(console.log));
     }
 });

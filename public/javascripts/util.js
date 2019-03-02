@@ -44,7 +44,7 @@ const util = (function () {
 
     function showMessage(message) {
         const el = document.getElementById('message');
-        el.innerHTML = message;
+        el.innerHTML = '<div class="alert alert-success">' + message +'</div>';
         el.style.display = 'block';
     };
 

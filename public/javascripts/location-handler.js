@@ -22,11 +22,11 @@ const locationManager = (function () {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
         dataStore.init().then(() => {
-            dataStore.getUser().then(user => {
+            dataStore.getUser().then(async user => {
                 if (user) {
                     const distance = getDistanceFromLatLonInMetres(lat, lon, user.latitude, user.longitude);
                     const atLocation = user.distance > distance;
-                    repository.editAtLocation(user.token, atLocation);
+                    await repository.editAtLocation(user.token, atLocation);
                 }
             });
         });
