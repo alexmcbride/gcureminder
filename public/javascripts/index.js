@@ -1,5 +1,5 @@
 /*
- * Module to handle index page.
+ * Module to handle the script for the index page.
  */
 (function () {
     let currentUser = null;

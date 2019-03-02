@@ -1,5 +1,5 @@
 /*
- * Module to handle login page
+ * Module to handle script for the login page
  */
 (function () {
     async function login(user) {

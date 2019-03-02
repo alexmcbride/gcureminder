@@ -1,5 +1,7 @@
 /*
- * Module to decide whether to use cached or fresh data
+ * Module to decide whether to use cached or fresh data. For GET requests it tries to fetch
+ * the response and if that fails falls back onto cached data. All POST requests and passed
+ * on to the background-sync function, that syncs them when the network is available.
  */
 const repository = (function () {
     function fetchJson(url) {

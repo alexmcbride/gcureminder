@@ -1,3 +1,8 @@
+/*
+ * Module to handle the geofence. It watches for the user to move within a certain distance of the latlon, then 
+ * updates a flag in storage and on the server. The server uses this to determine what sort of notification to
+ * send.
+ */
 const locationManager = (function () {
     // c/o: https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
     function getDistanceFromLatLonInMetres(lat1, lon1, lat2, lon2) {

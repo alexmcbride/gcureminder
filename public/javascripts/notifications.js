@@ -1,3 +1,14 @@
+/*
+ * Module to handle push notifications. To subscribe to a notification the following happens:
+ *
+ * - The vapid key is fetched from the server
+ * - The vapid key is passed into the subcribe method to generate a subscription token
+ * - The subscription token is then sent to the server.
+ *  
+ * The server then uses the subscription token to send push notifications to that user. The
+ * pushsubscriptionchange event means that the subscription has expired and needs to be 
+ * created again.
+ */
 const notifications = (function () {
     // This function is needed because Chrome doesn't accept a base64 encoded string
     // as value for applicationServerKey in pushManager.subscribe yet
@@ -82,6 +93,7 @@ const notifications = (function () {
         });
     }
 
+    // We check for document as this module can be loaded inside the SW.
     if ('document' in this) {
         util.documentLoaded().then(() => {
             self.addEventListener('pushsubscriptionchange', onPageSubscriptionChange);

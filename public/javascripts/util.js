@@ -2,6 +2,10 @@
  * Module with some utility functions.
  */
 const util = (function () {
+    /* 
+     * Called on each page to start the website, initializes the service worker, initializes the database, and then 
+     * subscribes to push notifications.
+     */ 
     function start() {
         return documentLoaded()
             .then(initServiceWorker)
