@@ -67,14 +67,8 @@ const repository = (function () {
     }
 
     function editAtLocation(token, atLocation) {
-        return dataStore.getUser().then(user => {
-            if (user.atLocation !== atLocation) {
-                return dataStore.editAtLocation(atLocation).then(() => {
-                    return backgroundSync.queue(token, { atLocation: atLocation }, '/api/settings/at-location');
-                });
-            } else {
-                return Promise.resolve();
-            }
+        return dataStore.editAtLocation(atLocation).then(() => {
+            return backgroundSync.queue(token, { atLocation: atLocation }, '/api/settings/at-location');
         });
     }
 

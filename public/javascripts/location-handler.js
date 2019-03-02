@@ -26,7 +26,9 @@ const locationManager = (function () {
                 if (user) {
                     const distance = getDistanceFromLatLonInMetres(lat, lon, user.latitude, user.longitude);
                     const atLocation = user.distance > distance;
-                    await repository.editAtLocation(user.token, atLocation);
+                    if (user.atLocation !== atLocation) {
+                        await repository.editAtLocation(user.token, atLocation);
+                    }
                 }
             });
         });
