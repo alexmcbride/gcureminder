@@ -51,9 +51,8 @@ function findUpcomingReminders() {
 
 async function run() {
     const reminders = await findUpcomingReminders();
-    reminders.map(checkReminder).forEach(async reminder => {
-        await reminder;
-    });
+    const promises =  reminders.map(checkReminder);
+    await Promise.all(promises);
 }
 
 module.exports = {

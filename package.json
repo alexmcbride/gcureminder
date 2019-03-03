@@ -6,7 +6,6 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "agenda": "^2.0.2",
     "bcrypt": "^3.0.4",
     "cookie-parser": "~1.4.3",
     "cron": "^1.6.0",
