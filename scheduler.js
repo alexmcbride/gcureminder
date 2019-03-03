@@ -3,54 +3,53 @@ const User = require('./models/user');
 const Reminder = require('./models/reminder');
 const notifications = require('./models/notifications');
 
-function getReminderText(reminder, date) {
-    const timeStr = date.format('HH:mm');
+function getReminderText(reminder) {
+    const timeStr = moment(reminder.date).format('HH:mm');
     return reminder.title + ' (' + reminder.type + ') at ' + timeStr + ' in ' + reminder.room;
 }
 
-function isReminderDue(reminder, amount, unit) {
+function reminderDueWithin(reminder, amount, unit) {
     const reminderDate = moment(reminder.date);
-    const triggerDate = moment().add(amount, unit);
-    return reminderDate.isSameOrAfter(triggerDate);
+    const endDate = moment().add(amount, unit);
+    return reminderDate.isAfter() && reminderDate.isSameOrBefore(endDate);
 }
 
-async function checkLongNotification(reminder, user) {
+async function checkLongNotification(reminder) {
     if (!reminder.longNotification) {
-        if (isReminderDue(reminder, 1, 'hour')) {
-            await notifications.send(reminder.userId, getReminderText(reminder, reminderDate));
-            user.longNotification = true;
-            await user.save();
+        if (reminderDueWithin(reminder, 1, 'hour')) {
+            await notifications.send(reminder.userId, getReminderText(reminder));
+            reminder.longNotification = true;
+            await reminder.save();
         }
     }
 }
 
-async function checkShortNotification(reminder, user) {
-    if (!reminder.shortNotification && user.atLocation) {
-        if (isReminderDue(reminder, 5, 'minutes')) {
-            await notifications.send(reminder.userId, getReminderText(reminder, reminderDate));
-            user.shortNotification = true;
-            await user.save();
+async function checkShortNotification(reminder, atLocation) {
+    if (!reminder.shortNotification) {
+        if (reminderDueWithin(reminder, 5, 'minutes') && atLocation) {
+            await notifications.send(reminder.userId, getReminderText(reminder));
+            reminder.shortNotification = true;
+            await reminder.save();
         }
     }
 }
 
 async function checkReminder(reminder) {
     const user = await User.findById(reminder.userId).exec();
-    await checkLongNotification(reminder, user);
-    await checkShortNotification(reminder, user);
+    await checkLongNotification(reminder);
+    await checkShortNotification(reminder, user.atLocation);
 }
 
 function findUpcomingReminders() {
     const start = moment();
-    const end = moment();
-    const end = end.add(1, 'hour');
+    const end = moment().add(1, 'hour');
     return Reminder.find({
         date: { '$gt': start.toDate(), '$lt': end.toDate() },
         '$or': [{ shortNotification: false }, { longNotification: false }]
     }).exec();
 }
 
-function run() {
+async function run() {
     const reminders = await findUpcomingReminders();
     reminders.map(checkReminder).forEach(async reminder => {
         await reminder;

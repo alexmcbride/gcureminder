@@ -1,6 +1,6 @@
 const express = require('express');
 const notifications = require('../models/notifications');
-const scheduler = require('../models/scheduler');
+const scheduler = require('../scheduler');
 
 const router = express.Router();
 
@@ -30,7 +30,7 @@ router.post('/test', (req, res) => {
 });
 
 router.get('/check-reminders', (req, res) => {
-    scheduler.checkReminders().then(() => {
+    scheduler.run().then(() => {
         res.sendStatus(200);
     }).catch(error => {
         console.log(error);
