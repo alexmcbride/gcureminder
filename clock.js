@@ -6,7 +6,7 @@ var CronJob = require('cron').CronJob;
 var scheduler = require('./scheduler.js');
 
 var job = new CronJob({
-  cronTime: "* 8-18 * * *", // Between 8am and 6pm every day
+  cronTime: "* 8-18 * * *", // Every minute between 8am and 6pm every day
   onTick: scheduler.run(),
   start: true,
   timeZone: "Europe/London"
