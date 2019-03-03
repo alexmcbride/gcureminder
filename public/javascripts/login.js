@@ -18,6 +18,10 @@
         }
     }
 
+    function showMessage(message) {
+        document.getElementById('login-message').innerHTML = message;
+    }
+
     function onLogin(event) {
         event.preventDefault();
         const data = getLoginData();
@@ -26,17 +30,17 @@
                 method: 'post',
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
-            }).then(response =>{
+            }).then(response => {
                 return response.json();
             }).then(data => {
                 if (data.success) {
                     login(data.user);
                 } else {
-                    util.showMessage('Username or password incorrect');
+                    showMessage('Username or password incorrect');
                 }
             }).catch(console.log);;
         } else {
-            util.showMessage('Enter username and password');
+            showMessage('Enter username and password');
         }
     }
 
