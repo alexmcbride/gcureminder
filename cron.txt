@@ -1,0 +1,10 @@
+*/15 7-19 * * *
+* 8-18 * * *
+
+https://crontab-generator.org/
+
+Between 8am and 6pm mon-fri
+* 8-18 * * 1-5 /home/alex/test > /home/alex/cronlog
+
+Between 8am and 6pm every day
+* 8-18 * * * /home/alex/test > /home/alex/cronlog
