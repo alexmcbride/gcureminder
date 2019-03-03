@@ -58,25 +58,10 @@ const notifications = (function () {
         });
     }
 
-    function reRegisterSubscription(user, subscription) {
-        return serviceWorker.pushManager.getSubscription().then(oldSubscription => {
-            return fetch('/api/notifications/re-register', {
-                method: 'post',
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ token: user.token, subscription: subscription, oldSubscription: oldSubscription }),
-            });
-        });
-    }
-
     function onPageSubscriptionChange() {
-        console.log('Subscription changed');
-        return dataStore.getUser().then(user => {
-            return createSubscription().then(subscription => {
-                return reRegisterSubscription(user, subscription).then(() => {
-                    console.log('Re-registered push notification subscription');
-                });
-            });
-        }).catch(console.log);
+        dataStore.init().then(() => {
+            return dataStore.getUser();
+        }).then(subscribe);
     }
 
     function show(event) {

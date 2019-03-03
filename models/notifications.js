@@ -50,22 +50,9 @@ const notifications = (function () {
         });
     }
 
-    function reregister(token, subscription, oldSubscription) {
-        subscription = JSON.stringify(subscription);
-        oldSubscription = JSON.stringify(oldSubscription);
-        return User.authToken(token).then(user => {
-            user.subscriptions.pull(oldSubscription);
-            user.subscriptions.push(subscription);
-            return user.save().then(() => {
-                console.log('Re-subscribed to push notification');
-            });
-        });
-    }
-
     return {
         send: send,
-        register: register,
-        reregister: reregister
+        register: register
     }
 }());
 
