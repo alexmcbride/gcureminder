@@ -5,8 +5,7 @@ input:invalid {
   margin-top: 20px; }
 
 #message {
-  display: none;
-  color: green; }
+  display: none; }
 
 #map {
   height: 400px;
@@ -33,10 +32,6 @@ input:invalid {
 
 .content h3 {
   color: #50514F; }
-
-.content #save-button {
-  padding-left: 40px;
-  padding-right: 40px; }
 
 .content #reminder-form {
   display: none; }

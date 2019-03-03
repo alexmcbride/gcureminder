@@ -9,11 +9,11 @@ const backgroundSync = (function () {
     }
 
     // Add item to the background sync queue.
-    async function queue(token, data, url) {
+    async function queue(token, data, url, message) {
         const registration = await navigator.serviceWorker.ready;
         if ('sync' in registration) {
             console.log('Background queueing item: ' + url);
-            await dataStore.addSyncItem(token, data, url);
+            await dataStore.addSyncItem(token, data, url, message);
             await registration.sync.register('background-sync');
         } else {
             // Sync not supported so just try to send normally.
@@ -36,7 +36,7 @@ const backgroundSync = (function () {
             }
             return item;
         })
-        await Promise.all(promises);
+        return await Promise.all(promises);
     }
 
     // Send a request to the server.

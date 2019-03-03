@@ -38,37 +38,37 @@ const repository = (function () {
 
     function addReminder(token, reminder) {
         return dataStore.setReminder(reminder).then(data => {
-            return backgroundSync.queue(token, data, '/api/reminders/add');
+            return backgroundSync.queue(token, data, '/api/reminders/add', 'Add reminder synced');
         });
     }
 
     function editReminder(token, reminder) {
         return dataStore.setReminder(reminder).then(data => {
-            return backgroundSync.queue(token, data, '/api/reminders/edit');
+            return backgroundSync.queue(token, data, '/api/reminders/edit', 'Edit reminder synced');
         });
     }
 
     function deleteReminder(token, id) {
         return dataStore.deleteReminder(id).then(() => {
-            return backgroundSync.queue(token, {}, '/api/reminders/delete/' + id);
+            return backgroundSync.queue(token, {}, '/api/reminders/delete/' + id, 'Delete reminder synced');
         });
     }
 
     function editDistance(token, distance) {
         return dataStore.editDistance(distance).then(() => {
-            return backgroundSync.queue(token, { distance: distance }, '/api/settings/distance');
+            return backgroundSync.queue(token, { distance: distance }, '/api/settings/distance', 'Edit settings synced');
         });
     }
 
     function editLocation(token, latitude, longitude) {
         return dataStore.editLocation(latitude, longitude).then(() => {
-            return backgroundSync.queue(token, { latitude: latitude, longitude: longitude }, '/api/settings/location');
+            return backgroundSync.queue(token, { latitude: latitude, longitude: longitude }, '/api/settings/location', 'Edit settings synced');
         });
     }
 
     function editAtLocation(token, atLocation) {
         return dataStore.editAtLocation(atLocation).then(() => {
-            return backgroundSync.queue(token, { atLocation: atLocation }, '/api/settings/at-location');
+            return backgroundSync.queue(token, { atLocation: atLocation }, '/api/settings/at-location', 'Edit location synced');
         });
     }
 

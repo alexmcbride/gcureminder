@@ -76,10 +76,22 @@ function sendMessageToClient(message, clientId) {
     });
 }
 
+function getSyncMessage(messages) {
+    if (messages.length > 1) {
+        return 'Updates synced with server';
+    } else if (messages.length == 1) {
+        return messages[0];
+    } else {
+        return '';
+    }
+}
+
 self.addEventListener('sync', event => {
     if (event.tag === 'background-sync') {
-        event.waitUntil(backgroundSync.sync().then(() => {
-            return sendMessage('Updates synced with server');
+        event.waitUntil(backgroundSync.sync().then(syncedItems => {
+            const messages = syncedItems.map(item => item.message);
+            const message = getSyncMessage(messages);
+            return sendMessage(message);
         }).catch(console.log));
     }
 });

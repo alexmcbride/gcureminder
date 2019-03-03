@@ -219,9 +219,9 @@ const dataStore = (function () {
         return crypto.getRandomValues(new Uint32Array(4)).join('-');
     }
 
-    function addSyncItem(token, data, url) {
+    function addSyncItem(token, data, url, message) {
         const id = createRandomId();
-        const document = { id: id, url: url, token: token, data: data };
+        const document = { id: id, url: url, token: token, data: data, message: message };
         return setDocument('sync-queue', document, id);
     }
 
