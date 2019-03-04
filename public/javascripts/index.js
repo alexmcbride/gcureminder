@@ -13,10 +13,10 @@
     function getDuration(date, duration) {
         const start = (date.getHours() * 60) + date.getMinutes();
         const end = start + parseInt(duration);
-        const startHours = (start / 60).toFixed(0);
-        const startMinutes = start - startHours * 60;
-        const endHours = (end / 60).toFixed(0);
-        const endMinutes = end - endHours * 60;
+        const startHours = Math.floor(start / 60);
+        const startMinutes = start - (startHours * 60);
+        const endHours = Math.floor(end / 60);
+        const endMinutes = end - (endHours * 60);
         return startHours + ':' + util.padNumber(startMinutes) +
             ' - ' + endHours + ':' + util.padNumber(endMinutes);
     }
