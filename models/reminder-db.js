@@ -21,11 +21,24 @@ class ReminderDb {
         })
     }
 
+    dateChanged(a, b) {
+        const dateA = moment(a.date);
+        const dateB = moment(b.date);
+        return !dateA.isSame(dateB);
+    }
+
     editReminder(token, reminder) {
         return User.authToken(token).then(user => {
             reminder.userId = user._id;
+            return Reminder.findOne({ id: reminder.id }).exec();
+        }).then(document => {
+            // If date changed reset notification flags
+            if (this.dateChanged(document, reminder)) {
+                reminder.longNotification = false;
+                reminder.shortNotification = false;
+            }
             return Reminder.findOneAndUpdate({ id: reminder.id }, reminder).exec();
-        });
+        });;
     }
 
     editLongNotification(reminder, sent) {

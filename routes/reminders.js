@@ -22,8 +22,8 @@ router.post('/add', (req, res, next) => {
     db.addReminder(token, reminder).then(reminder => {
         res.json({ success: true, reminder: reminder });
     }).catch(err => {
-        // todo: clean up errors, as dumping whole obj is a bit weird.
-        res.json({ success: false, error: err.message });
+        console.log(err.message);
+        res.sendStatus(500);
     });
 });
 
@@ -34,7 +34,8 @@ router.post('/edit', (req, res, next) => {
     db.editReminder(token, reminder).then(reminder => {
         res.json({ success: true, reminder: reminder });
     }).catch(err => {
-        res.json({ success: false, error: err });
+        console.log(err.message);
+        res.sendStatus(500);
     });
 });
 
@@ -45,7 +46,8 @@ router.post('/delete/:id', (req, res, next) => {
     db.deleteReminder(token, id).then(() => {
         res.json({ success: true, id: id });
     }).catch(err => {
-        res.json({ success: false, error: err });
+        console.log(err.message);
+        res.sendStatus(500);
     });
 });
 

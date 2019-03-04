@@ -24,18 +24,17 @@ const backgroundSync = (function () {
 
     // Attempt to sync all items in the queue.
     async function sync() {
-        await dataStore.init(); // SW will need the DB initialized.
+        await dataStore.init(); // When called from SW DB might not be initialized.
         const items = await dataStore.getSyncItems();
         const promises = items.map(async item => {
             const response = await postJsonItem(item.token, item.data, item.url);
-            const result = await response.json();
-            if (result.success) {
+            if (response.ok) {
                 await dataStore.deleteSyncItem(item.id);
             } else {
-                throw 'Error: ' + response.error;
+                throw 'Error: response not OK';
             }
             return item;
-        })
+        });
         return await Promise.all(promises);
     }
 
