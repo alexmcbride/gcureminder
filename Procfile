@@ -1,3 +1,3 @@
-web: node app.js
+web: npm start
 worker: node scheduler.js
 clock: node clock.js
