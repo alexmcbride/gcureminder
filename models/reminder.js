@@ -21,18 +21,10 @@ const reminderSchema = new mongoose.Schema({
 });
 
 reminderSchema.statics.createReminder = function (user, reminder) {
-    return new Promise((resolve, reject) => {
-        reminder.userId = user._id;
-        reminder.shortNotification = false;
-        reminder.longNotification = false;
-        this.model('Reminder').create(reminder, (error, user) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(user);
-            }
-        });
-    });
+    reminder.userId = user._id;
+    reminder.shortNotification = false;
+    reminder.longNotification = false;
+    return this.model('Reminder').create(reminder);
 }
 
 const Reminder = mongoose.model('Reminder', reminderSchema);
