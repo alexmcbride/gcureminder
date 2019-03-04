@@ -62,7 +62,7 @@ self.addEventListener('fetch', event => {
     }));
 });
 
-function sendMessage(message) {
+function sendMessageToAll(message) {
     return self.clients.matchAll().then(clients => {
         clients.forEach(client => {
             client.postMessage({ message: message });
@@ -79,10 +79,10 @@ function sendMessageToClient(message, clientId) {
 function getSyncMessage(messages) {
     if (messages.length > 1) {
         return 'Updates synced with server';
-    } else if (messages.length == 1) {
+    } else if (messages.length === 1) {
         return messages[0];
     } else {
-        return '';
+        return 'No message';
     }
 }
 
@@ -91,7 +91,7 @@ self.addEventListener('sync', event => {
         event.waitUntil(backgroundSync.sync().then(syncedItems => {
             const messages = syncedItems.map(item => item.message);
             const message = getSyncMessage(messages);
-            return sendMessage(message);
+            return sendMessageToAll(message);
         }).catch(console.log));
     }
 });

@@ -36,8 +36,12 @@ async function checkShortNotification(reminder, atLocation) {
 
 async function checkReminder(reminder) {
     const user = await User.findById(reminder.userId).exec();
-    await checkLongNotification(reminder);
-    await checkShortNotification(reminder, user.atLocation);
+    if (user == null) {
+        console.log('User not found for reminder: ' + reminder._id);
+    } else {
+        await checkLongNotification(reminder);
+        await checkShortNotification(reminder, user.atLocation);
+    }
 }
 
 function findUpcomingReminders() {
@@ -51,7 +55,7 @@ function findUpcomingReminders() {
 
 async function run() {
     const reminders = await findUpcomingReminders();
-    const promises =  reminders.map(checkReminder);
+    const promises = reminders.map(checkReminder);
     await Promise.all(promises);
 }
 
