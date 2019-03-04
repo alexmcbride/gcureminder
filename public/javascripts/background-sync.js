@@ -1,13 +1,9 @@
 /*
- * Module to handle background sync. Updated are queued in indexed DB. When the sw.js gets a sync 
+ * Module to handle background sync. Updates are queued in indexed DB. When the sw.js gets a sync 
  * event it calls the sync function. This then reads the requested update from the DB and then
  * posts each one. If successful the item is then dequeued.
  */
 const backgroundSync = (function () {
-    function getFutureTime(minutes) {
-        return new Date(new Date().getTime() + (minutes * 1000));
-    }
-
     // Add item to the background sync queue.
     async function queue(token, data, url, message) {
         const registration = await navigator.serviceWorker.ready;
