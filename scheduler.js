@@ -11,7 +11,7 @@ function getReminderText(reminder) {
 function reminderDueWithin(reminder, amount, unit) {
     const reminderDate = moment(reminder.date);
     const endDate = moment().add(amount, unit);
-    return reminderDate.isAfter() && reminderDate.isSameOrBefore(endDate);
+    return reminderDate.isSameOrAfter() && reminderDate.isSameOrBefore(endDate);
 }
 
 async function checkLongNotification(reminder) {
