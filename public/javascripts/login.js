@@ -19,7 +19,9 @@
     }
 
     function showMessage(message) {
-        document.getElementById('login-message').innerHTML = message;
+        const el = document.getElementById('login-message');
+        el.innerHTML = message;
+        el.style.display = 'block';
     }
 
     function onLogin(event) {

@@ -7,6 +7,9 @@ input:invalid {
 #message {
   display: none; }
 
+#login-message {
+  display: none; }
+
 #map {
   height: 400px;
   width: 100%;

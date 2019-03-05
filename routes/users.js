@@ -8,17 +8,20 @@ router.post('/login', (req, res, next) => {
     const username = req.body.username;
     const password = req.body.password;
     User.login(username, password).then(data => {
-        const user = data.user;
-        res.json({
-            success: true,
-            user: {
-                _id: user._id,
-                token: data.token,
-                longitude: user.longitude,
-                latitude: user.latitude,
-                distance: user.distance
-            }
-        });
+        if (data.success) {
+            res.json({
+                success: true,
+                user: {
+                    _id: data.user._id,
+                    token: data.token,
+                    longitude: data.user.longitude,
+                    latitude: data.user.latitude,
+                    distance: data.user.distance
+                }
+            });
+        } else {
+            res.json({ success: false });
+        }
     }).catch(err => {
         console.log(err);
         res.sendStatus(500);

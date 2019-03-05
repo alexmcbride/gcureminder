@@ -74,12 +74,15 @@ userSchema.statics.login = function (username, password) {
                         user.tokens.push(token); // Set session token.
                         user.save().then(() => {
                             resolve({
+                                success: true,
                                 token: token,
                                 user: user
                             });
                         }).catch(reject);
                     } else {
-                        reject('Username or password incorrect');
+                        resolve({
+                            success: false
+                        });
                     }
                 }).catch(reject);
             } else {
@@ -89,6 +92,7 @@ userSchema.statics.login = function (username, password) {
                     defaultUser.tokens.push(token); // Set session token.
                     this.model('User').create(defaultUser).then(user => {
                         resolve({
+                            success: true,
                             token: token,
                             user: user
                         });
