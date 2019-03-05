@@ -1,4 +1,5 @@
 const moment = require('moment');
+const mongoose = require('mongoose');
 const User = require('./models/user');
 const Reminder = require('./models/reminder');
 const notifications = require('./models/notifications');
@@ -17,7 +18,9 @@ function reminderDueWithin(reminder, amount, unit) {
 async function checkLongNotification(reminder) {
     if (!reminder.longNotification) {
         if (reminderDueWithin(reminder, 1, 'hour')) {
-            await notifications.send(reminder.userId, getReminderText(reminder));
+            const text = getReminderText(reminder);
+            console.log('Sending reminder: ' + text + ' to user ' + reminder.userId);
+            await notifications.send(reminder.userId, text);
             reminder.longNotification = true;
             await reminder.save();
         }
@@ -54,11 +57,18 @@ function findUpcomingReminders() {
 }
 
 async function run() {
-    const reminders = await findUpcomingReminders();
-    const promises = reminders.map(checkReminder);
-    await Promise.all(promises);
+    try {
+        mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
+        const db = mongoose.connection;
+        db.on('error', console.error.bind(console, 'Connection error:'));
+
+        console.log('Checking reminders...');
+        const reminders = await findUpcomingReminders();
+        const promises = reminders.map(checkReminder);
+        await Promise.all(promises);
+    } catch (err) {
+        console.log(err);
+    }
 }
 
-module.exports = {
-    run: run
-};
+run();
