@@ -59,8 +59,10 @@ async function run() {
     const time = moment().format('HH:mm');
     console.log(time + ' - checking reminders...');
     const reminders = await findUpcomingReminders();
-    const promises = reminders.map(checkReminder);
-    await Promise.all(promises);
+    if (reminders.length > 0) {
+        const promises = reminders.map(checkReminder);
+        await Promise.all(promises);
+    }
 }
 
 module.exports = {
