@@ -60,6 +60,9 @@ footer {
 body {
   background-color: #fffcff; }
 
+#testing {
+  display: none; }
+
 @media only screen and (min-width: 992px) {
   .sidebar {
     border-right: 1px solid #eee; } }
