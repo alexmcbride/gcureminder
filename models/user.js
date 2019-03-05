@@ -65,43 +65,54 @@ function createUser(username, hash) {
 }
 
 userSchema.statics.login = function (username, password) {
-    return new Promise((resolve, reject) => {
-        this.model('User').findOne({ username: username }).exec().then(user => {
-            if (user) {
-                comparePassword(password, user.password).then(success => {
-                    if (success) {
-                        const token = uuid();
-                        user.tokens.push(token); // Set session token.
-                        user.save().then(() => {
-                            resolve({
-                                success: true,
-                                token: token,
-                                user: user
-                            });
-                        }).catch(reject);
-                    } else {
-                        resolve({
-                            success: false
-                        });
-                    }
-                }).catch(reject);
-            } else {
-                hashPassword(password).then(hash => {
-                    const defaultUser = createUser(username, hash);
-                    const token = uuid();
-                    defaultUser.tokens.push(token); // Set session token.
-                    this.model('User').create(defaultUser).then(user => {
-                        resolve({
-                            success: true,
-                            token: token,
-                            user: user
-                        });
-                    });
-                }).catch(reject)
-            }
-        });
+    return this.model('User').findOne({ username: username }).exec().then(user => {
+        if (user) {
+            return handleExistingUser(this, password, user);
+        } else {
+            return handleNewUser(this, password, username);
+        }
     });
 };
+
+function handleNewUser(schema, password, username) {
+    return new Promise((resolve, reject) => {
+        hashPassword(password).then(hash => {
+            const defaultUser = createUser(username, hash);
+            const token = uuid();
+            defaultUser.tokens.push(token); // Set session token.
+            schema.model('User').create(defaultUser).then(user => {
+                resolve({
+                    success: true,
+                    token: token,
+                    user: user
+                });
+            });
+        }).catch(reject);
+    });
+}
+
+function handleExistingUser(schema, password, user) {
+    return new Promise((resolve, reject) => {
+        comparePassword(password, user.password).then(success => {
+            if (success) {
+                const token = uuid();
+                user.tokens.push(token); // Set session token.
+                user.save().then(() => {
+                    resolve({
+                        success: true,
+                        token: token,
+                        user: user
+                    });
+                }).catch(reject);
+            }
+            else {
+                resolve({
+                    success: false
+                });
+            }
+        }).catch(reject);
+    });
+}
 
 userSchema.statics.findByToken = function (token) {
     return this.model('User').findOne({ tokens: token }).exec();
