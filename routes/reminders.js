@@ -1,5 +1,6 @@
 const express = require('express');
 const ReminderDb = require('../models/reminder-db');
+const scheduler = require('../models/scheduler');
 
 const db = new ReminderDb();
 const router = express.Router();
@@ -61,6 +62,15 @@ router.get('/:token/:id', (req, res, next) => {
             console.log(err);
             res.sendStatus(500);
         });
+});
+
+router.get('/check', (req, res) => {
+    scheduler.run().then(() => {
+        res.sendStatus(200);
+    }).catch(error => {
+        console.log(error);
+        res.sendStatus(500);
+    });
 });
 
 module.exports = router;

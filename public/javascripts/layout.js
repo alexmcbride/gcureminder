@@ -7,7 +7,7 @@ const layout = (function () {
         });
 
         document.getElementById('check-reminders').addEventListener('click', event => {
-            fetch('/api/notifications/check-reminders').then(() => {
+            fetch('/api/reminders/check').then(() => {
                 console.log('Request check reminders');
             });
         });
