@@ -31,6 +31,8 @@ async function checkShortNotification(reminder, atLocation) {
         if (reminderDueWithin(reminder, 5, 'minutes') && atLocation) {
             await notifications.send(reminder.userId, getReminderText(reminder));
             reminder.shortNotification = true;
+            // If short notification sent no point sending long one.
+            reminder.longNotification = true;
             await reminder.save();
         }
     }
@@ -41,8 +43,8 @@ async function checkReminder(reminder) {
     if (user == null) {
         console.log('User not found for reminder: ' + reminder._id);
     } else {
-        await checkLongNotification(reminder);
         await checkShortNotification(reminder, user.atLocation);
+        await checkLongNotification(reminder);
     }
 }
 
