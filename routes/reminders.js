@@ -73,4 +73,13 @@ router.get('/check', (req, res) => {
     });
 });
 
+router.get('/check123', (req, res) => {
+    scheduler.run().then(() => {
+        res.sendStatus(200);
+    }).catch(error => {
+        console.log(error);
+        res.sendStatus(500);
+    });
+});
+
 module.exports = router;
