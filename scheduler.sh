@@ -1,1 +1,1 @@
-wget -q http://127.0.0.1:3000/api/reminders/check123
+curl http://127.0.0.1:3000/api/reminders/check
