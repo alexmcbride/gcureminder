@@ -5,7 +5,7 @@ const util = (function () {
     /* 
      * Called on each page to start the website, initializes the service worker, initializes the database, and then 
      * subscribes to push notifications.
-     */ 
+     */
     function start() {
         return documentLoaded()
             .then(initServiceWorker)
@@ -39,12 +39,18 @@ const util = (function () {
             if (user != null && !user.subscription) {
                 notifications.subscribe(user);
             }
+
+            // Message sent from service worker.
+            navigator.serviceWorker.addEventListener('message', event => {
+                console.log('SW message: ' + event.data.message);
+                util.showMessage(event.data.message);
+            });
         });
     }
 
     function showMessage(message) {
         const el = document.getElementById('message');
-        el.innerHTML = '<div class="alert alert-success">' + message +'</div>';
+        el.innerHTML = '<div class="alert alert-success">' + message + '</div>';
         el.style.display = 'block';
     };
 

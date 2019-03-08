@@ -19,7 +19,6 @@ const URLS_TO_CACHE = [
     '/javascripts/location-handler.js',
     '/javascripts/notifications.js',
     '/javascripts/background-sync.js',
-    '/javascripts/layout.js',
 
     '/images/delete-ic.png',
     '/images/edit-ic.png',

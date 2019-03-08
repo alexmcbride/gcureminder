@@ -11,10 +11,5 @@ const layout = (function () {
                 console.log('Request check reminders');
             });
         });
-
-        navigator.serviceWorker.addEventListener('message', event => {
-            console.log('SW message: ' + event.data.message);
-            util.showMessage(event.data.message);
-        });
     });
 }());
