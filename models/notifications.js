@@ -18,6 +18,7 @@ function removeSubscription(user, subscription) {
 }
 
 function send(userId, payload) {
+    payload = JSON.stringify(payload);
     return db.getUserFromId(userId).then(user => {
         if (user) {
             const promises = user.subscriptions.map(subscription => {

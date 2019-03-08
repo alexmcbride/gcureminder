@@ -20,7 +20,7 @@ router.post('/register', (req, res) => {
 
 router.post('/test', (req, res) => {
     const userId = req.body.userId;
-    notifications.send(userId, 'Sent from the server!').then(() => {
+    notifications.send(userId, { title: 'Test', text: 'Sent from the server!' }).then(() => {
         res.sendStatus(201);
     }).catch(error => {
         console.log(error);
