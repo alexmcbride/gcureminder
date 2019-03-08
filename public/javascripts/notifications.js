@@ -64,9 +64,9 @@ const notifications = (function () {
         }).then(subscribe);
     }
 
-    function show(event) {
-        return self.registration.showNotification('GCU Reminder', {
-            body: event.data.text()
+    function show(title, body) {
+        return self.registration.showNotification(title, {
+            body: body
         });
     }
 

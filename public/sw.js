@@ -97,7 +97,8 @@ self.addEventListener('sync', event => {
 });
 
 self.addEventListener('push', event => {
-    event.waitUntil(notifications.show(event));
+    const data = event.data.json();
+    event.waitUntil(notifications.show(data.title, data.text));
 });
 
 importScripts('/javascripts/util.js');

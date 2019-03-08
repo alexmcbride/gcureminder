@@ -5,7 +5,10 @@ const notifications = require('./notifications');
 
 function getReminderText(reminder) {
     const timeStr = moment(reminder.date).format('HH:mm');
-    return reminder.title + ' (' + reminder.type + ') at ' + timeStr + ' in ' + reminder.room;
+    return {
+        title: reminder.title,
+        text: reminder.type + ' ' + timeStr + ' ' + reminder.room
+    };
 }
 
 function reminderDueWithin(reminder, amount, unit) {
@@ -17,9 +20,8 @@ function reminderDueWithin(reminder, amount, unit) {
 async function checkLongNotification(reminder) {
     if (!reminder.longNotification) {
         if (reminderDueWithin(reminder, 1, 'hour')) {
-            const text = getReminderText(reminder);
-            console.log('Sending reminder: ' + text + ' to user ' + reminder.userId);
-            await notifications.send(reminder.userId, text);
+            const payload = getReminderText(reminder);
+            await notifications.send(reminder.userId, payload);
             reminder.longNotification = true;
             await reminder.save();
         }
