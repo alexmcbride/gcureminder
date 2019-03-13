@@ -68,7 +68,7 @@ const repository = (function () {
 
     function editAtLocation(token, atLocation) {
         return dataStore.editAtLocation(atLocation).then(() => {
-            return backgroundSync.queue(token, { atLocation: atLocation }, '/api/settings/at-location', 'Edit location synced');
+            return backgroundSync.queue(token, { atLocation: atLocation }, '/api/settings/at-location', 'Location synced');
         });
     }
 
