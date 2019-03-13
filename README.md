@@ -25,3 +25,13 @@ The app uses the following libraries (all on the backend).
 * [Mongoose.js for mongo DB support](https://github.com/Automattic/mongoose)
 * [WebPush for push notifications](https://github.com/web-push-libs/web-push)
 * [node-uuid for generating unique identifiers](https://github.com/kelektiv/node-uuid)
+
+To run the site locally you need to add some environment variables to your ~/.bashrc file:
+
+```
+export MONGODB_URI='mongodb://localhost/gcuminder'
+export VAPID_PUBLIC_KEY="<PUBLIC KEY>"
+export VAPID_PRIVATE_KEY="<PRIVATE KEY>"
+```
+  
+Find out more about vapid keys, needed for push notifications, [here](https://github.com/web-push-libs/web-push).
