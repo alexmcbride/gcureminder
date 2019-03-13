@@ -4,6 +4,8 @@
  * send.
  */
 const locationManager = (function () {
+    let currentUser = null;
+
     // c/o: https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
     function getDistanceFromLatLonInMetres(lat1, lon1, lat2, lon2) {
         function deg2rad(deg) {
@@ -18,20 +20,14 @@ const locationManager = (function () {
         return d * 1000; // Convert to metres
     }
 
-    function locationUpdate(pos) {
+    async function locationUpdate(pos) {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
-        dataStore.init().then(() => {
-            dataStore.getUser().then(async user => {
-                if (user) {
-                    const distance = getDistanceFromLatLonInMetres(lat, lon, user.latitude, user.longitude);
-                    const atLocation = user.distance > distance;
-                    if (user.atLocation !== atLocation) {
-                        await repository.editAtLocation(user.token, atLocation);
-                    }
-                }
-            });
-        });
+        const distance = getDistanceFromLatLonInMetres(lat, lon, currentUser.latitude, currentUser.longitude);
+        const atLocation = currentUser.distance > distance;
+        if (currentUser.atLocation !== atLocation) {
+            await repository.editAtLocation(currentUser.token, atLocation);
+        }
     }
 
     function locationError(err) {
@@ -39,10 +35,17 @@ const locationManager = (function () {
     }
 
     function startLocationUpdates() {
-        navigator.geolocation.watchPosition(locationUpdate, locationError, {
-            enableHighAccuracy: false,
-            timeout: 5000,
-            maximumAge: 0
+        dataStore.init().then(() => {
+            return dataStore.getUser();
+        }).then(user => {
+            if (user) {
+                currentUser = user;
+                navigator.geolocation.watchPosition(locationUpdate, locationError, {
+                    enableHighAccuracy: false,
+                    timeout: 5000,
+                    maximumAge: 0
+                });
+            }
         });
     }
 
