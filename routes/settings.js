@@ -1,5 +1,6 @@
 const express = require('express');
 const ReminderDb = require('../models/reminder-db');
+const formidable = require('formidable');
 
 const router = express.Router();
 const db = new ReminderDb();
@@ -31,5 +32,32 @@ router.post('/at-location', (req, res, next) => {
     const data = req.body.data;
     saveSettings(req, res, { atLocation: data.atLocation });
 });
+
+/* POST upload ical */
+router.post('/upload', (req, res) => {
+    const form = new formidable.IncomingForm();
+    form.uploadDir = '/tmp/';
+    form.encoding = 'utf-8';
+    form.keepExtensions = true;
+
+    form.parse(req, (error, fields, files) => {
+        if (error) {
+            console.log(error);
+            res.sendStatus(500);
+        } else {
+            console.log('File uploaded: ' + files.upload.path);
+            db.importCalendar(fields.token, files.upload).then(addedCount => {
+                res.statusCode = 201;
+                res.status(201).json({
+                    addedCount: addedCount
+                });
+            }).catch(error => {
+                console.log(error);
+                res.sendStatus(500);
+            });
+        }
+    })
+});
+
 
 module.exports = router;

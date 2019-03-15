@@ -84,7 +84,8 @@ const settings = (function () {
         if (file) {
             const tokens = file.split('\\');
             if (tokens.length > 0) {
-                updateUploadLabel(tokens[tokens.length - 1]);
+                const name = tokens[tokens.length - 1];
+                updateUploadLabel(name);
             }
         }
     }
@@ -98,7 +99,7 @@ const settings = (function () {
 
         // Using FormData with Fetch API is a pain, so we fallback to XHR.
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/api/reminders/upload');
+        xhr.open('POST', '/api/settings/upload');
         xhr.onreadystatechange = () => {
             if (xhr.readyState === 4) {
                 if (xhr.status === 201) {
