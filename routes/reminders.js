@@ -1,7 +1,6 @@
 const express = require('express');
 const ReminderDb = require('../models/reminder-db');
 const scheduler = require('../models/scheduler');
-const ical = require('ical');
 const formidable = require('formidable')
 
 const db = new ReminderDb();
@@ -81,22 +80,20 @@ router.post('/upload', (req, res) => {
     form.encoding = 'utf-8';
     form.keepExtensions = true;
 
-    form.parse(req, (err, fields, files) => {
-        console.log('File: ' + files.upload.name);
-        console.log('Path: ' + files.upload.path);
-
-        const data = ical.parseFile(files.upload.path);
-        for (let k in data) {
-            if (data.hasOwnProperty(k)) {
-                let ev = data[k];
-                if (ev.type == 'VEVENT') {
-                    console.log(`${ev.summary} is in ${ev.location} on the ${ev.start.getDate()} at ${ev.start.toLocaleTimeString('en-GB')}`);
-                }
-            }
+    form.parse(req, (error, fields, files) => {
+        if (error) {
+            console.log(error);
+            res.sendStatus(500);
+        } else {
+            console.log('File uploaded: ' + files.upload.path);
+            db.importCalendar(fields.token, files.upload).then(() => {
+                res.redirect('/settings');
+            }).catch(error => {
+                console.log(error);
+                res.sendStatus(500);
+            });;
         }
-    });
-
-    res.redirect('/settings');
+    })
 });
 
 module.exports = router;

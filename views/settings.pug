@@ -18,6 +18,7 @@ block content
     p Import iCal calendar file
     div.input-group
       div.custom-file
+        input#token(type='hidden', name='token')
         input.custom-file-input#upload(type="file", name="upload", aria-describedby="inputGroupFileAddon01")
         label.custom-file-label(for="upload") Choose file  
     button.btn.btn-secondary.upload-button(type='submit') Upload        

@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const Reminder = require('../models/reminder');
 const moment = require('moment');
+const ical = require('ical');
 
 class ReminderDb {
     getAllReminders(token) {
@@ -82,6 +83,56 @@ class ReminderDb {
 
     editUser(token, data) {
         return User.updateOne({ tokens: token }, data).exec();
+    }
+
+    importCalendar(token, file) {
+        // GCU ical has: Cloud Platform Development\; Lecture
+        function parseTitle(summary) {
+            const tokens = summary.split(';')
+            if (tokens.length == 2) {
+                return tokens[0].trim();
+            }
+            return summary;
+        }
+
+        function parseType(summary) {
+            const tokens = summary.split(';')
+            if (tokens.length == 2) {
+                return tokens[1].trim();;
+            }
+            return 'Other';
+        }
+
+        function parseDuration(start, endDate) {
+            const end = moment(endDate);
+            const duration = moment.duration(end.diff(start));
+            return duration.asMinutes();
+        }
+
+        return User.authToken(token).then(user => {
+            const data = ical.parseFile(file.path);
+            const promises = [];
+            for (let k in data) {
+                if (data.hasOwnProperty(k)) {
+                    let ev = data[k];
+                    const start = moment(ev.start);
+                    if (ev.type == 'VEVENT' && start.isAfter()) {
+                        const reminder = {
+                            id: ev.uid,
+                            title: parseTitle(ev.summary),
+                            type: parseType(ev.summary),
+                            room: ev.location,
+                            date: ev.start,
+                            duration: parseDuration(start, ev.end)
+                        };
+                        const promise = Reminder.createReminder(user, reminder);
+                        promises.push(promise)
+                        // console.log(`${ev.summary} is in ${ev.location} on the ${ev.start.getDate()} at ${ev.start.toLocaleTimeString('en-GB')}`);
+                    }
+                }
+            }
+            return Promise.all(promises);
+        });
     }
 }
 

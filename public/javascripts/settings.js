@@ -82,6 +82,7 @@ const settings = (function () {
                 document.getElementById('distance').value = user.distance;
                 document.getElementById('distance').addEventListener('change', onDistanceChanged);
                 document.getElementById('logout').addEventListener('click', onLogout);
+                document.getElementById('token').value = user.token;
             } else {
                 location.href = '/login';
             }
