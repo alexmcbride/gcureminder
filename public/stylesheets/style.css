@@ -53,6 +53,9 @@ input:invalid {
 .content .reminder-tabs {
   margin-bottom: 10px; }
 
+.content .upload-button {
+  margin-top: 5px; }
+
 footer {
   margin-top: 20px;
   margin-bottom: 20px; }

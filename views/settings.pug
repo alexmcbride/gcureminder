@@ -5,15 +5,25 @@ block script
 
 block content
   h2 Settings
-  label Drag the marker to your location
-  span.metadata-marker(style="display: none;", data-region_tag="html-body")
-  div#map  
-  br
-  div.form-group
-    label(for='distance') Set location distance (metres)
-    input.form-control(type='number', id='distance', min='50', max='2000', step='50')
+  form
+    label Drag the marker to your location
+    span.metadata-marker(style="display: none;", data-region_tag="html-body")
+    div#map  
+    br
+    div.form-group
+      label(for='distance') Set location distance (metres)
+      input.form-control#distance(type='number', min='50', max='2000', step='50')
   hr
-  div
-    p You can logout from the site
-    button.btn.btn-secondary(type='button', id='logout') Logout
+  form#upload-form(method='post', action='api/reminders/upload', encType='multipart/form-data')
+    p Import iCal calendar file
+    div.input-group
+      div.custom-file
+        input.custom-file-input#upload(type="file", name="upload", aria-describedby="inputGroupFileAddon01")
+        label.custom-file-label(for="upload") Choose file  
+    button.btn.btn-secondary.upload-button(type='submit') Upload        
+  hr
+  form
+    div
+      p You can logout from the site
+      button.btn.btn-secondary(type='button', id='logout') Logout
   script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDzVCYK2MsEz7ee_bz92qe-ahpD93iewQI&callback=initMap" async defer)    

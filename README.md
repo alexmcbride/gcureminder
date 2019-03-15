@@ -35,3 +35,5 @@ export VAPID_PRIVATE_KEY="<PRIVATE KEY>"
 ```
   
 Find out more about vapid keys, needed for push notifications, [here](https://github.com/web-push-libs/web-push).
+
+Note iCal needs to be cloned and installed from the folder, as the version published on NPM is years out of date.
