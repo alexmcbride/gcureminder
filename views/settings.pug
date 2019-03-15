@@ -14,13 +14,12 @@ block content
       label(for='distance') Set location distance (metres)
       input.form-control#distance(type='number', min='50', max='2000', step='50')
   hr
-  form#upload-form(method='post', action='api/reminders/upload', encType='multipart/form-data')
+  form#upload-form(method='post', encType='multipart/form-data')
     p Import iCal calendar file
     div.input-group
       div.custom-file
-        input#token(type='hidden', name='token')
         input.custom-file-input#upload(type="file", name="upload", aria-describedby="inputGroupFileAddon01")
-        label.custom-file-label(for="upload") Choose file  
+        label.custom-file-label#upload-label(for="upload") Choose file  
     button.btn.btn-secondary.upload-button(type='submit') Upload        
   hr
   form

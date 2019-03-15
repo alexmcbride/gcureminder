@@ -109,7 +109,7 @@ class ReminderDb {
             return duration.asMinutes();
         }
 
-        return User.authToken(token).then(user => {
+        return User.authToken(token).then(async user => {
             const data = ical.parseFile(file.path);
             const promises = [];
             for (let k in data) {
@@ -131,7 +131,8 @@ class ReminderDb {
                     }
                 }
             }
-            return Promise.all(promises);
+            await Promise.all(promises);
+            return promises.length;
         });
     }
 }

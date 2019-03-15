@@ -75,6 +75,45 @@ const settings = (function () {
         });
     }
 
+    function updateUploadLabel(text) {
+        document.getElementById('upload-label').innerHTML = text;
+    }
+
+    function onFileUploadChange(event) {
+        const file = event.currentTarget.value;
+        if (file) {
+            const tokens = file.split('\\');
+            if (tokens.length > 0) {
+                updateUploadLabel(tokens[tokens.length - 1]);
+            }
+        }
+    }
+
+    function onFileUploadSubmit(event) {
+        event.preventDefault();
+
+        // We use a form data object to upload our file.
+        const formData = new FormData(event.currentTarget);
+        formData.append('token', currentUser.token); // make sure we're authed
+
+        // Using FormData with Fetch API is a pain, so we fallback to XHR.
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/reminders/upload');
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 201) {
+                    console.log('File uploaded: ' + xhr.responseText);
+                    const response = JSON.parse(xhr.responseText);
+                    util.showMessage('Imported ' + response.addedCount + ' reminders');
+                    updateUploadLabel('Choose File');
+                } else {
+                    console.log('Status: ' + xhr.status);
+                }
+            }
+        };
+        xhr.send(formData);
+    }
+
     function onPageLoaded() {
         loadCurrentUser().then(user => {
             if (user) {
@@ -82,7 +121,8 @@ const settings = (function () {
                 document.getElementById('distance').value = user.distance;
                 document.getElementById('distance').addEventListener('change', onDistanceChanged);
                 document.getElementById('logout').addEventListener('click', onLogout);
-                document.getElementById('token').value = user.token;
+                document.getElementById('upload-form').addEventListener('submit', onFileUploadSubmit);
+                document.getElementById('upload').addEventListener('change', onFileUploadChange);
             } else {
                 location.href = '/login';
             }
