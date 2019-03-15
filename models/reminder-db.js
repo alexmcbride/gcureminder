@@ -86,7 +86,7 @@ class ReminderDb {
     }
 
     importCalendar(token, file) {
-        // GCU ical has: Cloud Platform Development\; Lecture
+        // Get title from summary.
         function parseTitle(summary) {
             const tokens = summary.split(';')
             if (tokens.length == 2) {
@@ -95,6 +95,7 @@ class ReminderDb {
             return summary;
         }
 
+        // Get type from summary.
         function parseType(summary) {
             const tokens = summary.split(';')
             if (tokens.length == 2) {
@@ -103,6 +104,7 @@ class ReminderDb {
             return 'Other';
         }
 
+        // We store duration as minutes.
         function parseDuration(start, endDate) {
             const end = moment(endDate);
             const duration = moment.duration(end.diff(start));
@@ -127,12 +129,11 @@ class ReminderDb {
                         };
                         const promise = Reminder.createReminder(user, reminder);
                         promises.push(promise)
-                        // console.log(`${ev.summary} is in ${ev.location} on the ${ev.start.getDate()} at ${ev.start.toLocaleTimeString('en-GB')}`);
                     }
                 }
             }
             await Promise.all(promises);
-            return promises.length;
+            return promises.length; // Return added count
         });
     }
 }
