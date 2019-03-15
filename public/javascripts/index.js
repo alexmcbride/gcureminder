@@ -21,6 +21,14 @@
             ' - ' + endHours + ':' + util.padNumber(endMinutes);
     }
 
+    function getRoom(room) {
+        const max = 10;
+        if (room.length > max) {
+            return room.substring(0, max) + "...";
+        }
+        return room;
+    }
+
     function getReminderHtml(reminder) {
         let html = '<h3>' + reminder.title + '</h3>';
         html += '<div class="row">';
@@ -33,8 +41,8 @@
         html += '<div class="col-sm">';
         html += getDuration(reminder.dateObj, reminder.duration);
         html += '</div>';
-        html += '<div class="col-sm">';
-        html += reminder.room;
+        html += '<div class="col-sm" title="' + reminder.room + '">';
+        html += getRoom(reminder.room);
         html += '</div>';
         html += '<div class="col text-right">';
         html += ' <a href="/reminder#edit/' + reminder.id + '" class="edit-link">';
