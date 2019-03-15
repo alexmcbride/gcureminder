@@ -97,22 +97,15 @@ const settings = (function () {
         const formData = new FormData(event.currentTarget);
         formData.append('token', currentUser.token); // make sure we're authed
 
-        // Using FormData with Fetch API is a pain, so we fallback to XHR.
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/api/settings/upload');
-        xhr.onreadystatechange = () => {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 201) {
-                    console.log('File uploaded: ' + xhr.responseText);
-                    const response = JSON.parse(xhr.responseText);
-                    util.showMessage('Imported ' + response.addedCount + ' reminders');
-                    updateUploadLabel('Choose File');
-                } else {
-                    console.log('Status: ' + xhr.status);
-                }
-            }
-        };
-        xhr.send(formData);
+        return fetch('/api/settings/upload', {
+            method: 'POST',
+            body: formData,
+        }).then(response => {
+            return response.json();
+        }).then(response => {
+            util.showMessage('Imported ' + response.addedCount + ' reminders');
+            updateUploadLabel('Choose file');
+        }).catch(console.log);
     }
 
     function onPageLoaded() {
