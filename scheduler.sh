@@ -1,1 +1,1 @@
-curl -s http://127.0.0.1:3000/api/reminders/check/$CHECK_REMINDER_TOKEN
+curl -s "http://127.0.0.1:3000/api/reminders/check/${CHECK_REMINDER_TOKEN}"
