@@ -32,8 +32,11 @@ To run the site locally you need to add some environment variables to your ~/.ba
 export MONGODB_URI='mongodb://localhost/gcuminder'
 export VAPID_PUBLIC_KEY="<PUBLIC KEY>"
 export VAPID_PRIVATE_KEY="<PRIVATE KEY>"
+export CHECK_REMINDER_TOKEN="<SECRET KEY>"
 ```
-  
+
+The CHECK_REMINDER_TOKEN env variable needs to go in the cron job as well, as it has its own list of environment variables.
+
 Find out more about vapid keys, needed for push notifications, [here](https://github.com/web-push-libs/web-push).
 
 Note iCal needs to be cloned and installed from the folder, as the version published on NPM is years out of date.
