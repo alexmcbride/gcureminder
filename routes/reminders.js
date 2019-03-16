@@ -52,6 +52,20 @@ router.post('/delete/:id', (req, res, next) => {
     });
 });
 
+router.get('/check/:token', (req, res) => {
+    const token = req.params.token;
+    if (process.env.CHECK_REMINDER_TOKEN == token) {
+        scheduler.run().then(() => {
+            res.sendStatus(200);
+        }).catch(error => {
+            console.log(error);
+            res.sendStatus(500);
+        });
+    } else {
+        console.log('Check reminder token does not match');
+    }
+});
+
 /* GET get single reminder as JSON */
 router.get('/:token/:id', (req, res, next) => {
     const id = req.params.id;
@@ -62,15 +76,6 @@ router.get('/:token/:id', (req, res, next) => {
             console.log(err);
             res.sendStatus(500);
         });
-});
-
-router.get('/check', (req, res) => {
-    scheduler.run().then(() => {
-        res.sendStatus(200);
-    }).catch(error => {
-        console.log(error);
-        res.sendStatus(500);
-    });
 });
 
 module.exports = router;
