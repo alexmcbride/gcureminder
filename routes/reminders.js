@@ -63,6 +63,7 @@ router.get('/check/:token', (req, res) => {
         });
     } else {
         console.log('Check reminder token does not match');
+        res.sendStatus(401);
     }
 });
 
