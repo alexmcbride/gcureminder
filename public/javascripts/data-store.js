@@ -201,13 +201,18 @@ const dataStore = (function () {
     }
 
     function setReminder(reminder) {
-        // Add any missing properties if needed
+        // As we don't get an _id until mongo DB inserts the document, we create our own 
+        // ID as we need to be able to reference a reminder before its synced with the backend.
+        // Therefore it's easier just to use our own reminder for this stuff.
         if (reminder.id === undefined) {
             reminder.id = createRandomId();
         }
+
+        // For convience we add a proper date object, which makes date operations simpler.
         if (reminder.dateObj === undefined) {
             reminder.dateObj = new Date(reminder.date);
         }
+
         return setDocument('reminders', reminder, reminder.id);
     }
 

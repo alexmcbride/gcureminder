@@ -46,11 +46,9 @@ router.post('/upload', (req, res) => {
             res.sendStatus(500);
         } else {
             console.log('File uploaded: ' + files.upload.path);
-            db.importCalendar(fields.token, files.upload).then(addedCount => {
+            db.importCalendar(fields.token, files.upload).then(reminders => {
                 res.statusCode = 201;
-                res.status(201).json({
-                    addedCount: addedCount
-                });
+                res.status(201).json(reminders);
             }).catch(error => {
                 console.log(error);
                 res.sendStatus(500);

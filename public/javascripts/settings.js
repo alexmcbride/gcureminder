@@ -102,9 +102,12 @@ const settings = (function () {
             body: formData,
         }).then(response => {
             return response.json();
-        }).then(response => {
-            util.showMessage('Imported ' + response.addedCount + ' reminders');
-            updateUploadLabel('Choose file');
+        }).then(reminders => {
+            repository.addReminders(reminders).then(reminders => {
+                console.log('Import completed successfully');
+                util.showMessage('Imported ' + reminders.length + ' reminders');
+                updateUploadLabel('Choose file');
+            });
         }).catch(console.log);
     }
 

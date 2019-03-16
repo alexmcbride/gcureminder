@@ -132,8 +132,7 @@ class ReminderDb {
                     }
                 }
             }
-            await Promise.all(promises);
-            return promises.length; // Return added count
+            return await Promise.all(promises);
         });
     }
 }

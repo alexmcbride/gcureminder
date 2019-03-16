@@ -42,6 +42,10 @@ const repository = (function () {
         });
     }
 
+    function addReminders(reminders) {
+        return Promise.all(reminders.map(dataStore.setReminder));
+    }
+
     function editReminder(token, reminder) {
         return dataStore.setReminder(reminder).then(data => {
             return backgroundSync.queue(token, data, '/api/reminders/edit', 'Edit reminder synced');
@@ -77,9 +81,11 @@ const repository = (function () {
         getReminder: getReminder,
         editReminder: editReminder,
         addReminder: addReminder,
+        addReminders: addReminders,
         deleteReminder: deleteReminder,
         editDistance: editDistance,
         editLocation: editLocation,
         editAtLocation: editAtLocation
     }
 }());
+
