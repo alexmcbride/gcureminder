@@ -39,7 +39,6 @@ router.post('/upload', (req, res) => {
     form.uploadDir = '/tmp/';
     form.encoding = 'utf-8';
     form.keepExtensions = true;
-
     form.parse(req, (error, fields, files) => {
         if (error) {
             console.log(error);
@@ -47,7 +46,6 @@ router.post('/upload', (req, res) => {
         } else {
             console.log('File uploaded: ' + files.upload.path);
             db.importCalendar(fields.token, files.upload).then(reminders => {
-                res.statusCode = 201;
                 res.status(201).json(reminders);
             }).catch(error => {
                 console.log(error);
