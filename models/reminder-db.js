@@ -104,7 +104,7 @@ class ReminderDb {
             return 'Other';
         }
 
-        // We store duration as minutes.
+        // Convert start/end times to minutes.
         function parseDuration(start, endDate) {
             const end = moment(endDate);
             const duration = moment.duration(end.diff(start));
@@ -112,26 +112,30 @@ class ReminderDb {
         }
 
         return User.authToken(token).then(async user => {
+            // Parse ical file using library. The NPM package for this module is years out of 
+            // date, so need to import git repo from local file system.
             const data = ical.parseFile(file.path);
             const promises = [];
             for (let k in data) {
                 if (data.hasOwnProperty(k)) {
-                    let ev = data[k];
-                    const start = moment(ev.start);
-                    if (ev.type == 'VEVENT' && start.isAfter()) {
+                    const eventValue = data[k];
+                    const start = moment(eventValue.start);
+                    // Check this is an event and not in the past.
+                    if (eventValue.type == 'VEVENT' && start.isAfter()) {
                         const reminder = {
-                            id: ev.uid,
-                            title: parseTitle(ev.summary),
-                            type: parseType(ev.summary),
-                            room: ev.location,
-                            date: ev.start,
-                            duration: parseDuration(start, ev.end)
+                            id: eventValue.uid,
+                            title: parseTitle(eventValue.summary),
+                            type: parseType(eventValue.summary),
+                            room: eventValue.location,
+                            date: eventValue.start,
+                            duration: parseDuration(start, eventValue.end)
                         };
-                        const promise = Reminder.createReminder(user, reminder);
-                        promises.push(promise)
+                        promises.push(Reminder.createReminder(user, reminder));
                     }
                 }
             }
+
+            // Return array of imported promises.
             return await Promise.all(promises);
         });
     }
