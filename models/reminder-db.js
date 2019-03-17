@@ -32,9 +32,9 @@ class ReminderDb {
         return User.authToken(token).then(user => {
             reminder.userId = user._id;
             return Reminder.findOne({ id: reminder.id }).exec();
-        }).then(document => {
+        }).then(existingReminder => {
             // If date changed reset notification flags
-            if (this.dateChanged(document, reminder)) {
+            if (this.dateChanged(existingReminder, reminder)) {
                 reminder.longNotification = false;
                 reminder.shortNotification = false;
             }
@@ -51,13 +51,9 @@ class ReminderDb {
     }
 
     deleteReminder(token, id) {
-        return User.authToken(token).then(user => {
+        return User.authToken(token).then(() => {
             return Reminder.findOneAndDelete({ id: id }).exec();
         });
-    }
-
-    editNotified(reminder, notified) {
-        return Reminder.findByIdAndUpdate(reminder._id, { notified: notified }).exec();
     }
 
     saveSettings(token, data) {

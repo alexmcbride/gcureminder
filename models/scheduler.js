@@ -18,25 +18,20 @@ function reminderDueWithin(reminder, amount, unit) {
 }
 
 async function checkLongNotification(reminder) {
-    if (!reminder.longNotification) {
-        if (reminderDueWithin(reminder, 1, 'hour')) {
-            const payload = getReminderText(reminder);
-            await notifications.send(reminder.userId, payload);
-            reminder.longNotification = true;
-            await reminder.save();
-        }
+    if (!reminder.longNotification && reminderDueWithin(reminder, 1, 'hour')) {
+        const payload = getReminderText(reminder);
+        await notifications.send(reminder.userId, payload);
+        reminder.longNotification = true;
+        await reminder.save();
     }
 }
 
 async function checkShortNotification(reminder, atLocation) {
-    if (!reminder.shortNotification) {
-        if (reminderDueWithin(reminder, 5, 'minutes') && atLocation) {
-            await notifications.send(reminder.userId, getReminderText(reminder));
-            reminder.shortNotification = true;
-            // If short notification sent no point sending long one.
-            reminder.longNotification = true;
-            await reminder.save();
-        }
+    if (!reminder.shortNotification && reminderDueWithin(reminder, 5, 'minutes') && atLocation) {
+        await notifications.send(reminder.userId, getReminderText(reminder));
+        reminder.shortNotification = true;
+        reminder.longNotification = true; // If short notification sent no point sending long one.
+        await reminder.save();
     }
 }
 
