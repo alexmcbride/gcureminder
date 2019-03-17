@@ -18,9 +18,10 @@ const backgroundSync = (function () {
         }
     }
 
-    // Attempt to sync all items in the queue.
+    // Attempt to sync all items in the queue. Returns array of synced items.
     async function sync() {
-        await dataStore.init(); // When called from SW DB might not be initialized.
+        // When called from Service Worker the database might not have been be initialized.
+        await dataStore.init();
         const items = await dataStore.getSyncItems();
         const promises = items.map(async item => {
             const response = await postJsonItem(item.token, item.data, item.url);

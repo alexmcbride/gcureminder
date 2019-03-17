@@ -1,14 +1,18 @@
 const CACHE_NAME = 'gcu-reminder-v7';
 const URLS_TO_CACHE = [
+    // Pages
     '/',
     '/reminder',
     '/settings',
 
+    // Styles
     '/stylesheets/style.css',
     '/stylesheets/bootstrap.min.css',
 
+    // Json
     '/manifest.json',
 
+    // Js
     '/javascripts/data-store.js',
     '/javascripts/index.js',
     '/javascripts/repository.js',
@@ -20,6 +24,7 @@ const URLS_TO_CACHE = [
     '/javascripts/notifications.js',
     '/javascripts/background-sync.js',
 
+    // Images
     '/images/delete-ic.png',
     '/images/edit-ic.png',
     '/images/home-ic.png',
@@ -27,6 +32,7 @@ const URLS_TO_CACHE = [
     '/images/time-ic.png',
     '/favicon.ico',
 
+    // Device icons...
     '/images/icons/apple-icon-57x57.png',
     '/images/icons/apple-icon-60x60.png',
     '/images/icons/apple-icon-72x72.png',
@@ -50,17 +56,20 @@ self.addEventListener('activate', event => {
 })
 
 self.addEventListener('install', event => {
+    // Cache pages.
     event.waitUntil(caches.open(CACHE_NAME).then(cache => {
         return cache.addAll(URLS_TO_CACHE);
     }));
 });
 
 self.addEventListener('fetch', event => {
+    // When fetching try and fetch local cache, otherwise fetch remote
     event.respondWith(caches.match(event.request).then(response => {
         return response || fetch(event.request);
     }));
 });
 
+// Send message to all browser windows using this service worker.
 function sendMessageToAll(message) {
     return self.clients.matchAll().then(clients => {
         clients.forEach(client => {
@@ -69,12 +78,14 @@ function sendMessageToAll(message) {
     });
 }
 
+// Send message to only single browser window.
 function sendMessageToClient(message, clientId) {
     return self.clients.get(clientId).then(client => {
         client.postMessage({ message: message });
     });
 }
 
+// Get single message, or generic message if more than one.
 function getSyncMessage(messages) {
     if (messages.length > 1) {
         return 'Updates synced with server';
@@ -85,8 +96,10 @@ function getSyncMessage(messages) {
     }
 }
 
+// Handle sync event.
 self.addEventListener('sync', event => {
     if (event.tag === 'background-sync') {
+        // Process background sync and send sync message to be displayed in browser.
         event.waitUntil(backgroundSync.sync().then(syncedItems => {
             const messages = syncedItems.map(item => item.message);
             const message = getSyncMessage(messages);
@@ -95,6 +108,7 @@ self.addEventListener('sync', event => {
     }
 });
 
+// Handle push notification.
 self.addEventListener('push', event => {
     const data = event.data.json();
     event.waitUntil(notifications.show(data.title, data.text));
