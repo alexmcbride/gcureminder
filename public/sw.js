@@ -101,7 +101,7 @@ self.addEventListener('sync', event => {
     if (event.tag === 'background-sync') {
         // Process background sync and send sync message to be displayed in browser.
         event.waitUntil(backgroundSync.sync().then(syncedItems => {
-            const messages = syncedItems.filter(item => item != null).map(item => item.message);
+            const messages = syncedItems.map(item => item.message);
             const message = getSyncMessage(messages);
             return sendMessageToAll(message);
         }).catch(console.log));

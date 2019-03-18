@@ -33,7 +33,8 @@ const backgroundSync = (function () {
                 return null;
             }
         });
-        return await Promise.all(promises); 
+        const syncedItems = await Promise.all(promises);
+        return syncedItems.filter(item => item != null); 
     }
 
     // Send a request to the server.
