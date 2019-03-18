@@ -64,6 +64,8 @@ router.post('/delete/:id', (req, res, next) => {
     });
 });
 
+/* GET check all upcoming reminders. called by the cron job. uses token in env variables to stop being called
+by ne'er do wells. */
 router.get('/check/:token', (req, res) => {
     const token = req.params.token;
     if (process.env.CHECK_REMINDER_TOKEN == token) {
