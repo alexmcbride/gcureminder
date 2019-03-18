@@ -5,6 +5,7 @@ const scheduler = require('../models/scheduler');
 const db = new ReminderDb();
 const router = express.Router();
 
+// filter out stuff we don't want in the json
 function getResponseReminder(reminder) {
     return {
         id: reminder.id,
