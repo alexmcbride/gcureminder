@@ -60,13 +60,13 @@ const repository = (function () {
 
     function editDistance(token, distance) {
         return dataStore.editDistance(distance).then(() => {
-            return backgroundSync.queue(token, { distance: distance }, '/api/settings/distance', 'Edit settings synced');
+            return backgroundSync.queue(token, { distance: distance }, '/api/settings/distance', 'Edit distance synced');
         });
     }
 
     function editLocation(token, latitude, longitude) {
         return dataStore.editLocation(latitude, longitude).then(() => {
-            return backgroundSync.queue(token, { latitude: latitude, longitude: longitude }, '/api/settings/location', 'Edit settings synced');
+            return backgroundSync.queue(token, { latitude: latitude, longitude: longitude }, '/api/settings/location', 'Edit location synced');
         });
     }
 

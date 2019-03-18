@@ -2,7 +2,7 @@
  * Module to wrap indexed db.
  */
 const dataStore = (function () {
-    const version = 14;
+    const version = 14; // DB destroyed and recreated when incremented
     const name = 'gcu-reminders-db';
     let db = null;
 

@@ -50,20 +50,20 @@ const URLS_TO_CACHE = [
     '/images/icons/ms-icon-144x144.png'
 ];
 
+// When activated cause SW to take control of pages in scope immediately
 self.addEventListener('activate', event => {
-    // cause SW to take control of pages in scope immediately
     event.waitUntil(self.clients.claim());
 })
 
+// When installed cache pages.
 self.addEventListener('install', event => {
-    // Cache pages.
     event.waitUntil(caches.open(CACHE_NAME).then(cache => {
         return cache.addAll(URLS_TO_CACHE);
     }));
 });
 
+// When fetching try and fetch local cache, otherwise fetch remote
 self.addEventListener('fetch', event => {
-    // When fetching try and fetch local cache, otherwise fetch remote
     event.respondWith(caches.match(event.request).then(response => {
         return response || fetch(event.request);
     }));
@@ -101,7 +101,7 @@ self.addEventListener('sync', event => {
     if (event.tag === 'background-sync') {
         // Process background sync and send sync message to be displayed in browser.
         event.waitUntil(backgroundSync.sync().then(syncedItems => {
-            const messages = syncedItems.map(item => item.message);
+            const messages = syncedItems.filter(item => item != null).map(item => item.message);
             const message = getSyncMessage(messages);
             return sendMessageToAll(message);
         }).catch(console.log));

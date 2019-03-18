@@ -27,12 +27,13 @@ const backgroundSync = (function () {
             const response = await postJsonItem(item.token, item.data, item.url);
             if (response.ok) {
                 await dataStore.deleteSyncItem(item.id);
+                return item;
             } else {
-                throw 'Error: response not OK';
+                console.log('Error: response not OK');
+                return null;
             }
-            return item;
         });
-        return await Promise.all(promises);
+        return await Promise.all(promises); 
     }
 
     // Send a request to the server.
