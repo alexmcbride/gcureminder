@@ -103,11 +103,11 @@ const settings = (function () {
         }).then(response => {
             return response.json();
         }).then(reminders => {
-            repository.addReminders(reminders).then(reminders => {
-                console.log('Import completed successfully');
-                util.showMessage('Imported ' + reminders.length + ' reminders');
-                updateUploadLabel('Choose file');
-            });
+            return repository.addReminders(reminders);
+        }).then(reminders => {
+            console.log('Import completed successfully');
+            util.showMessage('Imported ' + reminders.length + ' reminders');
+            updateUploadLabel('Choose file');
         }).catch(console.log);
     }
 

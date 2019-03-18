@@ -68,7 +68,7 @@ router.post('/delete/:id', (req, res, next) => {
 by ne'er do wells. */
 router.get('/check/:token', (req, res) => {
     const token = req.params.token;
-    if (process.env.CHECK_REMINDER_TOKEN == token) {
+    if (process.env.CHECK_REMINDER_TOKEN === token) {
         scheduler.run().then(() => {
             res.sendStatus(200);
         }).catch(error => {
