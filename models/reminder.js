@@ -21,7 +21,6 @@ const reminderSchema = new mongoose.Schema({
 });
 
 reminderSchema.statics.createReminder = function (user, reminder) {
-    const now = moment();
     reminder.userId = user._id;
     reminder.shortNotification = false;
     reminder.longNotification = false;

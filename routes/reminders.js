@@ -5,11 +5,22 @@ const scheduler = require('../models/scheduler');
 const db = new ReminderDb();
 const router = express.Router();
 
+function getResponseReminder(reminder) {
+    return {
+        id: reminder.id,
+        title: reminder.title,
+        type: reminder.type,
+        room: reminder.room,
+        date: reminder.date,
+        duration: reminder.duration
+    }
+}
+
 /* GET all reminders as JSON */
 router.get('/list/:token', (req, res, next) => {
     const token = req.params.token;
     db.getAllReminders(token).then(reminders => {
-        res.json(reminders);
+        res.json(reminders.map(getResponseReminder));
     }).catch(err => {
         console.log(err);
         res.sendStatus(500);
@@ -21,7 +32,7 @@ router.post('/add', (req, res, next) => {
     const token = req.body.token;
     const reminder = req.body.data;
     db.addReminder(token, reminder).then(reminder => {
-        res.json({ success: true, reminder: reminder });
+        res.json({ success: true, reminder: getResponseReminder(reminder) });
     }).catch(err => {
         console.log(err.message);
         res.sendStatus(500);
@@ -33,7 +44,7 @@ router.post('/edit', (req, res, next) => {
     const token = req.body.token;
     const reminder = req.body.data;
     db.editReminder(token, reminder).then(reminder => {
-        res.json({ success: true, reminder: reminder });
+        res.json({ success: true, reminder: getResponseReminder(reminder) });
     }).catch(err => {
         console.log(err.message);
         res.sendStatus(500);
@@ -72,7 +83,7 @@ router.get('/:token/:id', (req, res, next) => {
     const id = req.params.id;
     const token = req.params.token;
     db.getReminder(token, id)
-        .then(reminder => res.json(reminder))
+        .then(reminder => res.json(getResponseReminder(reminder)))
         .catch(err => {
             console.log(err);
             res.sendStatus(500);

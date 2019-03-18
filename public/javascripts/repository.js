@@ -23,6 +23,17 @@ const repository = (function () {
         }
     }
 
+    function getReminderData(reminder) {
+        return {
+            id: reminder.id,
+            title: reminder.title,
+            type: reminder.type,
+            room: reminder.room,
+            date: reminder.date,
+            duration: reminder.duration
+        }
+    }
+    
     function getReminder(user, id) {
         if (navigator.onLine) {
             return fetchJson('/api/reminders/' + user.token + '/' + id).then(reminder => {
@@ -37,8 +48,8 @@ const repository = (function () {
     }
 
     function addReminder(token, reminder) {
-        return dataStore.setReminder(reminder).then(data => {
-            return backgroundSync.queue(token, data, '/api/reminders/add', 'Add reminder synced');
+        return dataStore.setReminder(reminder).then(document => {
+            return backgroundSync.queue(token, getReminderData(document), '/api/reminders/add', 'Add reminder synced');
         });
     }
 
@@ -47,8 +58,8 @@ const repository = (function () {
     }
 
     function editReminder(token, reminder) {
-        return dataStore.setReminder(reminder).then(data => {
-            return backgroundSync.queue(token, data, '/api/reminders/edit', 'Edit reminder synced');
+        return dataStore.setReminder(reminder).then(document => {
+            return backgroundSync.queue(token, getReminderData(document), '/api/reminders/edit', 'Edit reminder synced');
         });
     }
 
