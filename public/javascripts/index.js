@@ -2,6 +2,8 @@
  * Module to handle the script for the index page.
  */
 (function () {
+    const tabPages = ['upcoming', 'all', 'previous', 'soon'];
+    const defaultTab = 'soon';
     let currentUser = null;
 
     function getDate(date) {
@@ -81,7 +83,7 @@
         content.appendChild(ul);
     }
 
-    function updateReminders(reminders) {
+    function updateRemindersList(reminders) {
         if (reminders.length === 0) {
             showNoRemindersMessage();
         } else {
@@ -115,55 +117,53 @@
     }
 
     function getActiveTab() {
-        if (location.hash && location.hash === '#active' || location.hash === '#all') {
-            return location.hash.substring(1);
-        } else {
-            return 'active'; // default
+        if (location.hash && location.hash.length > 1) {
+            const hash = location.hash.substr(1);
+            if (tabPages.indexOf(hash) > -1) {
+                return hash;
+            }
         }
+        return defaultTab;
     }
 
-    // adds active class to tab so it displays correctly
     function activateTab(activeTab) {
-        const activeTabLink = document.getElementById('active-tab-link');
-        const allTabLink = document.getElementById('all-tab-link');
-        if (activeTab == 'active') {
-            activeTabLink.classList.add('active');
-            allTabLink.classList.remove('active');
-        } else if (activeTab == 'all') {
-            allTabLink.classList.add('active');
-            activeTabLink.classList.remove('active');
-        }
+        tabPages.forEach(tab => {
+            const tabLink = document.getElementById(tab + '-tab-link');
+            if (tab === activeTab) {
+                tabLink.classList.add('active');
+            } else {
+                tabLink.classList.remove('active');
+            }
+        });
         util.hideMessage();
     }
 
-    function filterActiveReminders(reminders) {
-        const now = new Date().getTime();
-        return reminders.filter(reminder => {
-            return reminder.dateObj.getTime() > now;
-        });
-    }
-
-    function updatePage(reminders) {
-        const activeTab = getActiveTab();
-        if (activeTab === 'active') {
-            reminders = filterActiveReminders(reminders);
+    function getRemindersPromise(activeTab) {
+        if (activeTab === 'soon') {
+            return repository.getNearReminders(currentUser);
+        } else if (activeTab === 'upcoming') {
+            return repository.getUpcomingReminders(currentUser);
+        } else if (activeTab === 'previous') {
+            return repository.getPreviousReminders(currentUser);
+        } else {
+            return repository.getReminders(currentUser);
         }
-        updateReminders(reminders);
-        activateTab(activeTab);
     }
 
-    function loadReminders() {
-        return repository.getReminders(currentUser)
-            .then(updatePage)
-            .catch(console.log);
+    function updatePage() {
+        const activeTab = getActiveTab();
+        getRemindersPromise(activeTab).then(reminders => {
+            updateRemindersList(reminders);
+            activateTab(activeTab);
+        }).catch(console.log);
     }
 
     async function loadPage() {
         const user = await dataStore.getUser();
         if (user) {
             currentUser = user;
-            await loadReminders();
-            window.onhashchange = loadReminders;
+            updatePage();
+            window.onhashchange = updatePage;
         } else {
             location.href = '/login';
         }

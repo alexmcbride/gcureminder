@@ -23,7 +23,27 @@ const repository = (function () {
         }
     }
 
-    function getReminderData(reminder) {
+    async function getUpcomingReminders(user) {
+        const reminders = await getReminders(user);
+        const now = new Date().getTime();
+        return reminders.filter(reminder => {
+            return reminder.dateObj.getTime() >= now;
+        });
+    }
+
+    async function getNearReminders(user) {
+        return (await getUpcomingReminders(user)).slice(0, 5);
+    }
+
+    async function getPreviousReminders(user) {
+        const reminders = await getReminders(user);
+        const now = new Date().getTime();
+        return reminders.filter(reminder => {
+            return reminder.dateObj.getTime() < now;
+        });
+    }
+
+    function getReminderJson(reminder) {
         return {
             id: reminder.id,
             title: reminder.title,
@@ -33,7 +53,7 @@ const repository = (function () {
             duration: reminder.duration
         }
     }
-    
+
     function getReminder(user, id) {
         if (navigator.onLine) {
             return fetchJson('/api/reminders/' + user.token + '/' + id).then(reminder => {
@@ -49,7 +69,7 @@ const repository = (function () {
 
     function addReminder(token, reminder) {
         return dataStore.setReminder(reminder).then(document => {
-            return backgroundSync.queue(token, getReminderData(document), '/api/reminders/add', 'Add reminder synced');
+            return backgroundSync.queue(token, getReminderJson(document), '/api/reminders/add', 'Add reminder synced');
         });
     }
 
@@ -59,7 +79,7 @@ const repository = (function () {
 
     function editReminder(token, reminder) {
         return dataStore.setReminder(reminder).then(document => {
-            return backgroundSync.queue(token, getReminderData(document), '/api/reminders/edit', 'Edit reminder synced');
+            return backgroundSync.queue(token, getReminderJson(document), '/api/reminders/edit', 'Edit reminder synced');
         });
     }
 
@@ -89,6 +109,9 @@ const repository = (function () {
 
     return {
         getReminders: getReminders,
+        getUpcomingReminders: getUpcomingReminders,
+        getNearReminders: getNearReminders,
+        getPreviousReminders: getPreviousReminders,
         getReminder: getReminder,
         editReminder: editReminder,
         addReminder: addReminder,
