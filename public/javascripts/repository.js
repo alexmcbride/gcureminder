@@ -23,26 +23,6 @@ const repository = (function () {
         }
     }
 
-    async function getUpcomingReminders(user) {
-        const reminders = await getReminders(user);
-        const now = new Date().getTime();
-        return reminders.filter(reminder => {
-            return reminder.dateObj.getTime() >= now;
-        });
-    }
-
-    async function getNearReminders(user) {
-        return (await getUpcomingReminders(user)).slice(0, 5);
-    }
-
-    async function getPreviousReminders(user) {
-        const reminders = await getReminders(user);
-        const now = new Date().getTime();
-        return reminders.filter(reminder => {
-            return reminder.dateObj.getTime() < now;
-        });
-    }
-
     function getReminderJson(reminder) {
         return {
             id: reminder.id,
@@ -109,9 +89,6 @@ const repository = (function () {
 
     return {
         getReminders: getReminders,
-        getUpcomingReminders: getUpcomingReminders,
-        getNearReminders: getNearReminders,
-        getPreviousReminders: getPreviousReminders,
         getReminder: getReminder,
         editReminder: editReminder,
         addReminder: addReminder,

@@ -117,14 +117,13 @@
     }
 
     // Handles the data event.
-    function deleteReminder(event) {
+    async function deleteReminder(event) {
         event.preventDefault();
         if (confirm('Delete reminder?')) {
             const link = event.currentTarget;
             const id = link.getAttribute('data-id');
-            repository.deleteReminder(currentUser.token, id).then(() => {
-                removeReminderFromList(link);
-            });
+            await repository.deleteReminder(currentUser.token, id);
+            removeReminderFromList(link);
         }
     }
 
@@ -152,40 +151,61 @@
         util.hideMessage();
     }
 
+    // Gets a promise for reminders upcoming in the future.
+    async function getUpcomingReminders(user) {
+        const reminders = await repository.getReminders(user);
+        const now = new Date().getTime();
+        return reminders.filter(reminder => {
+            return reminder.dateObj.getTime() >= now;
+        });
+    }
+
+    // Gets the promise for reminders that happened in the past.
+    async function getPreviousReminders(user) {
+        const reminders = await repository.getReminders(user);
+        const now = new Date().getTime();
+        return reminders.filter(reminder => {
+            return reminder.dateObj.getTime() < now;
+        });
+    }
+
+    // Gets a promise for the next count reminders.
+    async function getSoonReminders(user, count) {
+        return (await getUpcomingReminders(user)).slice(0, count);
+    }
+
     // Gets a reminder promise for the specified tab.
     function getRemindersForActiveTab(activeTab) {
         if (activeTab === 'soon') {
-            return repository.getNearReminders(currentUser);
+            return getSoonReminders(currentUser, 5);
         } else if (activeTab === 'upcoming') {
-            return repository.getUpcomingReminders(currentUser);
+            return getUpcomingReminders(currentUser);
         } else if (activeTab === 'previous') {
-            return repository.getPreviousReminders(currentUser);
+            return getPreviousReminders(currentUser);
         } else {
             return repository.getReminders(currentUser);
         }
     }
 
     // Updates the page to show reminders.
-    function updatePage() {
+    async function updatePage() {
         const activeTab = getActiveTabFromHash();
-        getRemindersForActiveTab(activeTab).then(reminders => {
-            updateRemindersList(reminders);
-            activateTab(activeTab);
-        }).catch(console.log);
+        const reminders = await getRemindersForActiveTab(activeTab);
+        updateRemindersList(reminders);
+        activateTab(activeTab);
+        window.onhashchange = updatePage;
     }
 
     // Loads the page when first loaded.
-    function loadPage() {
-        dataStore.getUser().then(user => {
-            if (user) {
-                currentUser = user;
-                updatePage();
-                window.onhashchange = updatePage;
-            } else {
-                // Redirect to login.
-                location.href = '/login';
-            }
-        });
+    async function loadPage() {
+        const user = await dataStore.getUser();
+        if (user) {
+            currentUser = user;
+            updatePage();
+        } else {
+            // Redirect to login.
+            location.href = '/login';
+        }
     }
 
     util.start().then(loadPage);
