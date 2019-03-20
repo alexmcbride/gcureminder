@@ -6,12 +6,14 @@
     const defaultTab = 'soon';
     let currentUser = null;
 
+    // Gets the date string.
     function getDate(date) {
         return util.padNumber(date.getDate()) + '/' +
             util.padNumber(date.getMonth() + 1) + '/' +
             date.getFullYear();
     }
 
+    // Gets the duration string.
     function getDuration(date, duration) {
         const start = (date.getHours() * 60) + date.getMinutes();
         const end = start + parseInt(duration);
@@ -23,6 +25,7 @@
             ' - ' + endHours + ':' + util.padNumber(endMinutes);
     }
 
+    // Gets the room string.
     function getRoom(room) {
         const max = 10;
         if (room.length > max) {
@@ -31,6 +34,7 @@
         return room;
     }
 
+    // Gets the HTML for a single reminder.
     function getReminderHtml(reminder) {
         let html = '<h3>' + reminder.title + '</h3>';
         html += '<div class="row">';
@@ -58,6 +62,7 @@
         return html;
     }
 
+    // Adds a single reminder list item to a list.
     function addReminderItem(ul, reminder) {
         const li = document.createElement('li');
         li.setAttribute('class', 'list-group-item reminder-list-item');
@@ -65,6 +70,7 @@
         ul.appendChild(li);
     }
 
+    // Shows the message displayed when there are no reminders.
     function showNoRemindersMessage() {
         const content = document.getElementById('reminders-content');
         let html = '<div class="text-center no-reminders">'
@@ -73,6 +79,7 @@
         content.innerHTML = html;
     }
 
+    // Adds an array of reminders to the list.
     function addRemindersList(reminders) {
         const content = document.getElementById('reminders-content');
         content.innerHTML = '';
@@ -83,6 +90,7 @@
         content.appendChild(ul);
     }
 
+    // Redraws the reminders list to match the current state.
     function updateRemindersList(reminders) {
         if (reminders.length === 0) {
             showNoRemindersMessage();
@@ -92,6 +100,7 @@
         }
     }
 
+    // Adds delete events to currently displayed reminders.
     function addDeleteReminderEvents() {
         const links = document.getElementsByClassName('delete-reminder');
         for (const link of links) {
@@ -99,6 +108,7 @@
         }
     }
 
+    // Removes a reminder from the UI list.
     function removeReminderFromList(link) {
         // parent: col.row.li
         const li = link.parentNode.parentNode.parentNode;
@@ -106,17 +116,20 @@
         ul.removeChild(li);
     }
 
-    async function deleteReminder(event) {
+    // Handles the data event.
+    function deleteReminder(event) {
         event.preventDefault();
         if (confirm('Delete reminder?')) {
             const link = event.currentTarget;
             const id = link.getAttribute('data-id');
-            await repository.deleteReminder(currentUser.token, id);
-            removeReminderFromList(link);
+            repository.deleteReminder(currentUser.token, id).then(() => {
+                removeReminderFromList(link);
+            });
         }
     }
 
-    function getActiveTab() {
+    // Gets the active tab from the location hash.
+    function getActiveTabFromHash() {
         if (location.hash && location.hash.length > 1) {
             const hash = location.hash.substr(1);
             if (tabPages.indexOf(hash) > -1) {
@@ -126,6 +139,7 @@
         return defaultTab;
     }
 
+    // Add 'active' class to specified tab.
     function activateTab(activeTab) {
         tabPages.forEach(tab => {
             const tabLink = document.getElementById(tab + '-tab-link');
@@ -138,7 +152,8 @@
         util.hideMessage();
     }
 
-    function getRemindersPromise(activeTab) {
+    // Gets a reminder promise for the specified tab.
+    function getRemindersForActiveTab(activeTab) {
         if (activeTab === 'soon') {
             return repository.getNearReminders(currentUser);
         } else if (activeTab === 'upcoming') {
@@ -150,23 +165,27 @@
         }
     }
 
+    // Updates the page to show reminders.
     function updatePage() {
-        const activeTab = getActiveTab();
-        getRemindersPromise(activeTab).then(reminders => {
+        const activeTab = getActiveTabFromHash();
+        getRemindersForActiveTab(activeTab).then(reminders => {
             updateRemindersList(reminders);
             activateTab(activeTab);
         }).catch(console.log);
     }
 
-    async function loadPage() {
-        const user = await dataStore.getUser();
-        if (user) {
-            currentUser = user;
-            updatePage();
-            window.onhashchange = updatePage;
-        } else {
-            location.href = '/login';
-        }
+    // Loads the page when first loaded.
+    function loadPage() {
+        dataStore.getUser().then(user => {
+            if (user) {
+                currentUser = user;
+                updatePage();
+                window.onhashchange = updatePage;
+            } else {
+                // Redirect to login.
+                location.href = '/login';
+            }
+        });
     }
 
     util.start().then(loadPage);
