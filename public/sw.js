@@ -1,4 +1,7 @@
-const CACHE_NAME = 'gcu-reminder-v7';
+const CACHE_VERSION = 8;
+const CACHE_PREFIX = 'gcu-reminder-v';
+const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
+
 const URLS_TO_CACHE = [
     // Pages
     '/',
@@ -53,7 +56,21 @@ const URLS_TO_CACHE = [
 // When activated cause SW to take control of pages in scope immediately
 self.addEventListener('activate', event => {
     event.waitUntil(self.clients.claim());
+    event.waitUntil(removeOldCaches());
 })
+
+// Remove old caches on upgrade
+function removeOldCaches() {
+    const previousCache = CACHE_PREFIX + (CACHE_VERSION - 1);
+    return caches.keys().then(cacheNames => {
+        return Promise.all(cacheNames.map(cacheName => {
+            // Not equal to this or previous version.
+            if (cacheName !== CACHE_NAME && cacheName !== previousCache) {
+                return caches.delete(cacheName);
+            }
+        }));
+    });
+}
 
 // When installed cache pages.
 self.addEventListener('install', event => {
