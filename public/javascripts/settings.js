@@ -97,6 +97,8 @@ const settings = (function () {
         const formData = new FormData(event.currentTarget);
         formData.append('token', currentUser.token); // make sure we're authed
 
+        // Upload file data, which returns added reminders as JSON. Add those to DB and 
+        // display confirmation message.
         return fetch('/api/settings/upload', {
             method: 'POST',
             body: formData,
