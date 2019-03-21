@@ -182,9 +182,9 @@ const dataStore = (function () {
     function getReminders(userId) {
         return new Promise((resolve, reject) => {
             getCollection('reminders').then(reminders => {
-                const filtered = reminders.filter(reminder => reminder.userId === userId);
-                filtered.sort(sortRemindersByTime);
-                resolve(filtered);
+                // Make sure they're in order
+                reminders.sort(sortRemindersByTime);
+                resolve(reminders);
             }).catch(reject);
         });
     }
