@@ -2,8 +2,8 @@
  * Module to handle the script for the index page.
  */
 (function () {
-    const tabPages = ['upcoming', 'all', 'previous', 'soon'];
-    const defaultTab = 'soon';
+    const tabPages = ['upcoming', 'future', 'past', 'all'];
+    const defaultTab = 'upcoming';
     let currentUser = null;
 
     // Gets the date string.
@@ -152,7 +152,7 @@
     }
 
     // Gets a promise for reminders upcoming in the future.
-    async function getUpcomingReminders(user) {
+    async function getFutureReminders(user) {
         const reminders = await repository.getReminders(user);
         const now = new Date().getTime();
         return reminders.filter(reminder => {
@@ -161,7 +161,7 @@
     }
 
     // Gets the promise for reminders that happened in the past.
-    async function getPreviousReminders(user) {
+    async function getPastReminders(user) {
         const reminders = await repository.getReminders(user);
         const now = new Date().getTime();
         return reminders.filter(reminder => {
@@ -170,18 +170,18 @@
     }
 
     // Gets a promise for the next count reminders.
-    async function getSoonReminders(user, count) {
-        return (await getUpcomingReminders(user)).slice(0, count);
+    async function getUpcomingReminders(user, count) {
+        return (await getFutureReminders(user)).slice(0, count);
     }
 
     // Gets a reminder promise for the specified tab.
     function getRemindersForActiveTab(activeTab) {
-        if (activeTab === 'soon') {
-            return getSoonReminders(currentUser, 5);
-        } else if (activeTab === 'upcoming') {
-            return getUpcomingReminders(currentUser);
-        } else if (activeTab === 'previous') {
-            return getPreviousReminders(currentUser);
+        if (activeTab === 'upcoming') {
+            return getUpcomingReminders(currentUser, 6);
+        } else if (activeTab === 'future') {
+            return getFutureReminders(currentUser);
+        } else if (activeTab === 'past') {
+            return getPastReminders(currentUser);
         } else {
             return repository.getReminders(currentUser);
         }
