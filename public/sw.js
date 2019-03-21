@@ -1,4 +1,4 @@
-const CACHE_VERSION = 8;
+const CACHE_VERSION = 9;
 const CACHE_PREFIX = 'gcu-reminder-v';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
 
@@ -34,23 +34,6 @@ const URLS_TO_CACHE = [
     '/images/settings-ic.png',
     '/images/time-ic.png',
     '/favicon.ico',
-
-    // Device icons...
-    '/images/icons/apple-icon-57x57.png',
-    '/images/icons/apple-icon-60x60.png',
-    '/images/icons/apple-icon-72x72.png',
-    '/images/icons/apple-icon-76x76.png',
-    '/images/icons/apple-icon-114x114.png',
-    '/images/icons/apple-icon-120x120.png',
-    '/images/icons/apple-icon-144x144.png',
-    '/images/icons/apple-icon-152x152.png',
-    '/images/icons/apple-icon-180x180.png',
-    '/images/icons/android-icon-144x144.png',
-    '/images/icons/android-icon-192x192.png',
-    '/images/icons/favicon-32x32.png',
-    '/images/icons/favicon-96x96.png',
-    '/images/icons/favicon-16x16.png',
-    '/images/icons/ms-icon-144x144.png'
 ];
 
 // When activated cause SW to take control of pages in scope immediately
