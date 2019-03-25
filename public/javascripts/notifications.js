@@ -71,6 +71,7 @@ const notifications = (function () {
     }
 
     function test(user) {
+        console.log("push s: " + performance.now());
         return fetch('/api/notifications/test', {
             method: 'post',
             headers: { "Content-Type": "application/json" },

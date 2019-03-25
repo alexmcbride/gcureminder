@@ -1,6 +1,5 @@
 const express = require('express');
 const notifications = require('../models/notifications');
-
 const router = express.Router();
 
 router.get('/vapidPublicKey', (req, res) => {

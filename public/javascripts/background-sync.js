@@ -8,6 +8,7 @@ const backgroundSync = (function () {
     async function queue(token, data, url, message) {
         const registration = await navigator.serviceWorker.ready;
         if ('sync' in registration) {
+            console.log('queue: ' + (performance.timeOrigin + performance.now()));
             console.log('Background queueing item: ' + url);
             await dataStore.addSyncItem(token, data, url, message);
             await registration.sync.register('background-sync');
@@ -30,11 +31,13 @@ const backgroundSync = (function () {
                 return item;
             } else {
                 console.log('Error: response not OK');
-                return null;
             }
+            console.log('sync: ' + (performance.timeOrigin + performance.now()));
+            console.log('----');
+            return null;
         });
         const syncedItems = await Promise.all(promises);
-        return syncedItems.filter(item => item != null); 
+        return syncedItems.filter(item => item != null);
     }
 
     // Send a request to the server.
