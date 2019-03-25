@@ -27,14 +27,16 @@ const backgroundSync = (function () {
         const promises = items.map(async item => {
             const response = await postJsonItem(item.token, item.data, item.url);
             if (response.ok) {
+                console.log('sync: ' + (performance.timeOrigin + performance.now()));
+                console.log('----');
                 await dataStore.deleteSyncItem(item.id);
                 return item;
             } else {
                 console.log('Error: response not OK');
+                console.log('sync: ' + (performance.timeOrigin + performance.now()));
+                console.log('----');
+                return null;
             }
-            console.log('sync: ' + (performance.timeOrigin + performance.now()));
-            console.log('----');
-            return null;
         });
         const syncedItems = await Promise.all(promises);
         return syncedItems.filter(item => item != null);
