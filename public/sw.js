@@ -104,7 +104,10 @@ self.addEventListener('sync', event => {
             const messages = syncedItems.map(item => item.message);
             const message = getSyncMessage(messages);
             return sendMessageToAll(message);
-        }).catch(console.log));
+        }).catch(err => {
+            console.log('Error: fetch failed');
+            console.log('sync: ' + (performance.timeOrigin + performance.now()));
+        }));
     }
 });
 
