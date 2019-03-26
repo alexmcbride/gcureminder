@@ -7,6 +7,9 @@ const layout = (function () {
                 return notifications.test(user);
             }).then(() => {
                 console.log("push s: " + (performance.timeOrigin + performance.now()));
+            }).catch(err => {
+                console.log(err);
+                console.log("push s: " + (performance.timeOrigin + performance.now()));
             });
         });
 
