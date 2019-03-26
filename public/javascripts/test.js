@@ -3,7 +3,11 @@ const layout = (function () {
         document.getElementById('test-notifications').addEventListener('click', event => {
             dataStore.init().then(() => {
                 return dataStore.getUser();
-            }).then(notifications.test);
+            }).then(user => {
+                return notifications.test(user);
+            }).then(() => {
+                console.log("push s: " + (performance.timeOrigin + performance.now()));
+            });
         });
 
         document.getElementById('check-reminders').addEventListener('click', event => {

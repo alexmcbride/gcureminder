@@ -113,7 +113,7 @@ self.addEventListener('sync', event => {
 
 // Handle push notification.
 self.addEventListener('push', event => {
-    console.log("push r: " + performance.now());
+    console.log("push r: " + (performance.timeOrigin + performance.now()));
     const data = event.data.json();
     event.waitUntil(notifications.show(data.title, data.text));
 });
