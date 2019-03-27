@@ -1,4 +1,4 @@
-const CACHE_VERSION = 9;
+const CACHE_VERSION = 10;
 const CACHE_PREFIX = 'gcu-reminder-v';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
 
