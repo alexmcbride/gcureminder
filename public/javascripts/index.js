@@ -190,9 +190,9 @@
     // Updates the page to show reminders.
     async function updatePage() {
         const activeTab = getActiveTabFromHash();
-        const before = performance.now();
+        const before = performance.timeOrigin + performance.now();
         const reminders = await getRemindersForActiveTab(activeTab);
-        console.log("reminders (ms): " + (performance.now() - before));
+        console.log("reminders (ms): " + ((performance.timeOrigin + performance.now()) - before));
         updateRemindersList(reminders);
         activateTab(activeTab);
         window.onhashchange = updatePage;
