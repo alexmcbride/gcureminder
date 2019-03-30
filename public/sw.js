@@ -118,7 +118,6 @@ self.addEventListener('push', event => {
     event.waitUntil(notifications.show(data.title, data.text));
 });
 
-importScripts('/javascripts/util.js');
 importScripts('/javascripts/data-store.js');
 importScripts('/javascripts/background-sync.js');
 importScripts('/javascripts/notifications.js');
