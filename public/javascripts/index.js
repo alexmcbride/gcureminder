@@ -153,7 +153,7 @@
     }
 
     // Gets a promise for reminders upcoming in the future.
-    async function getFutureReminders(user) {
+    function getFutureReminders(user) {
         const now = new Date().getTime();
         return currentReminders.filter(reminder => {
             return reminder.dateObj.getTime() >= now;
@@ -161,7 +161,7 @@
     }
 
     // Gets the promise for reminders that happened in the past.
-    async function getPastReminders(user) {
+    function getPastReminders(user) {
         const now = new Date().getTime();
         return currentReminders.filter(reminder => {
             return reminder.dateObj.getTime() < now;
@@ -195,15 +195,19 @@
         window.onhashchange = updatePage;
     }
 
+    async function getReminders() {
+        const before = performance.timeOrigin + performance.now();
+        const reminders = await repository.getReminders(currentUser);
+        console.log("reminders (ms): " + ((performance.timeOrigin + performance.now()) - before));
+        return reminders;
+    }
+
     // Loads the page when first loaded.
     async function loadPage() {
         const user = await dataStore.getUser();
         if (user) {
-            const before = performance.timeOrigin + performance.now();
-            currentReminders = await repository.getReminders(user);
-            console.log("reminders (ms): " + ((performance.timeOrigin + performance.now()) - before));
-
             currentUser = user;
+            currentReminders = await getReminders();
             updatePage();
         } else {
             // Redirect to login.
