@@ -2,6 +2,7 @@ const User = require('../models/user');
 const Reminder = require('../models/reminder');
 const moment = require('moment');
 const ical = require('ical');
+const uuid = require('uuid/v1');
 
 class ReminderDb {
     getAllReminders(token) {
@@ -119,7 +120,7 @@ class ReminderDb {
                     // Check this is an event and not in the past.
                     if (eventValue.type == 'VEVENT' && start.isAfter()) {
                         const reminder = {
-                            id: eventValue.uid,
+                            id: uuid(),
                             title: parseTitle(eventValue.summary),
                             type: parseType(eventValue.summary),
                             room: eventValue.location,
