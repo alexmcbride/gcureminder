@@ -5,6 +5,7 @@
     const tabPages = ['upcoming', 'future', 'past', 'all'];
     const defaultTab = 'upcoming';
     let currentUser = null;
+    let currentReminders = [];
 
     // Gets the date string.
     function getDate(date) {
@@ -153,18 +154,16 @@
 
     // Gets a promise for reminders upcoming in the future.
     async function getFutureReminders(user) {
-        const reminders = await repository.getReminders(user);
         const now = new Date().getTime();
-        return reminders.filter(reminder => {
+        return currentReminders.filter(reminder => {
             return reminder.dateObj.getTime() >= now;
         });
     }
 
     // Gets the promise for reminders that happened in the past.
     async function getPastReminders(user) {
-        const reminders = await repository.getReminders(user);
         const now = new Date().getTime();
-        return reminders.filter(reminder => {
+        return currentReminders.filter(reminder => {
             return reminder.dateObj.getTime() < now;
         });
     }
@@ -183,16 +182,14 @@
         } else if (activeTab === 'past') {
             return getPastReminders(currentUser);
         } else {
-            return repository.getReminders(currentUser);
+            return currentReminders;
         }
     }
 
     // Updates the page to show reminders.
     async function updatePage() {
         const activeTab = getActiveTabFromHash();
-        const before = performance.timeOrigin + performance.now();
         const reminders = await getRemindersForActiveTab(activeTab);
-        console.log("reminders (ms): " + ((performance.timeOrigin + performance.now()) - before));
         updateRemindersList(reminders);
         activateTab(activeTab);
         window.onhashchange = updatePage;
@@ -202,6 +199,10 @@
     async function loadPage() {
         const user = await dataStore.getUser();
         if (user) {
+            const before = performance.timeOrigin + performance.now();
+            currentReminders = await repository.getReminders(user);
+            console.log("reminders (ms): " + ((performance.timeOrigin + performance.now()) - before));
+
             currentUser = user;
             updatePage();
         } else {
