@@ -105,15 +105,14 @@ self.addEventListener('sync', event => {
             const message = getSyncMessage(messages);
             return sendMessageToAll(message);
         }).catch(err => {
-            console.log('Error: fetch failed');
-            console.log('sync: ' + (performance.timeOrigin + performance.now()));
+            console.log('Error: fetch failed @ ' + (performance.timeOrigin + performance.now()));
         }));
     }
 });
 
 // Handle push notification.
 self.addEventListener('push', event => {
-    console.log("push r: " + (performance.timeOrigin + performance.now()));
+    console.log("Push received: " + (performance.timeOrigin + performance.now()));
     const data = event.data.json();
     event.waitUntil(notifications.show(data.title, data.text));
 });

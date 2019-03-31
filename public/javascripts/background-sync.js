@@ -8,8 +8,7 @@ const backgroundSync = (function () {
     async function queue(token, data, url, message) {
         const registration = await navigator.serviceWorker.ready;
         if ('sync' in registration) {
-            console.log('queue: ' + (performance.timeOrigin + performance.now()));
-            console.log('Background queueing item: ' + url);
+            console.log('Queueing item: ' + url + ': ' + (performance.timeOrigin + performance.now()));
             await dataStore.addSyncItem(token, data, url, message);
             await registration.sync.register('background-sync');
         } else {
@@ -27,14 +26,11 @@ const backgroundSync = (function () {
         const promises = items.map(async item => {
             const response = await postJsonItem(item.token, item.data, item.url);
             if (response.ok) {
-                console.log('sync: ' + (performance.timeOrigin + performance.now()));
-                console.log('----');
+                console.log('Item synced: ' + (performance.timeOrigin + performance.now()));
                 await dataStore.deleteSyncItem(item.id);
                 return item;
             } else {
-                console.log('Error: response not OK');
-                console.log('sync: ' + (performance.timeOrigin + performance.now()));
-                console.log('----');
+                console.log('Error: not OK: ' + (performance.timeOrigin + performance.now()));
                 return null;
             }
         });

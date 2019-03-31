@@ -6,10 +6,10 @@ const layout = (function () {
             }).then(user => {
                 return notifications.test(user);
             }).then(() => {
-                console.log("push s: " + (performance.timeOrigin + performance.now()));
+                console.log("Push sent: " + (performance.timeOrigin + performance.now()));
             }).catch(err => {
                 console.log(err);
-                console.log("push s: " + (performance.timeOrigin + performance.now()));
+                console.log("push error: " + (performance.timeOrigin + performance.now()));
             });
         });
 

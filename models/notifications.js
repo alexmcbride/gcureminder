@@ -27,6 +27,9 @@ function send(userId, payload) {
                     return removeSubscription(user, subscription);
                 });
             });
+
+            // Promises need to be processed one at a time to prevent two or more 
+            // users being updated simultaneously.
             promises.forEach(async promise => {
                 await promise;
             });
