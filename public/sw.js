@@ -7,6 +7,7 @@ const URLS_TO_CACHE = [
     '/',
     '/reminder',
     '/settings',
+    '/login',
 
     // Styles
     '/stylesheets/style.css',
