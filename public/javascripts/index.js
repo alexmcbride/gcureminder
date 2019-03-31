@@ -152,7 +152,7 @@
         util.hideMessage();
     }
 
-    // Gets a promise for reminders upcoming in the future.
+    // Gets reminders upcoming in the future.
     function getFutureReminders(user) {
         const now = new Date().getTime();
         return currentReminders.filter(reminder => {
@@ -160,7 +160,7 @@
         });
     }
 
-    // Gets the promise for reminders that happened in the past.
+    // Gets reminders that happened in the past.
     function getPastReminders(user) {
         const now = new Date().getTime();
         return currentReminders.filter(reminder => {
@@ -169,8 +169,8 @@
     }
 
     // Gets a promise for the next count reminders.
-    async function getUpcomingReminders(user, count) {
-        return (await getFutureReminders(user)).slice(0, count);
+    function getUpcomingReminders(user, count) {
+        return getFutureReminders(user).slice(0, count);
     }
 
     // Gets a reminder promise for the specified tab.
@@ -187,9 +187,9 @@
     }
 
     // Updates the page to show reminders.
-    async function updatePage() {
+    function updatePage() {
         const activeTab = getActiveTabFromHash();
-        const reminders = await getRemindersForActiveTab(activeTab);
+        const reminders = getRemindersForActiveTab(activeTab);
         updateRemindersList(reminders);
         activateTab(activeTab);
         window.onhashchange = updatePage;
