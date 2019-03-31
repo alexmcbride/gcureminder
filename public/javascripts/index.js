@@ -4,6 +4,7 @@
 (function () {
     const tabPages = ['upcoming', 'future', 'past', 'all'];
     const defaultTab = 'upcoming';
+    const upcomingLimit = 6;
     let currentUser = null;
     let currentReminders = [];
 
@@ -153,7 +154,7 @@
     }
 
     // Gets reminders upcoming in the future.
-    function getFutureReminders(user) {
+    function getFutureReminders() {
         const now = new Date().getTime();
         return currentReminders.filter(reminder => {
             return reminder.dateObj.getTime() >= now;
@@ -161,7 +162,7 @@
     }
 
     // Gets reminders that happened in the past.
-    function getPastReminders(user) {
+    function getPastReminders() {
         const now = new Date().getTime();
         return currentReminders.filter(reminder => {
             return reminder.dateObj.getTime() < now;
@@ -169,18 +170,18 @@
     }
 
     // Gets reminders limited by count.
-    function getUpcomingReminders(user, count) {
-        return getFutureReminders(user).slice(0, count);
+    function getUpcomingReminders(count) {
+        return getFutureReminders().slice(0, count);
     }
 
     // Gets reminders for the specified tab.
     function getRemindersForActiveTab(activeTab) {
         if (activeTab === 'upcoming') {
-            return getUpcomingReminders(currentUser, 6);
+            return getUpcomingReminders(upcomingLimit);
         } else if (activeTab === 'future') {
-            return getFutureReminders(currentUser);
+            return getFutureReminders();
         } else if (activeTab === 'past') {
-            return getPastReminders(currentUser);
+            return getPastReminders();
         } else {
             return currentReminders;
         }
