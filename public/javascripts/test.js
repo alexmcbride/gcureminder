@@ -4,9 +4,8 @@ const layout = (function () {
             dataStore.init().then(() => {
                 return dataStore.getUser();
             }).then(user => {
-                return notifications.test(user);
-            }).then(() => {
                 console.log("Push sent: " + (performance.timeOrigin + performance.now()));
+                return notifications.test(user);
             }).catch(err => {
                 console.log(err);
                 console.log("push error: " + (performance.timeOrigin + performance.now()));
