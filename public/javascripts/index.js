@@ -168,12 +168,12 @@
         });
     }
 
-    // Gets a promise for the next count reminders.
+    // Gets reminders limited by count.
     function getUpcomingReminders(user, count) {
         return getFutureReminders(user).slice(0, count);
     }
 
-    // Gets a reminder promise for the specified tab.
+    // Gets reminders for the specified tab.
     function getRemindersForActiveTab(activeTab) {
         if (activeTab === 'upcoming') {
             return getUpcomingReminders(currentUser, 6);
@@ -192,7 +192,6 @@
         const reminders = getRemindersForActiveTab(activeTab);
         updateRemindersList(reminders);
         activateTab(activeTab);
-        window.onhashchange = updatePage;
     }
 
     async function getReminders() {
@@ -209,6 +208,7 @@
             currentUser = user;
             currentReminders = await getReminders();
             updatePage();
+            window.onhashchange = updatePage;
         } else {
             // Redirect to login.
             location.href = '/login';
