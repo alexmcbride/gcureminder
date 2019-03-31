@@ -195,10 +195,12 @@
         activateTab(activeTab);
     }
 
+    // Get reminders and log time
     async function getReminders() {
         const before = performance.timeOrigin + performance.now();
         const reminders = await repository.getReminders(currentUser);
-        console.log("reminders (ms): " + ((performance.timeOrigin + performance.now()) - before));
+        const after  = performance.timeOrigin + performance.now();
+        console.log("Reminders (ms): " + (after - before));
         return reminders;
     }
 
