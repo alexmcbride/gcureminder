@@ -34,6 +34,15 @@ const URLS_TO_CACHE = [
     '/images/settings-ic.png',
     '/images/time-ic.png',
     '/favicon.ico',
+
+    // Icons
+    "/images/icons/android-icon-36x36.png",
+    "/images/icons/android-icon-48x48.png",
+    "/images/icons/android-icon-72x72.png",
+    "/images/icons/android-icon-96x96.png",
+    "/images/icons/android-icon-144x144.png",
+    "/images/icons/android-icon-192x192.png",
+    "/images/icons/android-icon-512x512.png"
 ];
 
 // When activated cause SW to take control of pages in scope immediately
