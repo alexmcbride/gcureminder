@@ -80,7 +80,7 @@ const notifications = (function () {
 
     // We check for document as this module can be loaded inside the SW.
     if ('document' in this) {
-        util.documentLoaded().then(() => {
+        app.documentLoaded().then(() => {
             self.addEventListener('pushsubscriptionchange', onPageSubscriptionChange);
         });
     }

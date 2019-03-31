@@ -10,8 +10,8 @@
 
     // Gets the date string.
     function getDate(date) {
-        return util.padNumber(date.getDate()) + '/' +
-            util.padNumber(date.getMonth() + 1) + '/' +
+        return app.padNumber(date.getDate()) + '/' +
+            app.padNumber(date.getMonth() + 1) + '/' +
             date.getFullYear();
     }
 
@@ -23,8 +23,8 @@
         const startMinutes = start - (startHours * 60);
         const endHours = Math.floor(end / 60);
         const endMinutes = end - (endHours * 60);
-        return startHours + ':' + util.padNumber(startMinutes) +
-            ' - ' + endHours + ':' + util.padNumber(endMinutes);
+        return startHours + ':' + app.padNumber(startMinutes) +
+            ' - ' + endHours + ':' + app.padNumber(endMinutes);
     }
 
     // Gets the room string.
@@ -150,7 +150,7 @@
                 tabLink.classList.remove('active');
             }
         });
-        util.hideMessage();
+        app.hideMessage();
     }
 
     // Gets reminders upcoming in the future.
@@ -218,5 +218,5 @@
         }
     }
 
-    util.start().then(loadPage);
+    app.start().then(loadPage);
 }());

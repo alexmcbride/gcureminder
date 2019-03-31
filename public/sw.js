@@ -22,7 +22,7 @@ const URLS_TO_CACHE = [
     '/javascripts/login.js',
     '/javascripts/reminder.js',
     '/javascripts/settings.js',
-    '/javascripts/util.js',
+    '/javascripts/app.js',
     '/javascripts/location-handler.js',
     '/javascripts/notifications.js',
     '/javascripts/background-sync.js',

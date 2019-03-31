@@ -49,5 +49,5 @@ const locationManager = (function () {
         });
     }
 
-    util.documentLoaded().then(startLocationUpdates);
+    app.documentLoaded().then(startLocationUpdates);
 }());

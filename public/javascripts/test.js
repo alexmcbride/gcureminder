@@ -1,5 +1,5 @@
 const layout = (function () {
-    util.documentLoaded().then(() => {
+    app.documentLoaded().then(() => {
         document.getElementById('test-notifications').addEventListener('click', event => {
             dataStore.init().then(() => {
                 return dataStore.getUser();

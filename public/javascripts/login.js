@@ -46,7 +46,7 @@
         }
     }
 
-    util.start().then(() => {
+    app.start().then(() => {
         document.getElementById('login-form').addEventListener('submit', onLogin);
     });
 }());

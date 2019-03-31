@@ -11,7 +11,7 @@
         save() {
             const data = getData();
             return repository.addReminder(currentUser.token, data).then(() => {
-                util.showMessage('Saved reminder!');
+                app.showMessage('Saved reminder!');
                 clearForm();
             });
         }
@@ -30,7 +30,7 @@
             document.getElementById('title').value = data.title;
             document.getElementById('type').value = data.type;
             document.getElementById('room').value = data.room;
-            document.getElementById('date').value = util.formatDate(data.date);
+            document.getElementById('date').value = app.formatDate(data.date);
             document.getElementById('duration').value = data.duration;
             document.getElementById('reminder-form').style.display = 'block';
         }
@@ -41,7 +41,7 @@
             data.id = this.id;
             data.userId = currentUser._id;
             return repository.editReminder(currentUser.token, data).then(response => {
-                util.showMessage('Saved reminder!');
+                app.showMessage('Saved reminder!');
             });
         }
     }
@@ -50,7 +50,7 @@
     let state = null;
 
     function setMinimumDate() {
-        document.getElementById('date').setAttribute('min', util.formatDate(new Date()));
+        document.getElementById('date').setAttribute('min', app.formatDate(new Date()));
     }
 
     function disableSaveButton(disabled) {
@@ -102,7 +102,7 @@
         if (checkValidity()) {
             await state.save();
         } else {
-            util.showMessage('Validation errors!');
+            app.showMessage('Validation errors!');
         }
         disableSaveButton(false);
     }
@@ -119,5 +119,5 @@
         });
     }
 
-    util.start().then(onPageLoaded);
+    app.start().then(onPageLoaded);
 }());

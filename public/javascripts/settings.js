@@ -108,7 +108,7 @@ const settings = (function () {
             return repository.addReminders(reminders);
         }).then(reminders => {
             console.log('Import completed successfully');
-            util.showMessage('Imported ' + reminders.length + ' reminders');
+            app.showMessage('Imported ' + reminders.length + ' reminders');
             updateUploadLabel('Choose file');
         }).catch(console.log);
     }
@@ -146,7 +146,7 @@ const settings = (function () {
         }).catch(console.log);
     }
 
-    util.start().then(onPageLoaded);
+    app.start().then(onPageLoaded);
 
     return {
         initMap: initMap
