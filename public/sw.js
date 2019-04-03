@@ -115,7 +115,7 @@ self.addEventListener('sync', event => {
             const message = getSyncMessage(messages);
             return sendMessageToAll(message);
         }).catch(err => {
-            console.log('Error: fetch failed @ ' + (performance.timeOrigin + performance.now()));
+            console.log('Error: fetch failed - ' + (performance.timeOrigin + performance.now()));
         }));
     }
 });
@@ -124,7 +124,13 @@ self.addEventListener('sync', event => {
 self.addEventListener('push', event => {
     console.log("Push received: " + (performance.timeOrigin + performance.now()));
     const data = event.data.json();
-    event.waitUntil(notifications.show(data.title, data.text));
+    if (data.type === 'reminder') {
+        event.waitUntil(notifications.showForReminder(data.id));
+    } else if (data.type === 'text') {
+        event.waitUntil(notifications.show(data.title, data.text));
+    } else {
+        console.log('Unknown notification type: ' + data.type);
+    }
 });
 
 importScripts('/javascripts/data-store.js');

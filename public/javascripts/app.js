@@ -73,6 +73,7 @@ const app = (function () {
         return date.getFullYear() + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
     }
 
+
     return {
         start: start,
         documentLoaded: documentLoaded,

@@ -70,6 +70,35 @@ const notifications = (function () {
         });
     }
 
+    function padNumber(num) {
+        return num >= 0 && num <= 9 ? '0' + num : '' + num;
+    }
+
+    function getTimeStr(date) {
+        // Format time as HH:mm
+        const hours = padNumber(date.getHours());
+        const minutes = padNumber(date.getMinutes());
+        return hours + ':' + minutes;
+    }
+
+    function getReminderText(reminder) {
+        const timeStr = getTimeStr(reminder.dateObj);
+        return reminder.type + ' ' + timeStr + ' ' + reminder.room;
+    }
+
+    function showForReminder(id) {
+        dataStore.init().then(() => {
+            return dataStore.getReminder(id);
+        }).then(reminder => {
+            if (reminder != null) {
+                const text = getReminderText(reminder);
+                show(reminder.title, text);
+            } else {
+                console.log('Reminder not found for notification with ID: ' + id);
+            }
+        }).catch(console.log);
+    }
+
     function test(user) {
         return fetch('/api/notifications/test', {
             method: 'post',
@@ -88,6 +117,7 @@ const notifications = (function () {
     return {
         subscribe: subscribe,
         show: show,
+        showForReminder: showForReminder,
         test: test
     }
 }());
