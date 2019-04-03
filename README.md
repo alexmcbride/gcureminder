@@ -28,7 +28,7 @@ The app uses the following libraries (all on the backend).
 * [ical-node for processing calendar files](https://github.com/jens-maus/node-ical)
 * [Formidable uploading files](https://github.com/felixge/node-formidable)
 
-Note iCal needs to be cloned and installed from the folder, as the version published on NPM is years out of date.
+Note iCal needs to be cloned and installed from the folder location, as the version published on NPM is years out of date.
 
 To run the site locally you need to add some environment variables to your ~/.bashrc file:
 
@@ -39,4 +39,4 @@ export VAPID_PRIVATE_KEY="<PRIVATE KEY>"
 export CHECK_REMINDER_TOKEN="<SECRET KEY>"
 ```
 
-The CHECK_REMINDER_TOKEN env variable needs to go in the cron job as well, as it has its own list of environment variables. Find out more about vapid keys, needed for push notifications, [here](https://github.com/web-push-libs/web-push).
+The CHECK_REMINDER_TOKEN env variable needs to go in the cron job as well, as it has its own list of environment variables. The check reminder token can be any GUID. Find out more about vapid keys, needed for push notifications, [here](https://github.com/web-push-libs/web-push).
