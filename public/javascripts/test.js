@@ -1,4 +1,4 @@
-const layout = (function () {
+(function () {
     app.documentLoaded().then(() => {
         document.getElementById('test-notifications').addEventListener('click', event => {
             dataStore.init().then(() => {
