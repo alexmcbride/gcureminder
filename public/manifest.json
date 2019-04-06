@@ -1,6 +1,6 @@
 {
  "name": "GCU Reminder",
- "short_name": "GCUR",
+ "short_name": "GCU Reminder",
  "start_url": ".",
  "description": "Reminder app to prevent you being late for lectures!",
  "display": "standalone",
