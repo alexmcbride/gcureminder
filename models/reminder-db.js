@@ -102,7 +102,8 @@ class ReminderDb {
         }
 
         // Convert start/end times to minutes.
-        function parseDuration(start, endDate) {
+        function parseDuration(startDate, endDate) {
+            const start = moment(startDate);
             const end = moment(endDate);
             const duration = moment.duration(end.diff(start));
             return duration.asMinutes();
@@ -116,16 +117,15 @@ class ReminderDb {
             for (let k in data) {
                 if (data.hasOwnProperty(k)) {
                     const eventValue = data[k];
-                    const start = moment(eventValue.start);
                     // Check this is an event and not in the past.
-                    if (eventValue.type == 'VEVENT' && start.isAfter()) {
+                    if (eventValue.type == 'VEVENT') {
                         const reminder = {
                             id: uuid(),
                             title: parseTitle(eventValue.summary),
                             type: parseType(eventValue.summary),
                             room: eventValue.location,
                             date: eventValue.start,
-                            duration: parseDuration(start, eventValue.end)
+                            duration: parseDuration(eventValue.start, eventValue.end)
                         };
                         promises.push(Reminder.createReminder(user, reminder));
                     }
